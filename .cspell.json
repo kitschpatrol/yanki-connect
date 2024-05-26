@@ -1,0 +1,27 @@
+{
+	"$schema": "https://raw.githubusercontent.com/streetsidesoftware/cspell/main/cspell.schema.json",
+	"import": "@kitschpatrol/cspell-config",
+	"words": [
+		"afmt",
+		"Anki",
+		"bafmt",
+		"bfont",
+		"bqfmt",
+		"bsize",
+		"cloze",
+		"flds",
+		"latexsvg",
+		"mdank",
+		"mult",
+		"odid",
+		"odue",
+		"openapi",
+		"qfmt",
+		"replayq",
+		"sarim",
+		"Sched",
+		"sortf",
+		"tmpls",
+		"Zodios"
+	]
+}
