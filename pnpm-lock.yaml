@@ -50,6 +50,9 @@ importers:
       tsx:
         specifier: ^4.11.0
         version: 4.11.0
+      type-fest:
+        specifier: ^4.18.3
+        version: 4.18.3
       unified:
         specifier: ^11.0.4
         version: 11.0.4
