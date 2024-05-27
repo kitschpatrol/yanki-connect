@@ -61,6 +61,8 @@ Default card types:
 
 ### Implementation notes
 
+https://foosoft.net/projects/anki-connect/index.html
+
 ### Similar projects
 
 ## The future
@@ -76,3 +78,10 @@ _State anyone or anything that significantly helped with the development of your
 <!-- contributing -->
 
 <!-- license -->
+
+## Scratch
+
+TS AnkiConnect API
+
+https://clover.sarim.garden
+https://www.zodios.org/docs/intro

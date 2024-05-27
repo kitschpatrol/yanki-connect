@@ -13,9 +13,12 @@
 	},
 	"devDependencies": {
 		"@kitschpatrol/shared-config": "^4.6.6",
+		"@sarim.garden/clover": "^2.0.1",
 		"@types/mdast": "^4.0.4",
 		"@types/node": "^20.12.12",
 		"@types/unist": "^3.0.2",
+		"@zodios/core": "^10.9.6",
+		"axios": "^1.7.2",
 		"remark": "^15.0.1",
 		"remark-frontmatter": "^5.0.0",
 		"remark-gfm": "^4.0.0",
