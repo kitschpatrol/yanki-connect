@@ -18,7 +18,7 @@ export type Request<
 	Result,
 > = {
 	action: Action
-	params?: Params
+	params: Params
 	response: {
 		error: null | string
 		result: Result
@@ -43,11 +43,11 @@ export type ActionsForRequests<T extends Requests> = T['action']
 export type Actions = Requests['action']
 
 export type ActionsWithParams = {
-	[K in Actions]: ParamsForAction<K> extends undefined ? never : K
+	[K in Actions]: ParamsForAction<K> extends never ? never : K
 }[Actions]
 
 export type ActionsWithoutParams = {
-	[K in Actions]: ParamsForAction<K> extends undefined ? K : never
+	[K in Actions]: ParamsForAction<K> extends never ? K : never
 }[Actions]
 
 export type ParamsForAction<T extends Requests['action']> = Extract<
