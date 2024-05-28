@@ -53,8 +53,8 @@ export type DeckRequests =
 	| Request<'changeDeck', { cards: number[]; deck: string }, null>
 	| Request<'cloneDeckConfigId', { cloneFrom: number; name: string }, false | number>
 	| Request<'createDeck', { deck: string }, Record<string, number>>
-	| Request<'deckNames', undefined, string[]>
-	| Request<'deckNamesAndIds', undefined, Record<string, number>>
+	| Request<'deckNames', never, string[]>
+	| Request<'deckNamesAndIds', never, Record<string, number>>
 	| Request<'deleteDecks', { cardsToo: true; decks: string[] }, null>
 	| Request<'getDeckConfig', { deck: string }, DeckConfig>
 	| Request<'getDeckStats', { decks: string[] }, Record<string, DeckStats>>

@@ -52,6 +52,6 @@ export type StatisticRequests =
 	  >
 	| Request<'getCollectionStatsHTML', { wholeCollection: boolean }, string>
 	| Request<'getLatestReviewID', { deck: string }, number>
-	| Request<'getNumCardsReviewedByDay', undefined, Array<[string, number]>>
-	| Request<'getNumCardsReviewedToday', undefined, number>
+	| Request<'getNumCardsReviewedByDay', never, Array<[string, number]>>
+	| Request<'getNumCardsReviewedToday', never, number>
 	| Request<'insertReviews', { reviews: ReviewStatisticTuple[] }, null>

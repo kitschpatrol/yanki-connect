@@ -138,7 +138,7 @@ export class AnkiConnectClient {
 			throw new Error('failed to issue request')
 		}
 
-		return (await response.json()) as ResponseForAction<T>
+		return response.json() as Promise<ResponseForAction<T>>
 	}
 
 	// Overload for actions with / without params
@@ -160,8 +160,10 @@ export class AnkiConnectClient {
 }
 
 const client = new AnkiConnectClient()
+const otherResult = await client.invoke('deckNames')
+const result = await client.deck.removeDeckConfigId()
 
-const result = await client.deck.console.log(result)
+console.log(otherResult)
 
 // Const noteIds = (await invoke('findNotes', 6, {
 // 	query: 'deck:Default',
