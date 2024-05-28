@@ -18,17 +18,17 @@ export type GraphicalRequests =
 	  > // Query syntax: https://docs.ankiweb.net/searching.html
 	| Request<'guiAddCards', { note: Note }, number>
 	| Request<'guiAnswerCard', { ease: number }, boolean>
-	| Request<'guiCheckDatabase', undefined, true> // True even if errors detected
-	| Request<'guiCurrentCard', undefined, CardInfo | null>
-	| Request<'guiDeckBrowser', undefined, null>
+	| Request<'guiCheckDatabase', never, true> // True even if errors detected
+	| Request<'guiCurrentCard', never, CardInfo | null>
+	| Request<'guiDeckBrowser'>
 	| Request<'guiDeckOverview', { name: string }, boolean>
 	| Request<'guiDeckReview', { name: string }, boolean>
-	| Request<'guiEditNote', { note: number }, null>
-	| Request<'guiExitAnki', undefined, null> // Returns before it actually closes
-	| Request<'guiImportFile', { path: string }, null>
+	| Request<'guiEditNote', { note: number }>
+	| Request<'guiExitAnki'> // Returns before it actually closes
+	| Request<'guiImportFile', { path: string }>
 	| Request<'guiSelectNote', { note: number }, boolean>
-	| Request<'guiSelectNotes', undefined, number[]>
-	| Request<'guiShowAnswer', undefined, boolean>
-	| Request<'guiShowQuestion', undefined, boolean>
-	| Request<'guiStartCardTimer', undefined, true> // Or null?
-	| Request<'guiUndo', undefined, boolean> // Or null?
+	| Request<'guiSelectNotes', never, number[]>
+	| Request<'guiShowAnswer', never, boolean>
+	| Request<'guiShowQuestion', never, boolean>
+	| Request<'guiStartCardTimer', never, true> // Or null?
+	| Request<'guiUndo', never, boolean> // Or null?

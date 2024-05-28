@@ -40,7 +40,7 @@ export type MiscellaneousRequests =
 	  >
 	| Request<
 			'requestPermission',
-			undefined,
+			never,
 			| {
 					permission: 'denied'
 			  }
@@ -50,8 +50,8 @@ export type MiscellaneousRequests =
 					version: boolean
 			  }
 	  >
-	| Request<'getProfiles', undefined, string[]>
+	| Request<'getProfiles', never, string[]>
 	| Request<'loadProfile', { name: string }, true> // Also false?
-	| Request<'reloadCollection', undefined, null>
-	| Request<'sync', undefined, null>
-	| Request<'version', undefined, number> // Currently versions 1 through 6 are defined.
+	| Request<'reloadCollection'>
+	| Request<'sync'>
+	| Request<'version', never, number> // Currently versions 1 through 6 are defined.

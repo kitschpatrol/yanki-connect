@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-types */
-
 import { type Request } from './shared'
 
 export type ReviewStatisticTuple = [
@@ -54,4 +52,4 @@ export type StatisticRequests =
 	| Request<'getLatestReviewID', { deck: string }, number>
 	| Request<'getNumCardsReviewedByDay', never, Array<[string, number]>>
 	| Request<'getNumCardsReviewedToday', never, number>
-	| Request<'insertReviews', { reviews: ReviewStatisticTuple[] }, null>
+	| Request<'insertReviews', { reviews: ReviewStatisticTuple[] }>

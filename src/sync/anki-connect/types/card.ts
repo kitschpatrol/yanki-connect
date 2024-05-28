@@ -78,22 +78,18 @@ export type CardRequests =
 				mod: number
 			}
 	  >
-	| Request<
-			'setSpecificValueOfCard',
-			{ card: number; keys: CardValueKeys[]; newValues: string[] },
-			boolean[]
-	  >
 	| Request<'answerCards', { answers: Array<{ cardId: number; ease: number }> }, boolean[]>
 	| Request<'areDue', { cards: number[] }, boolean[]>
 	| Request<'areSuspended', { cards: number[] }, Array<boolean | null>>
 	| Request<'cardsInfo', { cards: number[] }, CardInfo[]>
 	| Request<'cardsToNotes', { cards: number[] }, number[]>
 	| Request<'findCards', { query: string }, number[]> // Query syntax: https://docs.ankiweb.net/searching.html
-	| Request<'forgetCards', { cards: number[] }, null>
+	| Request<'forgetCards', { cards: number[] }>
 	| Request<'getEaseFactors', { cards: number[] }, number[]>
 	| Request<'getIntervals', { cards: number[]; complete?: boolean }, number[] | number[][]>
-	| Request<'relearnCards', { cards: number[] }, null>
-	| Request<'setEaseFactors', { cards: number[]; easeFactors: number[] }, boolean[]> // TODo confirm return quantity
+	| Request<'relearnCards', { cards: number[] }>
+	| Request<'setEaseFactors', { cards: number[]; easeFactors: number[] }, boolean[]> // TODO confirm return quantity
+	| Request<'setSpecificValueOfCard', { card: number; keys: CardValueKeys[]; newValues: string[] }, boolean[]>
 	| Request<'suspend', { cards: number[] }, boolean>
 	| Request<'suspended', { card: number }, boolean>
 	| Request<'unsuspend', { cards: number[] }, boolean>

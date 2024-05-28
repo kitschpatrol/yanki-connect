@@ -12,11 +12,7 @@ import type { StatisticRequests } from './statistic'
 /**
  * Abstract wrapper over an Anki Connect action / response
  */
-export type Request<
-	Action extends string,
-	Params extends Record<string, unknown> | undefined,
-	Result,
-> = {
+export type Request<Action extends string, Params = never, Result = null> = {
 	action: Action
 	params: Params
 	response: {
@@ -29,14 +25,16 @@ export type Request<
  * Requests
  */
 export type Requests =
-	// | CardRequests
+	| CardRequests
 	| DeckRequests
-	// | GraphicalRequests
-	// | MediaRequests
-	// | MiscellaneousRequests
-	// | ModelRequests
-	// | NoteRequests
+	| GraphicalRequests
+	| MediaRequests
+	| MiscellaneousRequests
+	| ModelRequests
+	| NoteRequests
 	| StatisticRequests
+
+// Type Temp = GraphicalRequests['action']
 
 // Helpers
 export type ActionsForRequests<T extends Requests> = T['action']
@@ -50,12 +48,8 @@ export type ActionsWithoutParams = {
 	[K in Actions]: ParamsForAction<K> extends never ? K : never
 }[Actions]
 
-export type ParamsForAction<T extends Requests['action']> = Extract<
-	Requests,
-	{ action: T }
->['params']
+export type ParamsForAction<T extends Requests['action']> = Extract<Requests, { action: T }>['params']
 
-export type ResponseForAction<T extends Requests['action']> = Extract<
-	Requests,
-	{ action: T }
->['response']
+export type ResponseForAction<T extends Requests['action']> = Extract<Requests, { action: T }>['response']
+
+export type ResultForAction<T extends Requests['action']> = ResponseForAction<T>['result']
