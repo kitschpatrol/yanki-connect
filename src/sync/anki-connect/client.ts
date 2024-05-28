@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/member-ordering */
 /* eslint-disable @typescript-eslint/unified-signatures */
 
+import { launchAnkiApp } from './anki-launcher'
 import type {
 	Actions,
 	ActionsWithParams,
@@ -10,32 +11,112 @@ import type {
 	ResultForAction,
 } from './types/shared'
 
+type ClientOptions = {
+	/**
+	 * Attempt to open the desktop Anki.app if it's not already running.
+	 *
+	 * - `true` will always attempt to open Anki _when a request is made_. This might introduce significant latency on the first launch.
+	 * - `false` (default) will never attempt to open Anki. Requests will fail until something or someone else opens the Anki app.
+	 * -  `immediately` is a special option that will open Anki when the client is instantiated.
+	 *
+	 * The Anki desktop app must be running for the client and the underlying AnkiConnect service to work.
+	 *
+	 *
+	 * The client does not attempt to close the app.
+	 *  */
+	autoLaunchAnki?: 'immediately' | boolean
+	/** Host where the AnkiConnect service is running. */
+	host?: string
+	/** Anki-Connect security key (optional) */
+	key?: string
+	/** Port where the AnkiConnect service is running. */
+	port?: number
+	/** Only version 6 is supported for now. */
+	version?: 6
+}
+
 /**
- * AnkiConnectClient is a client for the AnkiConnect API.
+ * AnkiConnectClient is a client for the [Anki-Connect API](https://foosoft.net/projects/anki-connect/)
  *
  * It implements every endpoint as of May 2024.
  *
  */
 export class AnkiConnectClient {
+	private readonly autoLaunchAnki: 'immediately' | boolean
+
+	private readonly host: string
+
+	private readonly key?: string
+
+	private readonly port: number
+
+	private readonly version: number
+
 	/**
-	 * Card-related notes.
+	 * Card Actions
+	 * [Documentation](https://foosoft.net/projects/anki-connect/index.html#card-actions)
 	 */
 	public readonly card = {
+		/** Answer cards. Ease is between 1 (Again) and 4 (Easy). Will start the
+		 * timer immediately before answering. Returns true if card exists, `false`
+		 * otherwise. */
 		answerCards: this.build('answerCards'),
+		/** Returns an array indicating whether each of the given cards is due (in
+		 * the same order). Note: cards in the learning queue with a large interval
+		 * (over 20 minutes) are treated as not due until the time of their interval
+		 * has passed, to match the way Anki treats them when reviewing. */
 		areDue: this.build('areDue'),
+		/** Returns an array indicating whether each of the given cards is suspended
+		 * (in the same order). If card doesn’t exist returns `null`. */
 		areSuspended: this.build('areSuspended'),
+		/** Returns a list of objects containing for each card ID the card fields,
+		 * front and back sides including CSS, note type, the note that the card
+		 * belongs to, and deck name, last modification timestamp as well as ease
+		 * and interval. */
 		cardsInfo: this.build('cardsInfo'),
+		/** Returns a list of objects containing for each card ID the modification
+		 * time. This function is about 15 times faster than executing `cardsInfo`.
+		 * */
 		cardsModTime: this.build('cardsModTime'),
+		/** Returns an unordered array of note IDs for the given card IDs. For cards
+		 * with the same note, the ID is only given once in the array. */
 		cardsToNotes: this.build('cardsToNotes'),
+		/** Returns an array of card IDs for a given query. Functionally identical
+		 * to `guiBrowse` but doesn’t use the GUI for better performance. */
 		findCards: this.build('findCards'),
+		/** Forget cards, making the cards new again. */
 		forgetCards: this.build('forgetCards'),
+		/** Returns an array with the ease factor for each of the given cards (in
+		 * the same order). */
 		getEaseFactors: this.build('getEaseFactors'),
+		/** Returns an array of the most recent intervals for each given card ID, or
+		 * a 2-dimensional array of all the intervals for each given card ID when
+		 * complete is `true`. Negative intervals are in seconds and positive
+		 * intervals in days. */
 		getIntervals: this.build('getIntervals'),
+		/** Make cards be “relearning”. */
 		relearnCards: this.build('relearnCards'),
+		/** Sets ease factor of cards by card ID; returns `true` if successful (all
+		 * cards existed) or `false` otherwise. */
 		setEaseFactors: this.build('setEaseFactors'),
+		/** Sets specific value of a single card. Given the risk of wreaking havoc
+		 * in the database when changing some of the values of a card, some of the
+		 * keys require the argument “warning_check” set to True. This can be used
+		 * to set a card’s flag, change it’s ease factor, change the review order in
+		 * a filtered deck and change the column “data” (not currently used by anki
+		 * apparently), and many other values. A list of values and explanation of
+		 * their respective utility can be found at [AnkiDroid’s
+		 * wiki](https://github.com/ankidroid/Anki-Android/wiki/Database-Structure).
+		 * */
 		setSpecificValueOfCard: this.build('setSpecificValueOfCard'),
+		/** Suspend cards by card ID; returns `true` if successful (at least one
+		 * card wasn’t already suspended) or `false` otherwise. */
 		suspend: this.build('suspend'),
+		/** Check if card is suspended by its ID. Returns `true` if suspended,
+		 * `false` otherwise. */
 		suspended: this.build('suspended'),
+		/** Unsuspend cards by card ID; returns `true` if successful (at least one
+		 * card was previously suspended) or `false` otherwise. */
 		unsuspend: this.build('unsuspend'),
 	}
 
@@ -176,14 +257,19 @@ export class AnkiConnectClient {
 		insertReviews: this.build('insertReviews'),
 	}
 
-	constructor(
-		private readonly host = 'http://127.0.0.1',
-		private readonly port = 8765,
-		private readonly version = 6,
-		private readonly key?: string,
-	) {
-		if (version !== 6) {
+	constructor(options?: ClientOptions) {
+		this.port = options?.port ?? 8765
+		this.version = options?.version ?? 6
+		this.autoLaunchAnki = options?.autoLaunchAnki ?? false
+		this.key = options?.key ?? undefined
+		this.host = options?.host ?? 'http://127.0.0.1'
+
+		if (this.version !== 6) {
 			throw new Error('AnkiConnectClient only supports version 6')
+		}
+
+		if (this.autoLaunchAnki === 'immediately') {
+			void launchAnkiApp()
 		}
 	}
 
@@ -233,30 +319,58 @@ export class AnkiConnectClient {
 		action: T,
 		params?: T extends ActionsWithParams ? ParamsForAction<T> : undefined,
 	): Promise<ResponseForAction<T>> {
-		const response = await fetch(`${this.host}:${this.port}`, {
-			body: JSON.stringify({
-				action,
-				...(this.key === undefined ? {} : { key: this.key }),
-				params,
-				version: this.version,
-			}),
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			method: 'POST',
-		})
+		let response: Response
+		let responseJson: ResponseForAction<T>
+		try {
+			response = await fetch(`${this.host}:${this.port}`, {
+				body: JSON.stringify({
+					action,
+					...(this.key === undefined ? {} : { key: this.key }),
+					params,
+					version: this.version,
+				}),
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				method: 'POST',
+			})
 
-		if (!response.ok) {
-			throw new Error('failed to issue request')
+			if (response === undefined) {
+				throw new Error('Anki-Connect response is undefined')
+			}
+
+			if (!response.ok) {
+				throw new Error('failed to issue request')
+			}
+
+			responseJson = (await response.json()) as ResponseForAction<T>
+
+			if (this.autoLaunchAnki !== false && responseJson.error === 'collection is not available') {
+				throw new Error(responseJson.error)
+			}
+		} catch (error) {
+			// Attempt restart
+			if (this.autoLaunchAnki !== false) {
+				console.log("Can't connect to Anki app, retrying...")
+
+				// Internally throttled
+				await launchAnkiApp()
+
+				await new Promise((resolve) => {
+					setTimeout(resolve, 500)
+				})
+
+				if (params === undefined) {
+					return this.invoke(action as ActionsWithoutParams) as Promise<ResponseForAction<T>>
+				}
+
+				return this.invoke(action as ActionsWithParams, params) as Promise<ResponseForAction<T>>
+			}
+
+			throw error
 		}
 
-		const responseJson = (await response.json()) as Record<string, unknown>
-
-		// Borrowing some validation from chenlijun99/autoanki
-		if (Object.getOwnPropertyNames(responseJson).length !== 2) {
-			throw new Error('Response has an unexpected number of fields.')
-		}
-
+		// Non-recoverable by launching app
 		if (!('error' in responseJson)) {
 			throw new Error('response is missing required error field')
 		}
@@ -265,13 +379,13 @@ export class AnkiConnectClient {
 			throw new Error('response is missing required result field')
 		}
 
-		return responseJson as unknown as Promise<ResponseForAction<T>>
+		return responseJson
 	}
 }
 
-const client = new AnkiConnectClient()
-// Const t1 = await client.invoke('cardReviews', { deck: 'Default', startID: 0 })
-const t1 = await client.deck.deckNamesAndIds()
+const client = new AnkiConnectClient({ autoLaunchAnki: true })
+// Const t1 = await client.deck.deckNames()
+const t1 = await client.invoke('deckNames')
 
 console.log(t1)
 
