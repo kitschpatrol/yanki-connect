@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-types */
-
 import { type Request } from './shared'
 
 export type MediaRequests =
@@ -21,6 +19,6 @@ export type MediaRequests =
 			},
 			string
 	  >
-	| Request<'deleteMediaFile', { filename: string }, null>
-	| Request<'getMediaDirPath', undefined, string>
+	| Request<'deleteMediaFile', { filename: string }>
+	| Request<'getMediaDirPath', never, string>
 	| Request<'getMediaFilesNames', { pattern: string }, string[]>

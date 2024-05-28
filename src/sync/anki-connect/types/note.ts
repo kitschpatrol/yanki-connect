@@ -3,12 +3,7 @@
 
 import { type Request } from './shared'
 
-export type NoteModel =
-	| 'Basic (and reversed card)'
-	| 'Basic (type in the answer)'
-	| 'Basic'
-	| 'Cloze'
-	| ({} & string) // Allow arbitrary strings too
+export type NoteModel = 'Basic (and reversed card)' | 'Basic (type in the answer)' | 'Basic' | 'Cloze' | ({} & string) // Allow arbitrary strings too
 
 export type NoteMedia = {
 	fields: string[]
@@ -45,8 +40,7 @@ export type NoteRequests =
 			{
 				notes: number[]
 				tags: string // Array allowed?
-			},
-			null
+			}
 	  >
 	| Request<
 			'canAddNotesWithErrorDetail',
@@ -91,8 +85,7 @@ export type NoteRequests =
 			{
 				notes: number[]
 				tags: string // Array allowed?
-			},
-			null
+			}
 	  >
 	| Request<
 			'replaceTags',
@@ -100,16 +93,14 @@ export type NoteRequests =
 				notes: number[]
 				replace_with_tag: string
 				tag_to_replace: string
-			},
-			null
+			}
 	  >
 	| Request<
 			'replaceTagsInAllNotes',
 			{
 				replace_with_tag: string
 				tag_to_replace: string
-			},
-			null
+			}
 	  >
 	| Request<
 			'updateNote',
@@ -129,8 +120,7 @@ export type NoteRequests =
 							id: number
 							tags: string[]
 					  }
-			},
-			null
+			}
 	  >
 	| Request<
 			'updateNoteFields',
@@ -142,8 +132,7 @@ export type NoteRequests =
 					picture?: NoteMedia[]
 					video?: NoteMedia[]
 				}
-			},
-			null
+			}
 	  >
 	| Request<
 			'updateNoteModel',
@@ -154,21 +143,19 @@ export type NoteRequests =
 					modelName: string
 					tags: string[]
 				}
-			},
-			null
+			}
 	  >
 	| Request<
 			'updateNoteTags',
 			{
 				note: number
 				tags: string[]
-			},
-			null
+			}
 	  >
 	| Request<'addNote', { note: NoteWithCreationOptions }, number>
 	| Request<'addNotes', { notes: NoteWithCreationOptions[] }, Array<null | string>>
 	| Request<'canAddNotes', { notes: NoteWithCreationOptions[] }, boolean[]>
-	| Request<'clearUnusedTags', undefined, string[]>
+	| Request<'clearUnusedTags', never, string[]>
 	| Request<'deleteNotes', { notes: number[] }, number>
-	| Request<'getTags', undefined, string[]>
-	| Request<'removeEmptyNotes', undefined, null>
+	| Request<'getTags', never, string[]>
+	| Request<'removeEmptyNotes'>

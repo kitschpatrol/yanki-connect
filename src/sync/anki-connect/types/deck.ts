@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-/* eslint-disable @typescript-eslint/ban-types */
 
 import { type Request } from './shared'
 
@@ -50,12 +49,12 @@ export type DeckConfig = {
 }
 
 export type DeckRequests =
-	| Request<'changeDeck', { cards: number[]; deck: string }, null>
+	| Request<'changeDeck', { cards: number[]; deck: string }>
 	| Request<'cloneDeckConfigId', { cloneFrom: number; name: string }, false | number>
 	| Request<'createDeck', { deck: string }, Record<string, number>>
 	| Request<'deckNames', never, string[]>
 	| Request<'deckNamesAndIds', never, Record<string, number>>
-	| Request<'deleteDecks', { cardsToo: true; decks: string[] }, null>
+	| Request<'deleteDecks', { cardsToo: true; decks: string[] }>
 	| Request<'getDeckConfig', { deck: string }, DeckConfig>
 	| Request<'getDeckStats', { decks: string[] }, Record<string, DeckStats>>
 	| Request<'getDecks', Record<'cards', number[]>, Record<string, number[]>>

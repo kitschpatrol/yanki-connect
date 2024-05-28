@@ -85,3 +85,5 @@ TS AnkiConnect API
 
 https://clover.sarim.garden
 https://www.zodios.org/docs/intro
+
+https://github.com/epilurzu/ankkit

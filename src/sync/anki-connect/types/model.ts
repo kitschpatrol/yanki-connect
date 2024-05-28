@@ -81,11 +81,6 @@ export type ModelRequests =
 			number
 	  >
 	| Request<
-			'modelFieldDescriptions',
-			{ description: string; fieldName: string; modelName: string },
-			boolean
-	  > // Only ancient versions return false
-	| Request<
 			'modelFieldFonts',
 			{ modelName: string },
 			Record<
@@ -97,21 +92,6 @@ export type ModelRequests =
 			>
 	  >
 	| Request<
-			'modelFieldRename',
-			{ modelName: string; newFieldName: string; oldFieldName: string },
-			null
-	  >
-	| Request<
-			'modelFieldSetDescription',
-			{ fieldName: string; index: number; modelName: string },
-			null
-	  >
-	| Request<
-			'modelFieldSetFontSize',
-			{ fieldName: string; fontSize: number; modelName: string },
-			null
-	  >
-	| Request<
 			'modelTemplateAdd',
 			{
 				modelName: string
@@ -120,26 +100,14 @@ export type ModelRequests =
 					Front: string
 					Name: string
 				}
-			},
-			null
+			}
 	  >
 	| Request<
 			'modelTemplateRemove',
 			{
 				modelName: string
 				templateName: string
-			},
-			null
-	  >
-	| Request<
-			'modelTemplateRename',
-			{ modelName: string; newTemplateName: string; oldTemplateName: string },
-			null
-	  >
-	| Request<
-			'modelTemplateReposition',
-			{ index: number; modelName: string; templateName: string },
-			null
+			}
 	  >
 	| Request<
 			'modelTemplates',
@@ -160,8 +128,7 @@ export type ModelRequests =
 					css: string
 					name: string
 				}
-			},
-			null
+			}
 	  >
 	| Request<
 			'updateModelTemplates',
@@ -170,17 +137,22 @@ export type ModelRequests =
 					name: string
 					templates: Record<string, { Back?: string; Front?: string }>
 				}
-			},
-			null
+			}
 	  >
 	| Request<'findModelsById', { modelNames: string[] }, Model[]>
 	| Request<'findModelsByName', { modelIds: number[] }, Model[]>
-	| Request<'modelFieldAdd', { fieldName: string; index: number; modelName: string }, null>
+	| Request<'modelFieldAdd', { fieldName: string; index: number; modelName: string }>
+	| Request<'modelFieldDescriptions', { description: string; fieldName: string; modelName: string }, boolean> // Only ancient versions return false
 	| Request<'modelFieldNames', { modelName: string }, string[]>
-	| Request<'modelFieldRemove', { fieldName: string; modelName: string }, null>
-	| Request<'modelFieldReposition', { fieldName: string; index: number; modelName: string }, null>
-	| Request<'modelFieldSetFont', { fieldName: string; font: string; modelName: string }, null>
+	| Request<'modelFieldRemove', { fieldName: string; modelName: string }>
+	| Request<'modelFieldRename', { modelName: string; newFieldName: string; oldFieldName: string }>
+	| Request<'modelFieldReposition', { fieldName: string; index: number; modelName: string }>
+	| Request<'modelFieldSetDescription', { fieldName: string; index: number; modelName: string }>
+	| Request<'modelFieldSetFont', { fieldName: string; font: string; modelName: string }>
+	| Request<'modelFieldSetFontSize', { fieldName: string; fontSize: number; modelName: string }>
 	| Request<'modelFieldsOnTemplates', { modelName: string }, Record<string, [string[], string[]]>> // Note tuple
-	| Request<'modelNames', undefined, string[]>
-	| Request<'modelNamesAndIds', undefined, Record<string, number>>
+	| Request<'modelNames', never, string[]>
+	| Request<'modelNamesAndIds', never, Record<string, number>>
 	| Request<'modelStyling', { modelName: string }, { css: string }>
+	| Request<'modelTemplateRename', { modelName: string; newTemplateName: string; oldTemplateName: string }>
+	| Request<'modelTemplateReposition', { index: number; modelName: string; templateName: string }>
