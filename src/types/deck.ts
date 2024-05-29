@@ -38,10 +38,10 @@ export type DeckConfig = {
 	rev: {
 		bury: boolean
 		ease4: number
-		fuzz: 0.05
+		fuzz: number
 		ivlFct: number
 		maxIvl: number
-		minSpace: 1
+		minSpace: number
 		perDay: number
 	}
 	timer: number
@@ -57,7 +57,7 @@ export type DeckRequests =
 	| Request<'deleteDecks', 6, { cardsToo: true; decks: string[] }>
 	| Request<'getDeckConfig', 6, { deck: string }, DeckConfig>
 	| Request<'getDeckStats', 6, { decks: string[] }, Record<string, DeckStats>>
-	| Request<'getDecks', Record<'cards', 6, number[]>, Record<string, number[]>>
+	| Request<'getDecks', 6, Record<'cards', number[]>, Record<string, number[]>>
 	| Request<'removeDeckConfigId', 6, { configId: number }, boolean>
 	| Request<'saveDeckConfig', 6, { config: DeckConfig }, boolean>
 	| Request<'setDeckConfigId', 6, { configId: number; decks: string[] }, boolean>
