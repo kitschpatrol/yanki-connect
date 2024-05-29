@@ -81,9 +81,11 @@ _State anyone or anything that significantly helped with the development of your
 
 ## Scratch
 
-TS AnkiConnect API
+TS Anki-Connect API
 
 https://clover.sarim.garden
 https://www.zodios.org/docs/intro
 
 https://github.com/epilurzu/ankkit
+
+https://www.npmjs.com/package/@autoanki/anki-connect
