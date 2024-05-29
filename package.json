@@ -1,40 +1,64 @@
 {
-	"name": "mdank",
-	"version": "1.0.0",
+	"name": "yanki-connect",
+	"version": "0.0.0",
 	"type": "module",
-	"description": "",
-	"author": "",
+	"description": "A fully-typed Anki-Connect client for reading and writing Anki data.",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/kitschpatrol/yanki-connect.git"
+	},
+	"homepage": "https://github.com/kitschpatrol/yanki-connect",
+	"bugs": {
+		"url": "https://github.com/kitschpatrol/yanki-connect/issues",
+		"email": "eric@ericmika.com"
+	},
+	"author": {
+		"name": "Eric Mika",
+		"email": "eric@ericmika.com",
+		"url": "https://ericmika.com"
+	},
 	"license": "MIT",
-	"packageManager": "pnpm@9.1.2+sha512.127dc83b9ea10c32be65d22a8efb4a65fb952e8fefbdfded39bdc3c97efc32d31b48b00420df2c1187ace28c921c902f0cb5a134a4d032b8b5295cbfa2c681e2",
-	"main": "index.js",
-	"keywords": [],
+	"packageManager": "pnpm@9.1.3",
+	"engines": {
+		"node": ">=18.0.0",
+		"pnpm": ">=8.0.0"
+	},
+	"main": "./dist/index.js",
+	"module": "./dist/index.js",
+	"exports": {
+		".": {
+			"import": "./dist/index.js",
+			"types": "./dist/index.d.ts"
+		}
+	},
+	"types": "./dist/index.d.ts",
+	"files": [
+		"dist"
+	],
+	"keywords": [
+		"anki",
+		"spaced-repetition",
+		"anki-connect",
+		"client",
+		"api",
+		"npm-package"
+	],
 	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1"
+		"build": "tsx ./scripts/build.ts && tsc -p tsconfig.build.json",
+		"fix": "shared-config --fix",
+		"lint": "shared-config --lint",
+		"preview": "vite preview",
+		"release": "pnpm build && pnpm bumpp --commit 'Release: %s' && pnpm publish --otp $(op read 'op://Personal/Npmjs/one-time password?attribute=otp')",
+		"test": "vitest"
 	},
 	"devDependencies": {
 		"@kitschpatrol/shared-config": "^4.6.6",
-		"@sarim.garden/clover": "^2.0.1",
-		"@types/mdast": "^4.0.4",
 		"@types/node": "^20.12.12",
-		"@types/unist": "^3.0.2",
-		"@zodios/core": "^10.9.6",
-		"axios": "^1.7.2",
 		"open": "^10.1.0",
-		"p-retry": "^6.2.0",
-		"p-wait-for": "^5.0.2",
-		"remark": "^15.0.1",
-		"remark-frontmatter": "^5.0.0",
-		"remark-gfm": "^4.0.0",
-		"remark-html": "^16.0.1",
-		"remark-parse": "^11.0.0",
-		"remark-wiki-link": "^2.0.1",
 		"tsx": "^4.11.0",
-		"type-fest": "^4.18.3",
-		"unified": "^11.0.4",
-		"unist-builder": "^4.0.0",
-		"unist-util-visit": "^5.0.0",
-		"vitest": "^1.6.0",
-		"yaml": "^2.4.2",
-		"zod": "^3.23.8"
+		"vitest": "^1.6.0"
+	},
+	"publishConfig": {
+		"access": "public"
 	}
 }

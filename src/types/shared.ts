@@ -48,8 +48,14 @@ export type ActionsWithoutParams = {
 	[K in Actions]: ParamsForAction<K> extends never ? K : never
 }[Actions]
 
-export type ParamsForAction<T extends Requests['action']> = Extract<Requests, { action: T }>['params']
+export type ParamsForAction<T extends Requests['action']> = Extract<
+	Requests,
+	{ action: T }
+>['params']
 
-export type ResponseForAction<T extends Requests['action']> = Extract<Requests, { action: T }>['response']
+export type ResponseForAction<T extends Requests['action']> = Extract<
+	Requests,
+	{ action: T }
+>['response']
 
 export type ResultForAction<T extends Requests['action']> = ResponseForAction<T>['result']

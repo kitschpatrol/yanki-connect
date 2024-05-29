@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/member-ordering */
 /* eslint-disable @typescript-eslint/unified-signatures */
 
-import { launchAnkiApp } from './anki-launcher'
+import { launchAnkiApp } from './launcher'
 import type {
 	Actions,
 	ActionsWithParams,
@@ -10,8 +10,9 @@ import type {
 	ResponseForAction,
 	ResultForAction,
 } from './types/shared'
+import { platform } from 'node:process'
 
-type ClientOptions = {
+export type YankiConnectOptions = {
 	/**
 	 * Attempt to open the desktop Anki.app if it's not already running.
 	 *
@@ -21,39 +22,37 @@ type ClientOptions = {
 	 *
 	 * The Anki desktop app must be running for the client and the underlying AnkiConnect service to work.
 	 *
+	 * Currently supported on macOS only.
 	 *
 	 * The client does not attempt to close the app.
 	 *  */
 	autoLaunchAnki?: 'immediately' | boolean
-	/** Host where the AnkiConnect service is running. */
+	/** Host where the Anki-Connect service is running. */
 	host?: string
 	/** Anki-Connect security key (optional) */
 	key?: string
-	/** Port where the AnkiConnect service is running. */
+	/** Port where the Anki-Connect service is running. */
 	port?: number
-	/** Only version 6 is supported for now. */
+	/** Only API version 6 is supported for now. */
 	version?: 6
 }
 
 /**
- * AnkiConnectClient is a client for the [Anki-Connect API](https://foosoft.net/projects/anki-connect/)
+ * YankiConnect is a client for the [Anki-Connect API](https://foosoft.net/projects/anki-connect/)
  *
  * It implements every endpoint as of May 2024.
  *
  */
-export class AnkiConnectClient {
+export class YankiConnect {
 	private readonly autoLaunchAnki: 'immediately' | boolean
-
 	private readonly host: string
-
 	private readonly key?: string
-
 	private readonly port: number
-
 	private readonly version: number
 
 	/**
 	 * Card Actions
+	 *
 	 * [Documentation](https://foosoft.net/projects/anki-connect/index.html#card-actions)
 	 */
 	public readonly card = {
@@ -121,43 +120,119 @@ export class AnkiConnectClient {
 	}
 
 	/**
-	 * Deck-related notes.
+	 * Deck Actions
+	 *
+	 * [Documentation](https://foosoft.net/projects/anki-connect/index.html#deck-actions)
 	 */
 	public readonly deck = {
+		/** Moves cards with the given IDs to a different deck, creating the deck if
+		 * it doesn’t exist yet. */
 		changeDeck: this.build('changeDeck'),
+		/** Creates a new configuration group with the given name, cloning from the
+		 * group with the given ID, or from the default group if this is
+		 * unspecified. Returns the ID of the new configuration group, or `false` if
+		 * the specified group to clone from does not exist. */
 		cloneDeckConfigId: this.build('cloneDeckConfigId'),
+		/** Create a new empty deck. Will not overwrite a deck that exists with the
+		 * same name. */
 		createDeck: this.build('createDeck'),
+		/** Gets the complete list of deck names for the current user. */
 		deckNames: this.build('deckNames'),
+		/** Gets the complete list of deck names and their respective IDs for the
+		 * current user. */
 		deckNamesAndIds: this.build('deckNamesAndIds'),
+		/** Deletes decks with the given names. The argument `cardsToo` must be
+		 * specified and set to `true`. */
 		deleteDecks: this.build('deleteDecks'),
+		/** Gets the configuration group object for the given deck. */
 		getDeckConfig: this.build('getDeckConfig'),
+		/** Gets statistics such as total cards and cards due for the given decks.
+		 * */
 		getDeckStats: this.build('getDeckStats'),
+		/** Accepts an array of card IDs and returns an object with each deck name
+		 * as a key, and its value an array of the given cards which belong to it.
+		 * */
 		getDecks: this.build('getDecks'),
+		/** Removes the configuration group with the given ID, returning `true` if
+		 * successful, or `false` if attempting to remove either the default
+		 * configuration group (ID = 1) or a configuration group that does not
+		 * exist. */
 		removeDeckConfigId: this.build('removeDeckConfigId'),
+		/** Saves the given configuration group, returning `true` on success or
+		 * `false` if the ID of the configuration group is invalid (such as when it
+		 * does not exist). */
 		saveDeckConfig: this.build('saveDeckConfig'),
+		/** Changes the configuration group for the given decks to the one with the
+		 * given ID. Returns `true` on success or `false` if the given configuration
+		 * group or any of the given decks do not exist. */
 		setDeckConfigId: this.build('setDeckConfigId'),
 	}
 
 	/**
-	 * Graphical
+	 * Graphical Actions
+	 *
+	 * [Documentation](https://foosoft.net/projects/anki-connect/index.html#graphical-actions)
 	 */
 	public readonly graphical = {
+		/** Invokes the _Add Cards_ dialog, presets the note using the given deck
+		 * and model, with the provided field values and tags. Invoking it multiple
+		 * times closes the old window and _reopen the window_ with the new
+		 * provided values.
+		 *
+		 * Audio, video, and picture files can be embedded into the fields via the
+		 * `audio`, `video`, and `picture` keys, respectively. Refer to the documentation
+		 * of `addNote` and `storeMediaFile` for an explanation of these fields.
+		 *
+		 * The result is the ID of the note which would be added, if the user chose
+		 * to confirm the _Add Cards_ dialogue. */
 		guiAddCards: this.build('guiAddCards'),
+		/** Answers the current card; returns `true` if succeeded or `false` otherwise. Note that the answer for the current card must be displayed before before any answer can be accepted by Anki. */
 		guiAnswerCard: this.build('guiAnswerCard'),
+		/** Invokes the _Card Browser_ dialog and searches for a given query. Returns
+		 * an array of identifiers of the cards that were found. Query syntax is
+		 * [documented here](https://docs.ankiweb.net/searching.html).
+		 *
+		 * Optionally, the `reorderCards` property can be provided to reorder the
+		 * cards shown in the _Card Browser_. This is an array including the `order` and
+		 * `columnId` objects. `order` can be either `ascending` or `descending` while
+		 * `columnId` can be one of several column identifiers (as documented in the
+		 * [Anki source
+		 * code](https://github.com/ankitects/anki/blob/main/rslib/src/browser_table.rs)).
+		 * The specified column needs to be visible in the _Card Browser_. */
 		guiBrowse: this.build('guiBrowse'),
+		/** Requests a database check, but returns immediately without waiting for the check to complete. Therefore, the action will always return `true` even if errors are detected during the database check. */
 		guiCheckDatabase: this.build('guiCheckDatabase'),
+		/** Returns information about the current card or `null` if not in review mode. */
 		guiCurrentCard: this.build('guiCurrentCard'),
+		/** Opens the _Deck Browser_ dialog. */
 		guiDeckBrowser: this.build('guiDeckBrowser'),
+		/** Opens the _Deck Overview_ dialog for the deck with the given name; returns `true` if succeeded or `false` otherwise. */
 		guiDeckOverview: this.build('guiDeckOverview'),
+		/** Starts review for the deck with the given name; returns `true` if succeeded or `false` otherwise. */
 		guiDeckReview: this.build('guiDeckReview'),
+		/** Opens the _Edit_ dialog with a note corresponding to given note ID. The
+		 * dialog is similar to the _Edit Current_ dialog, but:
+		 *
+		 * - has a Preview button to preview the cards for the note
+		 * - has a Browse button to open the browser with these cards
+		 * - has Previous/Back buttons to navigate the history of the dialog
+		 * - has no bar with the Close button */
 		guiEditNote: this.build('guiEditNote'),
+		/** Schedules a request to gracefully close Anki. This operation is asynchronous, so it will return immediately and won’t wait until the Anki process actually terminates. */
 		guiExitAnki: this.build('guiExitAnki'),
+		/** Invokes the _Import… (Ctrl+Shift+I)_ dialog with an optional file path. Brings up the dialog for user to review the import. Supports all file types that Anki supports. Brings open file dialog if no path is provided. Forward slashes must be used in the path on Windows. Only supported for Anki 2.1.52+. */
 		guiImportFile: this.build('guiImportFile'),
+		/** Finds the open instance of the Card Browser dialog and selects a note given a note identifier. Returns `true` if the _Card Browser_ is open, `false` otherwise. */
 		guiSelectNote: this.build('guiSelectNote'),
-		guiSelectNotes: this.build('guiSelectNotes'),
+		/** Finds the open instance of the _Card Browser_ dialog and returns an array of identifiers of the notes that are selected. Returns an empty list if the browser is not open. */
+		guiSelectedNotes: this.build('guiSelectedNotes'),
+		/** Shows answer text for the current card; returns `true` if in review mode or `false` otherwise. */
 		guiShowAnswer: this.build('guiShowAnswer'),
+		/** Shows question text for the current card; returns `true` if in review mode or `false` otherwise. */
 		guiShowQuestion: this.build('guiShowQuestion'),
+		/** Starts or resets the `timerStarted` value for the current card. This is useful for deferring the start time to when it is displayed via the API, allowing the recorded time taken to answer the card to be more accurate when calling `guiAnswerCard`. */
 		guiStartCardTimer: this.build('guiStartCardTimer'),
+		/** Undo the last action / card; returns `true` if succeeded or `false` otherwise. */
 		guiUndo: this.build('guiUndo'),
 	}
 
@@ -257,23 +332,28 @@ export class AnkiConnectClient {
 		insertReviews: this.build('insertReviews'),
 	}
 
-	constructor(options?: ClientOptions) {
+	constructor(options?: YankiConnectOptions) {
 		this.port = options?.port ?? 8765
 		this.version = options?.version ?? 6
-		this.autoLaunchAnki = options?.autoLaunchAnki ?? false
+
+		if (platform !== 'darwin' && options?.autoLaunchAnki !== false) {
+			console.warn('The autoLaunchAnki option is only supported on macOS')
+			this.autoLaunchAnki = false
+		} else {
+			this.autoLaunchAnki = options?.autoLaunchAnki ?? false
+		}
+
 		this.key = options?.key ?? undefined
 		this.host = options?.host ?? 'http://127.0.0.1'
 
 		if (this.version !== 6) {
-			throw new Error('AnkiConnectClient only supports version 6')
+			throw new Error('YankiConnect only supports version 6')
 		}
 
 		if (this.autoLaunchAnki === 'immediately') {
 			void launchAnkiApp()
 		}
 	}
-
-	//
 
 	/**
 	 * Factory for creating convenience functions for each action.
@@ -382,12 +462,6 @@ export class AnkiConnectClient {
 		return responseJson
 	}
 }
-
-const client = new AnkiConnectClient({ autoLaunchAnki: true })
-// Const t1 = await client.deck.deckNames()
-const t1 = await client.invoke('deckNames')
-
-console.log(t1)
 
 // --------------------------
 

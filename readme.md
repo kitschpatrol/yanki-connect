@@ -2,19 +2,22 @@
 
 <!-- title -->
 
-# mdank
+# yanki-connect
 
 <!-- /title -->
 
-<!-- banner -->
-
 <!-- badges -->
 
+[![NPM Package yanki-connect](https://img.shields.io/npm/v/yanki-connect.svg)](https://npmjs.com/package/yanki-connect)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 <!-- /badges -->
 
 <!-- short-description -->
+
+**A fully-typed Anki-Connect client for reading and writing Anki data.**
+
+<!-- /short-description -->
 
 ## Overview
 
@@ -61,7 +64,7 @@ Default card types:
 
 ### Implementation notes
 
-https://foosoft.net/projects/anki-connect/index.html
+<https://foosoft.net/projects/anki-connect/index.html>
 
 ### Similar projects
 
@@ -77,15 +80,27 @@ _State anyone or anything that significantly helped with the development of your
 
 <!-- contributing -->
 
+## Contributing
+
+[Issues](https://github.com/kitschpatrol/yanki-connect/issues) and pull requests are welcome.
+
+<!-- /contributing -->
+
 <!-- license -->
+
+## License
+
+[MIT](license.txt) © Eric Mika
+
+<!-- /license -->
 
 ## Scratch
 
 TS Anki-Connect API
 
-https://clover.sarim.garden
-https://www.zodios.org/docs/intro
+<https://clover.sarim.garden>
+<https://www.zodios.org/docs/intro>
 
-https://github.com/epilurzu/ankkit
+<https://github.com/epilurzu/ankkit>
 
-https://www.npmjs.com/package/@autoanki/anki-connect
+<https://www.npmjs.com/package/@autoanki/anki-connect>

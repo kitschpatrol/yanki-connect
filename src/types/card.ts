@@ -78,6 +78,11 @@ export type CardRequests =
 				mod: number
 			}
 	  >
+	| Request<
+			'setSpecificValueOfCard',
+			{ card: number; keys: CardValueKeys[]; newValues: string[] },
+			boolean[]
+	  >
 	| Request<'answerCards', { answers: Array<{ cardId: number; ease: number }> }, boolean[]>
 	| Request<'areDue', { cards: number[] }, boolean[]>
 	| Request<'areSuspended', { cards: number[] }, Array<boolean | null>>
@@ -89,7 +94,6 @@ export type CardRequests =
 	| Request<'getIntervals', { cards: number[]; complete?: boolean }, number[] | number[][]>
 	| Request<'relearnCards', { cards: number[] }>
 	| Request<'setEaseFactors', { cards: number[]; easeFactors: number[] }, boolean[]> // TODO confirm return quantity
-	| Request<'setSpecificValueOfCard', { card: number; keys: CardValueKeys[]; newValues: string[] }, boolean[]>
 	| Request<'suspend', { cards: number[] }, boolean>
 	| Request<'suspended', { card: number }, boolean>
 	| Request<'unsuspend', { cards: number[] }, boolean>

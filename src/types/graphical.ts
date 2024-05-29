@@ -27,7 +27,7 @@ export type GraphicalRequests =
 	| Request<'guiExitAnki'> // Returns before it actually closes
 	| Request<'guiImportFile', { path: string }>
 	| Request<'guiSelectNote', { note: number }, boolean>
-	| Request<'guiSelectNotes', never, number[]>
+	| Request<'guiSelectedNotes', never, number[]>
 	| Request<'guiShowAnswer', never, boolean>
 	| Request<'guiShowQuestion', never, boolean>
 	| Request<'guiStartCardTimer', never, true> // Or null?
