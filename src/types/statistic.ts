@@ -15,6 +15,7 @@ export type ReviewStatisticTuple = [
 export type StatisticRequests =
 	| Request<
 			'cardReviews',
+			6,
 			{
 				deck: string
 				startID: number
@@ -23,6 +24,7 @@ export type StatisticRequests =
 	  >
 	| Request<
 			'getReviewsOfCards',
+			6,
 			{
 				cards: string[]
 			},
@@ -48,8 +50,8 @@ export type StatisticRequests =
 				}>
 			>
 	  >
-	| Request<'getCollectionStatsHTML', { wholeCollection: boolean }, string>
-	| Request<'getLatestReviewID', { deck: string }, number>
-	| Request<'getNumCardsReviewedByDay', never, Array<[string, number]>>
-	| Request<'getNumCardsReviewedToday', never, number>
-	| Request<'insertReviews', { reviews: ReviewStatisticTuple[] }>
+	| Request<'getCollectionStatsHTML', 6, { wholeCollection: boolean }, string>
+	| Request<'getLatestReviewID', 6, { deck: string }, number>
+	| Request<'getNumCardsReviewedByDay', 6, never, Array<[string, number]>>
+	| Request<'getNumCardsReviewedToday', 6, never, number>
+	| Request<'insertReviews', 6, { reviews: ReviewStatisticTuple[] }>

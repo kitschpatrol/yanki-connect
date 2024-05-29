@@ -3,7 +3,12 @@
 
 import { type Request } from './shared'
 
-export type NoteModel = 'Basic (and reversed card)' | 'Basic (type in the answer)' | 'Basic' | 'Cloze' | ({} & string) // Allow arbitrary strings too
+export type NoteModel =
+	| 'Basic (and reversed card)'
+	| 'Basic (type in the answer)'
+	| 'Basic'
+	| 'Cloze'
+	| ({} & string) // Allow arbitrary strings too
 
 export type NoteMedia = {
 	fields: string[]
@@ -37,6 +42,7 @@ export type NoteWithCreationOptions = {
 export type NoteRequests =
 	| Request<
 			'addTags',
+			6,
 			{
 				notes: number[]
 				tags: string // Array allowed?
@@ -44,6 +50,7 @@ export type NoteRequests =
 	  >
 	| Request<
 			'canAddNotesWithErrorDetail',
+			6,
 			{ notes: NoteWithCreationOptions[] },
 			Array<
 				| {
@@ -55,6 +62,7 @@ export type NoteRequests =
 	  >
 	| Request<
 			'findNotes',
+			6,
 			{
 				// https://docs.ankiweb.net/searching.html
 				query: string
@@ -63,6 +71,7 @@ export type NoteRequests =
 	  >
 	| Request<
 			'getNoteTags',
+			6,
 			{
 				note: number
 			},
@@ -70,6 +79,7 @@ export type NoteRequests =
 	  >
 	| Request<
 			'notesInfo',
+			6,
 			{
 				notes: number[]
 			},
@@ -82,6 +92,7 @@ export type NoteRequests =
 	  >
 	| Request<
 			'removeTags',
+			6,
 			{
 				notes: number[]
 				tags: string // Array allowed?
@@ -89,6 +100,7 @@ export type NoteRequests =
 	  >
 	| Request<
 			'replaceTags',
+			6,
 			{
 				notes: number[]
 				replace_with_tag: string
@@ -97,6 +109,7 @@ export type NoteRequests =
 	  >
 	| Request<
 			'replaceTagsInAllNotes',
+			6,
 			{
 				replace_with_tag: string
 				tag_to_replace: string
@@ -104,6 +117,7 @@ export type NoteRequests =
 	  >
 	| Request<
 			'updateNote',
+			6,
 			{
 				// Certain fields only available when fields is defined
 				note:
@@ -124,6 +138,7 @@ export type NoteRequests =
 	  >
 	| Request<
 			'updateNoteFields',
+			6,
 			{
 				note: {
 					audio?: NoteMedia[]
@@ -136,6 +151,7 @@ export type NoteRequests =
 	  >
 	| Request<
 			'updateNoteModel',
+			6,
 			{
 				note: {
 					fields: Record<string, string>
@@ -147,15 +163,16 @@ export type NoteRequests =
 	  >
 	| Request<
 			'updateNoteTags',
+			6,
 			{
 				note: number
 				tags: string[]
 			}
 	  >
-	| Request<'addNote', { note: NoteWithCreationOptions }, number>
-	| Request<'addNotes', { notes: NoteWithCreationOptions[] }, Array<null | string>>
-	| Request<'canAddNotes', { notes: NoteWithCreationOptions[] }, boolean[]>
-	| Request<'clearUnusedTags', never, string[]>
-	| Request<'deleteNotes', { notes: number[] }, number>
-	| Request<'getTags', never, string[]>
-	| Request<'removeEmptyNotes'>
+	| Request<'addNote', 6, { note: NoteWithCreationOptions }, number>
+	| Request<'addNotes', 6, { notes: NoteWithCreationOptions[] }, Array<null | string>>
+	| Request<'canAddNotes', 6, { notes: NoteWithCreationOptions[] }, boolean[]>
+	| Request<'clearUnusedTags', 6, never, string[]>
+	| Request<'deleteNotes', 6, { notes: number[] }, number>
+	| Request<'getTags', 6, never, string[]>
+	| Request<'removeEmptyNotes', 6>

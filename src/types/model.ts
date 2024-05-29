@@ -53,6 +53,7 @@ export type Model = {
 export type ModelRequests =
 	| Request<
 			'createModel',
+			6,
 			{
 				cardTemplates: Array<{
 					Back: string
@@ -68,6 +69,7 @@ export type ModelRequests =
 	  >
 	| Request<
 			'findAndReplaceInModels',
+			6,
 			{
 				model: {
 					back: boolean
@@ -82,6 +84,7 @@ export type ModelRequests =
 	  >
 	| Request<
 			'modelFieldFonts',
+			6,
 			{ modelName: string },
 			Record<
 				string,
@@ -93,6 +96,7 @@ export type ModelRequests =
 	  >
 	| Request<
 			'modelTemplateAdd',
+			6,
 			{
 				modelName: string
 				template: {
@@ -104,6 +108,7 @@ export type ModelRequests =
 	  >
 	| Request<
 			'modelTemplateRemove',
+			6,
 			{
 				modelName: string
 				templateName: string
@@ -111,6 +116,7 @@ export type ModelRequests =
 	  >
 	| Request<
 			'modelTemplates',
+			6,
 			{ modelName: string },
 			Record<
 				string,
@@ -123,6 +129,7 @@ export type ModelRequests =
 	  >
 	| Request<
 			'updateModelStyling',
+			6,
 			{
 				model: {
 					css: string
@@ -132,6 +139,7 @@ export type ModelRequests =
 	  >
 	| Request<
 			'updateModelTemplates',
+			6,
 			{
 				model: {
 					name: string
@@ -139,20 +147,40 @@ export type ModelRequests =
 				}
 			}
 	  >
-	| Request<'findModelsById', { modelNames: string[] }, Model[]>
-	| Request<'findModelsByName', { modelIds: number[] }, Model[]>
-	| Request<'modelFieldAdd', { fieldName: string; index: number; modelName: string }>
-	| Request<'modelFieldDescriptions', { description: string; fieldName: string; modelName: string }, boolean> // Only ancient versions return false
-	| Request<'modelFieldNames', { modelName: string }, string[]>
-	| Request<'modelFieldRemove', { fieldName: string; modelName: string }>
-	| Request<'modelFieldRename', { modelName: string; newFieldName: string; oldFieldName: string }>
-	| Request<'modelFieldReposition', { fieldName: string; index: number; modelName: string }>
-	| Request<'modelFieldSetDescription', { fieldName: string; index: number; modelName: string }>
-	| Request<'modelFieldSetFont', { fieldName: string; font: string; modelName: string }>
-	| Request<'modelFieldSetFontSize', { fieldName: string; fontSize: number; modelName: string }>
-	| Request<'modelFieldsOnTemplates', { modelName: string }, Record<string, [string[], string[]]>> // Note tuple
-	| Request<'modelNames', never, string[]>
-	| Request<'modelNamesAndIds', never, Record<string, number>>
-	| Request<'modelStyling', { modelName: string }, { css: string }>
-	| Request<'modelTemplateRename', { modelName: string; newTemplateName: string; oldTemplateName: string }>
-	| Request<'modelTemplateReposition', { index: number; modelName: string; templateName: string }>
+	| Request<'findModelsById', 6, { modelNames: string[] }, Model[]>
+	| Request<'findModelsByName', 6, { modelIds: number[] }, Model[]>
+	| Request<'modelFieldAdd', 6, { fieldName: string; index: number; modelName: string }>
+	| Request<
+			'modelFieldDescriptions',
+			{ description: string; fieldName: string; modelName: string },
+			boolean
+	  > // Only ancient versions return false
+	| Request<'modelFieldNames', 6, { modelName: string }, string[]>
+	| Request<'modelFieldRemove', 6, { fieldName: string; modelName: string }>
+	| Request<
+			'modelFieldRename',
+			6,
+			{ modelName: string; newFieldName: string; oldFieldName: string }
+	  >
+	| Request<'modelFieldReposition', 6, { fieldName: string; index: number; modelName: string }>
+	| Request<'modelFieldSetDescription', 6, { fieldName: string; index: number; modelName: string }>
+	| Request<'modelFieldSetFont', 6, { fieldName: string; font: string; modelName: string }>
+	| Request<'modelFieldSetFontSize', 6, { fieldName: string; fontSize: number; modelName: string }>
+	| Request<
+			'modelFieldsOnTemplates',
+			6,
+			{ modelName: string },
+			Record<string, [string[], string[]]>
+	  > // Note tuple
+	| Request<'modelNames', 6, never, string[]>
+	| Request<'modelNamesAndIds', 6, never, Record<string, number>>
+	| Request<'modelStyling', 6, { modelName: string }, { css: string }>
+	| Request<
+			'modelTemplateRename',
+			{ modelName: string; newTemplateName: string; oldTemplateName: string }
+	  >
+	| Request<
+			'modelTemplateReposition',
+			6,
+			{ index: number; modelName: string; templateName: string }
+	  >

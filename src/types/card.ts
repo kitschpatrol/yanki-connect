@@ -72,6 +72,7 @@ export type CardInfo = {
 export type CardRequests =
 	| Request<
 			'cardsModTime',
+			6,
 			{ cards: number[] },
 			{
 				cardId: number
@@ -80,20 +81,21 @@ export type CardRequests =
 	  >
 	| Request<
 			'setSpecificValueOfCard',
+			6,
 			{ card: number; keys: CardValueKeys[]; newValues: string[] },
 			boolean[]
 	  >
-	| Request<'answerCards', { answers: Array<{ cardId: number; ease: number }> }, boolean[]>
-	| Request<'areDue', { cards: number[] }, boolean[]>
-	| Request<'areSuspended', { cards: number[] }, Array<boolean | null>>
-	| Request<'cardsInfo', { cards: number[] }, CardInfo[]>
-	| Request<'cardsToNotes', { cards: number[] }, number[]>
-	| Request<'findCards', { query: string }, number[]> // Query syntax: https://docs.ankiweb.net/searching.html
-	| Request<'forgetCards', { cards: number[] }>
-	| Request<'getEaseFactors', { cards: number[] }, number[]>
-	| Request<'getIntervals', { cards: number[]; complete?: boolean }, number[] | number[][]>
-	| Request<'relearnCards', { cards: number[] }>
-	| Request<'setEaseFactors', { cards: number[]; easeFactors: number[] }, boolean[]> // TODO confirm return quantity
-	| Request<'suspend', { cards: number[] }, boolean>
-	| Request<'suspended', { card: number }, boolean>
-	| Request<'unsuspend', { cards: number[] }, boolean>
+	| Request<'answerCards', 6, { answers: Array<{ cardId: number; ease: number }> }, boolean[]>
+	| Request<'areDue', 6, { cards: number[] }, boolean[]>
+	| Request<'areSuspended', 6, { cards: number[] }, Array<boolean | null>>
+	| Request<'cardsInfo', 6, { cards: number[] }, CardInfo[]>
+	| Request<'cardsToNotes', 6, { cards: number[] }, number[]>
+	| Request<'findCards', 6, { query: string }, number[]> // Query syntax: https://docs.ankiweb.net/searching.html
+	| Request<'forgetCards', 6, { cards: number[] }>
+	| Request<'getEaseFactors', 6, { cards: number[] }, number[]>
+	| Request<'getIntervals', 6, { cards: number[]; complete?: boolean }, number[] | number[][]>
+	| Request<'relearnCards', 6, { cards: number[] }>
+	| Request<'setEaseFactors', 6, { cards: number[]; easeFactors: number[] }, boolean[]> // TODO confirm return quantity
+	| Request<'suspend', 6, { cards: number[] }, boolean>
+	| Request<'suspended', 6, { card: number }, boolean>
+	| Request<'unsuspend', 6, { cards: number[] }, boolean>

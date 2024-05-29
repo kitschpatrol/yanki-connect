@@ -12,13 +12,19 @@ import type { StatisticRequests } from './statistic'
 /**
  * Abstract wrapper over an Anki Connect action / response
  */
-export type Request<Action extends string, Params = never, Result = null> = {
+export type Request<
+	Action extends string,
+	Version extends AnkiConnectVersion,
+	Params = never,
+	Result = null,
+> = {
 	action: Action
 	params: Params
 	response: {
 		error: null | string
 		result: Result
 	}
+	version: Version
 }
 
 /**
@@ -37,6 +43,7 @@ export type Requests =
 // Type Temp = GraphicalRequests['action']
 
 export type AnkiConnectVersion = 6
+
 // Helpers
 export type ActionsForRequests<T extends Requests> = T['action']
 export type Actions = Requests['action']

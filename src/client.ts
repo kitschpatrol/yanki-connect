@@ -591,7 +591,7 @@ export class YankiConnect {
 		action: T,
 	): (params?: ParamsForAction<T>) => Promise<ResultForAction<T>>
 
-	// // Implementation
+	// // Implementation, have to lie about the action type
 	private build<T extends ActionsWithParams>(
 		action: T,
 	): (params?: ParamsForAction<T>) => Promise<ResultForAction<T>> {

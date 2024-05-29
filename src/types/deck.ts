@@ -49,15 +49,15 @@ export type DeckConfig = {
 }
 
 export type DeckRequests =
-	| Request<'changeDeck', { cards: number[]; deck: string }>
-	| Request<'cloneDeckConfigId', { cloneFrom: number; name: string }, false | number>
-	| Request<'createDeck', { deck: string }, Record<string, number>>
-	| Request<'deckNames', never, string[]>
-	| Request<'deckNamesAndIds', never, Record<string, number>>
-	| Request<'deleteDecks', { cardsToo: true; decks: string[] }>
-	| Request<'getDeckConfig', { deck: string }, DeckConfig>
-	| Request<'getDeckStats', { decks: string[] }, Record<string, DeckStats>>
-	| Request<'getDecks', Record<'cards', number[]>, Record<string, number[]>>
-	| Request<'removeDeckConfigId', { configId: number }, boolean>
-	| Request<'saveDeckConfig', { config: DeckConfig }, boolean>
-	| Request<'setDeckConfigId', { configId: number; decks: string[] }, boolean>
+	| Request<'changeDeck', 6, { cards: number[]; deck: string }>
+	| Request<'cloneDeckConfigId', 6, { cloneFrom: number; name: string }, false | number>
+	| Request<'createDeck', 6, { deck: string }, Record<string, number>>
+	| Request<'deckNames', 6, never, string[]>
+	| Request<'deckNamesAndIds', 6, never, Record<string, number>>
+	| Request<'deleteDecks', 6, { cardsToo: true; decks: string[] }>
+	| Request<'getDeckConfig', 6, { deck: string }, DeckConfig>
+	| Request<'getDeckStats', 6, { decks: string[] }, Record<string, DeckStats>>
+	| Request<'getDecks', Record<'cards', 6, number[]>, Record<string, number[]>>
+	| Request<'removeDeckConfigId', 6, { configId: number }, boolean>
+	| Request<'saveDeckConfig', 6, { config: DeckConfig }, boolean>
+	| Request<'setDeckConfigId', 6, { configId: number; decks: string[] }, boolean>

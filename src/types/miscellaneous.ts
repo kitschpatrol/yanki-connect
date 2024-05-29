@@ -5,6 +5,7 @@ import type { Request, Requests } from './shared'
 export type MiscellaneousRequests =
 	| Request<
 			'apiReflect',
+			6,
 			{ actions: null | string[]; scopes: Array<'actions'> },
 			{
 				actions: string[]
@@ -13,6 +14,7 @@ export type MiscellaneousRequests =
 	  >
 	| Request<
 			'exportPackage',
+			6,
 			{
 				deck: string
 				includeSched?: boolean
@@ -22,13 +24,15 @@ export type MiscellaneousRequests =
 	  >
 	| Request<
 			'importPackage',
+			6,
 			{
 				path: string // Relative to media folder
 			},
 			boolean
 	  >
 	| Request<
-			'multi', // Crazy, have to call this experimental
+			'multi',
+			6, // Crazy, have to call this experimental
 			{
 				actions: Array<{
 					action: Requests['action'] // No generic objects : /
@@ -40,6 +44,7 @@ export type MiscellaneousRequests =
 	  >
 	| Request<
 			'requestPermission',
+			6,
 			never,
 			| {
 					permission: 'denied'
@@ -50,8 +55,8 @@ export type MiscellaneousRequests =
 					version: boolean
 			  }
 	  >
-	| Request<'getProfiles', never, string[]>
-	| Request<'loadProfile', { name: string }, true> // Also false?
-	| Request<'reloadCollection'>
-	| Request<'sync'>
-	| Request<'version', never, number> // Currently versions 1 through 6 are defined.
+	| Request<'getProfiles', 6, never, string[]>
+	| Request<'loadProfile', 6, { name: string }, true> // Also false?
+	| Request<'reloadCollection', 6>
+	| Request<'sync', 6>
+	| Request<'version', 6, never, number> // Currently versions 1 through 6 are defined.
