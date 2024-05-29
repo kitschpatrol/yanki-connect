@@ -19,7 +19,7 @@ describe('deck actions', () => {
 	})
 
 	it('deckNamesAndIds', async () => {
-		expect(await client.invoke('deckNamesAndIds')).toMatchInlineSnapshot(`
+		expect(await client.deck.deckNamesAndIds()).toMatchInlineSnapshot(`
 			{
 			  "error": null,
 			  "result": {

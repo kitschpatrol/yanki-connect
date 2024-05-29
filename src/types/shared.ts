@@ -36,6 +36,7 @@ export type Requests =
 
 // Type Temp = GraphicalRequests['action']
 
+export type AnkiConnectVersion = 6
 // Helpers
 export type ActionsForRequests<T extends Requests> = T['action']
 export type Actions = Requests['action']
