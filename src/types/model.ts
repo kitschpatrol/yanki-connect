@@ -83,6 +83,12 @@ export type ModelRequests =
 			number
 	  >
 	| Request<
+			'modelFieldDescriptions',
+			6,
+			{ description: string; fieldName: string; modelName: string },
+			boolean
+	  > // Only ancient versions return false
+	| Request<
 			'modelFieldFonts',
 			6,
 			{ modelName: string },
@@ -94,6 +100,17 @@ export type ModelRequests =
 				}
 			>
 	  >
+	| Request<
+			'modelFieldRename',
+			6,
+			{ modelName: string; newFieldName: string; oldFieldName: string }
+	  >
+	| Request<
+			'modelFieldsOnTemplates',
+			6,
+			{ modelName: string },
+			Record<string, [string[], string[]]>
+	  > // Note tuple
 	| Request<
 			'modelTemplateAdd',
 			6,
@@ -113,6 +130,16 @@ export type ModelRequests =
 				modelName: string
 				templateName: string
 			}
+	  >
+	| Request<
+			'modelTemplateRename',
+			6,
+			{ modelName: string; newTemplateName: string; oldTemplateName: string }
+	  >
+	| Request<
+			'modelTemplateReposition',
+			6,
+			{ index: number; modelName: string; templateName: string }
 	  >
 	| Request<
 			'modelTemplates',
@@ -150,37 +177,12 @@ export type ModelRequests =
 	| Request<'findModelsById', 6, { modelNames: string[] }, Model[]>
 	| Request<'findModelsByName', 6, { modelIds: number[] }, Model[]>
 	| Request<'modelFieldAdd', 6, { fieldName: string; index: number; modelName: string }>
-	| Request<
-			'modelFieldDescriptions',
-			{ description: string; fieldName: string; modelName: string },
-			boolean
-	  > // Only ancient versions return false
 	| Request<'modelFieldNames', 6, { modelName: string }, string[]>
 	| Request<'modelFieldRemove', 6, { fieldName: string; modelName: string }>
-	| Request<
-			'modelFieldRename',
-			6,
-			{ modelName: string; newFieldName: string; oldFieldName: string }
-	  >
 	| Request<'modelFieldReposition', 6, { fieldName: string; index: number; modelName: string }>
 	| Request<'modelFieldSetDescription', 6, { fieldName: string; index: number; modelName: string }>
 	| Request<'modelFieldSetFont', 6, { fieldName: string; font: string; modelName: string }>
 	| Request<'modelFieldSetFontSize', 6, { fieldName: string; fontSize: number; modelName: string }>
-	| Request<
-			'modelFieldsOnTemplates',
-			6,
-			{ modelName: string },
-			Record<string, [string[], string[]]>
-	  > // Note tuple
 	| Request<'modelNames', 6, never, string[]>
 	| Request<'modelNamesAndIds', 6, never, Record<string, number>>
 	| Request<'modelStyling', 6, { modelName: string }, { css: string }>
-	| Request<
-			'modelTemplateRename',
-			{ modelName: string; newTemplateName: string; oldTemplateName: string }
-	  >
-	| Request<
-			'modelTemplateReposition',
-			6,
-			{ index: number; modelName: string; templateName: string }
-	  >

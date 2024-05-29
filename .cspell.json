@@ -3,6 +3,7 @@
 	"import": "@kitschpatrol/cspell-config",
 	"words": [
 		"afmt",
+		"anki",
 		"Anki",
 		"apkg",
 		"autoanki",
@@ -10,22 +11,20 @@
 		"bfont",
 		"bqfmt",
 		"bsize",
-		"chenlijun",
-		"cloze",
+		"Cloze",
+		"duplicative",
 		"flds",
 		"latexsvg",
-		"mdank",
+		"Lijun",
 		"mult",
 		"odid",
 		"odue",
-		"openapi",
 		"qfmt",
 		"replayq",
-		"sarim",
 		"Sched",
 		"sortf",
 		"tmpls",
 		"Yanki",
-		"Zodios"
+		"Yatskov"
 	]
 }
