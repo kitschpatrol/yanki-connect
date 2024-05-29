@@ -18,11 +18,15 @@ export type YankiConnectOptions = {
 	/**
 	 * Attempt to open the desktop Anki.app if it's not already running.
 	 *
-	 * - `true` will always attempt to open Anki _when a request is made_. This might introduce significant latency on the first launch.
-	 * - `false` will never attempt to open Anki. Requests will fail until something or someone else opens the Anki app.
-	 * -  `immediately` is a special option that will open Anki when the client is instantiated.
+	 * - `true` will always attempt to open Anki _when a request is made_. This
+	 *   might introduce significant latency on the first launch.
+	 * - `false` will never attempt to open Anki. Requests will fail until
+	 *   something or someone else opens the Anki app.
+	 * -  `immediately` is a special option that will open Anki when the client is
+	 *    instantiated.
 	 *
-	 * The Anki desktop app must be running for the client and the underlying AnkiConnect service to work.
+	 * The Anki desktop app must be running for the client and the underlying
+	 * AnkiConnect service to work.
 	 *
 	 * Currently supported on macOS only.
 	 *
@@ -60,9 +64,13 @@ export type YankiConnectOptions = {
 }
 
 /**
- * __YankiConnect is a client for the [Anki-Connect API](https://foosoft.net/projects/anki-connect/)__
+ * __YankiConnect is a client for the [Anki-Connect
+ * API](https://foosoft.net/projects/anki-connect/)__.
  *
  * It implements every endpoint as of May 2024.
+ *
+ * Inline documentation is by the Anki-Connect authors, generated from [the
+ * readme.md](https://git.foosoft.net/alex/anki-connect/src/commit/306103c618f817a809b8043c1b8386dceedc4b0e/README.md)
  */
 export class YankiConnect {
 	private readonly autoLaunchAnki: 'immediately' | boolean
@@ -113,8 +121,8 @@ export class YankiConnect {
 		 */
 		cardsToNotes: this.build('cardsToNotes'),
 		/**
-		 * Returns an array of card IDs for a given query. Functionally identical
-		 * to `guiBrowse` but doesn’t use the GUI for better performance.
+		 * Returns an array of card IDs for a given query. Functionally identical to
+		 * `guiBrowse` but doesn’t use the GUI for better performance.
 		 */
 		findCards: this.build('findCards'),
 		/**
@@ -122,8 +130,8 @@ export class YankiConnect {
 		 */
 		forgetCards: this.build('forgetCards'),
 		/**
-		 * Returns an array with the ease factor for each of the given cards (in
-		 * the same order).
+		 * Returns an array with the ease factor for each of the given cards (in the
+		 * same order).
 		 */
 		getEaseFactors: this.build('getEaseFactors'),
 		/**
@@ -143,19 +151,19 @@ export class YankiConnect {
 		 */
 		setEaseFactors: this.build('setEaseFactors'),
 		/**
-		 * Sets specific value of a single card. Given the risk of wreaking havoc
-		 * in the database when changing some of the values of a card, some of the
-		 * keys require the argument “warning_check” set to True. This can be used
-		 * to set a card’s flag, change it’s ease factor, change the review order in
-		 * a filtered deck and change the column “data” (not currently used by anki
+		 * Sets specific value of a single card. Given the risk of wreaking havoc in
+		 * the database when changing some of the values of a card, some of the keys
+		 * require the argument “warning_check” set to True. This can be used to set
+		 * a card’s flag, change it’s ease factor, change the review order in a
+		 * filtered deck and change the column “data” (not currently used by anki
 		 * apparently), and many other values. A list of values and explanation of
 		 * their respective utility can be found at [AnkiDroid’s
 		 * wiki](https://github.com/ankidroid/Anki-Android/wiki/Database-Structure).
 		 */
 		setSpecificValueOfCard: this.build('setSpecificValueOfCard'),
 		/**
-		 * Suspend cards by card ID; returns `true` if successful (at least one
-		 * card wasn’t already suspended) or `false` otherwise.
+		 * Suspend cards by card ID; returns `true` if successful (at least one card
+		 * wasn’t already suspended) or `false` otherwise.
 		 */
 		suspend: this.build('suspend'),
 		/**
@@ -215,8 +223,8 @@ export class YankiConnect {
 		 */
 		getDeckStats: this.build('getDeckStats'),
 		/**
-		 * Accepts an array of card IDs and returns an object with each deck name
-		 * as a key, and its value an array of the given cards which belong to it.
+		 * Accepts an array of card IDs and returns an object with each deck name as
+		 * a key, and its value an array of the given cards which belong to it.
 		 */
 		getDecks: this.build('getDecks'),
 		/**
@@ -268,9 +276,9 @@ export class YankiConnect {
 		 */
 		guiAnswerCard: this.build('guiAnswerCard'),
 		/**
-		 * Invokes the _Card Browser_ dialog and searches for a given query.
-		 * Returns an array of identifiers of the cards that were found. Query
-		 * syntax is [documented here](https://docs.ankiweb.net/searching.html).
+		 * Invokes the _Card Browser_ dialog and searches for a given query. Returns
+		 * an array of identifiers of the cards that were found. Query syntax is
+		 * [documented here](https://docs.ankiweb.net/searching.html).
 		 *
 		 * Optionally, the `reorderCards` property can be provided to reorder the
 		 * cards shown in the _Card Browser_. This is an array including the `order`
@@ -337,9 +345,9 @@ export class YankiConnect {
 		 */
 		guiSelectNote: this.build('guiSelectNote'),
 		/**
-		 * Finds the open instance of the _Card Browser_ dialog and returns an
-		 * array of identifiers of the notes that are selected. Returns an empty
-		 * list if the browser is not open.
+		 * Finds the open instance of the _Card Browser_ dialog and returns an array
+		 * of identifiers of the notes that are selected. Returns an empty list if
+		 * the browser is not open.
 		 */
 		guiSelectedNotes: this.build('guiSelectedNotes'),
 		/**
@@ -377,34 +385,40 @@ export class YankiConnect {
 		 */
 		deleteMediaFile: this.build('deleteMediaFile'),
 		/**
-		 * Gets the full path to the `collection.media` folder of the currently opened profile.
+		 * Gets the full path to the `collection.media` folder of the currently
+		 * opened profile.
 		 */
 		getMediaDirPath: this.build('getMediaDirPath'),
 		/**
-		 * Gets the names of media files matched the pattern. Returning all names by default.
+		 * Gets the names of media files matched the pattern. Returning all names by
+		 * default.
 		 */
 		getMediaFilesNames: this.build('getMediaFilesNames'),
 		/**
-		 * Retrieves the base64-encoded contents of the specified file, returning `false` if the file does not exist.
+		 * Retrieves the base64-encoded contents of the specified file, returning
+		 * `false` if the file does not exist.
 		 */
 		retrieveMediaFile: this.build('retrieveMediaFile'),
 		/**
 		 * Stores a file with the specified base64-encoded contents inside the media
 		 * folder. Alternatively you can specify a absolute file path, or a url from
-		 * where the file shell be downloaded. If more than one of `data`, `path` and
-		 * `url` are provided, the `data` field will be used first, then `path`, and
-		 * finally `url`. To prevent Anki from removing files not used by any cards
-		 * (e.g. for configuration files), prefix the filename with an underscore.
-		 * These files are still synchronized to AnkiWeb. Any existing file with the
-		 * same name is deleted by default. Set `deleteExisting` to `false` to prevent
-		 * that by [letting Anki give the new file a non-conflicting
+		 * where the file shell be downloaded. If more than one of `data`, `path`
+		 * and `url` are provided, the `data` field will be used first, then `path`,
+		 * and finally `url`. To prevent Anki from removing files not used by any
+		 * cards (e.g. for configuration files), prefix the filename with an
+		 * underscore. These files are still synchronized to AnkiWeb. Any existing
+		 * file with the same name is deleted by default. Set `deleteExisting` to
+		 * `false` to prevent that by [letting Anki give the new file a
+		 * non-conflicting
 		 * name](https://github.com/ankitects/anki/blob/aeba725d3ea9628c73300648f748140db3fdd5ed/rslib/src/media/files.rs#L194).
 		 */
 		storeMediaFile: this.build('storeMediaFile'),
 	}
 
 	/**
-	 * Miscellaneous
+	 * __Miscellaneous Actions__
+	 *
+	 * [Documentation](https://foosoft.net/projects/anki-connect/index.html#miscellaneous-actions)
 	 */
 	public readonly miscellaneous = {
 		/**
@@ -420,9 +434,9 @@ export class YankiConnect {
 		 */
 		apiReflect: this.build('apiReflect'),
 		/**
-		 * Exports a given deck in `.apkg` format. Returns `true` if successful or `false`
-		 * otherwise. The optional property `includeSched` (default is `false`) can be
-		 * specified to include the cards’ scheduling data.
+		 * Exports a given deck in `.apkg` format. Returns `true` if successful or
+		 * `false` otherwise. The optional property `includeSched` (default is
+		 * `false`) can be specified to include the cards’ scheduling data.
 		 */
 		exportPackage: this.build('exportPackage'),
 		/**
@@ -440,7 +454,8 @@ export class YankiConnect {
 		 */
 		loadProfile: this.build('loadProfile'),
 		/**
-		 * Performs multiple actions in one request, returning an array with the response of each action (in the given order).
+		 * Performs multiple actions in one request, returning an array with the
+		 * response of each action (in the given order).
 		 */
 		multi: this.build('multi'),
 		/**
@@ -455,22 +470,22 @@ export class YankiConnect {
 		 * `localhost` is trusted by default.
 		 *
 		 * Calling this method from an untrusted origin will display a popup in Anki
-		 * asking the user whether they want to allow your origin to use the API; calls
-		 * from trusted origins will return the result without displaying the popup. When
-		 * denying permission, the user may also choose to ignore further permission
-		 * requests from that origin. These origins end up in the `ignoreOriginList`,
-		 * editable via the add-on config.
+		 * asking the user whether they want to allow your origin to use the API;
+		 * calls from trusted origins will return the result without displaying the
+		 * popup. When denying permission, the user may also choose to ignore
+		 * further permission requests from that origin. These origins end up in the
+		 * `ignoreOriginList`, editable via the add-on config.
 		 *
-		 * The result always contains the `permission` field, which in turn contains either
-		 * the string `granted` or `denied`, corresponding to whether your origin is trusted.
-		 * If your origin is trusted, the fields `requireApiKey` (true if required) and
-		 * `version` will also be returned.
+		 * The result always contains the `permission` field, which in turn contains
+		 * either the string `granted` or `denied`, corresponding to whether your
+		 * origin is trusted. If your origin is trusted, the fields `requireApiKey`
+		 * (true if required) and `version` will also be returned.
 		 *
-		 * This should be the first call you make to make sure that your application and
-		 * Anki-Connect are able to communicate properly with each other. New versions of
-		 * Anki-Connect are backwards compatible; as long as you are using actions which
-		 * are available in the reported Anki-Connect version or earlier, everything
-		 * should work fine.
+		 * This should be the first call you make to make sure that your application
+		 * and Anki-Connect are able to communicate properly with each other. New
+		 * versions of Anki-Connect are backwards compatible; as long as you are
+		 * using actions which are available in the reported Anki-Connect version or
+		 * earlier, everything should work fine.
 		 */
 		requestPermission: this.build('requestPermission'),
 		/**
@@ -478,77 +493,372 @@ export class YankiConnect {
 		 */
 		sync: this.build('sync'),
 		/**
-		 * Gets the version of the API exposed by this plugin. Currently versions `1` through `6` are defined.
+		 * Gets the version of the API exposed by this plugin. Currently versions
+		 * `1` through `6` are defined.
 		 */
 		version: this.build('version'),
 	}
 
 	/**
-	 * Model
+	 * __Model Actions__
+	 *
+	 * [Documentation](https://foosoft.net/projects/anki-connect/index.html#model-actions)
 	 */
 	public readonly model = {
+		/**
+		 * Creates a new model to be used in Anki. User must provide the
+		 * `modelName`, `inOrderFields` and `cardTemplates` to be used in the model.
+		 * There are optional fields `css` and `isCloze`. If not specified, `css`
+		 * will use the default Anki css and `isCloze` will be equal to `false`. If
+		 * `isCloze` is `true` then model will be created as Cloze.
+		 *
+		 * Optionally the `Name` field can be provided for each entry of
+		 * `cardTemplates`. By default the card names will be `Card 1`, `Card 2`,
+		 * and so on.
+		 */
 		createModel: this.build('createModel'),
+		/**
+		 * Find and replace string in existing model by model name. Customize to
+		 * replace in front, back or css by setting to `true`/`false`.
+		 */
 		findAndReplaceInModels: this.build('findAndReplaceInModels'),
+		/**
+		 * Gets a list of models for the provided model IDs from the current user.
+		 */
 		findModelsById: this.build('findModelsById'),
+		/**
+		 * Gets a list of models for the provided model names from the current user.
+		 */
 		findModelsByName: this.build('findModelsByName'),
+		/**
+		 * Creates a new field within a given model.
+		 *
+		 * Optionally, the `index` value can be provided, which works exactly the
+		 * same as the index in `modelFieldReposition`. By default, the field is
+		 * added to the end of the field list.
+		 */
 		modelFieldAdd: this.build('modelFieldAdd'),
+		/**
+		 * Gets the complete list of field descriptions (the text seen in the gui
+		 * editor when a field is empty) for the provided model name.
+		 */
 		modelFieldDescriptions: this.build('modelFieldDescriptions'),
+		/**
+		 * Gets the complete list of fonts along with their font sizes.
+		 */
 		modelFieldFonts: this.build('modelFieldFonts'),
+		/**
+		 * Gets the complete list of field names for the provided model name.
+		 */
 		modelFieldNames: this.build('modelFieldNames'),
+		/**
+		 * Deletes a field within a given model.
+		 */
 		modelFieldRemove: this.build('modelFieldRemove'),
+		/**
+		 * Rename the field name of a given model.
+		 */
 		modelFieldRename: this.build('modelFieldRename'),
+		/**
+		 * Reposition the field within the field list of a given model.
+		 *
+		 * The value of `index` starts at 0. For example, an `index` of `0` puts the
+		 * field in the first position, and an `index` of `2` puts the field in the
+		 * third position.
+		 */
 		modelFieldReposition: this.build('modelFieldReposition'),
+		/**
+		 * Sets the description (the text seen in the gui editor when a field is
+		 * empty) for a field within a given model.
+		 *
+		 * Older versions of Anki (2.1.49 and below) do not have field descriptions.
+		 * In that case, this will return with `false`.
+		 */
 		modelFieldSetDescription: this.build('modelFieldSetDescription'),
+		/**
+		 * Sets the font for a field within a given model.
+		 */
 		modelFieldSetFont: this.build('modelFieldSetFont'),
+		/**
+		 * Sets the font size for a field within a given model.
+		 */
 		modelFieldSetFontSize: this.build('modelFieldSetFontSize'),
+		/**
+		 * Returns an object indicating the fields on the question and answer side
+		 * of each card template for the given model name. The question side is
+		 * given first in each array.
+		 */
 		modelFieldsOnTemplates: this.build('modelFieldsOnTemplates'),
+		/**
+		 * Gets the complete list of model names for the current user.
+		 */
 		modelNames: this.build('modelNames'),
+		/**
+		 * Gets the complete list of model names and their corresponding IDs for the
+		 * current user.
+		 */
 		modelNamesAndIds: this.build('modelNamesAndIds'),
+		/**
+		 * Gets the CSS styling for the provided model by name.
+		 */
 		modelStyling: this.build('modelStyling'),
+		/**
+		 * Adds a template to an existing model by name. If you want to update an
+		 * existing template, use `updateModelTemplates`.
+		 */
 		modelTemplateAdd: this.build('modelTemplateAdd'),
+		/**
+		 * Removes a template from an existing model.
+		 */
 		modelTemplateRemove: this.build('modelTemplateRemove'),
+		/**
+		 * Renames a template in an existing model.
+		 */
 		modelTemplateRename: this.build('modelTemplateRename'),
+		/**
+		 * Repositions a template in an existing model.
+		 */
 		modelTemplateReposition: this.build('modelTemplateReposition'),
+		/**
+		 * Returns an object indicating the template content for each card connected
+		 * to the provided model by name.
+		 *
+		 * The value of `index` starts at 0. For example, an `index` of `0` puts the
+		 * template in the first position, and an `index` of `2` puts the template
+		 * in the third position.
+		 */
 		modelTemplates: this.build('modelTemplates'),
+		/**
+		 * Modify the CSS styling of an existing model by name.
+		 */
 		updateModelStyling: this.build('updateModelStyling'),
+		/**
+		 * Modify the templates of an existing model by name. Only specifies cards
+		 * and specified sides will be modified. If an existing card or side is not
+		 * included in the request, it will be left unchanged.
+		 */
 		updateModelTemplates: this.build('updateModelTemplates'),
 	}
 
 	/**
-	 * Note
+	 * __Note Actions__
+	 *
+	 * [Documentation](https://foosoft.net/projects/anki-connect/index.html#note-actions)
 	 */
 	public readonly note = {
+		/**
+		 * Creates a note using the given deck and model, with the provided field
+		 * values and tags. Returns the identifier of the created note created on
+		 * success, and null on failure.
+		 *
+		 * Anki-Connect can download audio, video, and picture files and embed them
+		 * in newly created notes. The corresponding `audio`, `video`, and `picture`
+		 * note members are optional and can be omitted. If you choose to include
+		 * any of them, they should contain a single object or an array of objects
+		 * with the mandatory `filename` field and one of `data`, `path` or `url`.
+		 * Refer to the documentation of `storeMediaFile` for an explanation of
+		 * these fields. The `skipHash` field can be optionally provided to skip the
+		 * inclusion of files with an MD5 hash that matches the provided value. This
+		 * is useful for avoiding the saving of error pages and stub files. The
+		 * `fields` member is a list of fields that should play audio or video, or
+		 * show a picture when the card is displayed in Anki. The `allowDuplicate`
+		 * member inside `options` group can be set to true to enable adding
+		 * duplicate cards. Normally duplicate cards can not be added and trigger
+		 * exception.
+		 *
+		 * The `duplicateScope` member inside `options` can be used to specify the
+		 * scope for which duplicates are checked. A value of `"deck"` will only
+		 * check for duplicates in the target deck; any other value will check the
+		 * entire collection.
+		 *
+		 * The `duplicateScopeOptions` object can be used to specify some additional
+		 * settings:
+		 *
+		 * - `duplicateScopeOptions.deckName` will specify which deck to use for
+		 *   checking duplicates in. If undefined or null, the target deck will be
+		 *   used.
+		 * - `duplicateScopeOptions.checkChildren` will change whether or not
+		 *   duplicate cards are checked in child decks. The default value is false.
+		 * - `duplicateScopeOptions.checkAllModels` specifies whether duplicate
+		 *   checks are performed across all note types. The default value is false.
+		 */
 		addNote: this.build('addNote'),
+		/**
+		 * Creates multiple notes using the given deck and model, with the provided
+		 * field values and tags. Returns an array of identifiers of the created
+		 * notes (notes that could not be created will have a `null` identifier).
+		 * Please see the documentation for `addNote` for an explanation of objects
+		 * in the `notes` array.
+		 */
 		addNotes: this.build('addNotes'),
+		/**
+		 * Adds tags to notes by note ID.
+		 */
 		addTags: this.build('addTags'),
+		/**
+		 * Accepts an array of objects which define parameters for candidate notes
+		 * (see `addNote`) and returns an array of booleans indicating whether or
+		 * not the parameters at the corresponding index could be used to create a
+		 * new note.
+		 */
 		canAddNotes: this.build('canAddNotes'),
+		/**
+		 * Accepts an array of objects which define parameters for candidate notes
+		 * (see `addNote`) and returns an array of objects with fields `canAdd` and
+		 * `error`.
+		 *
+		 * - `canAdd` indicates whether or not the parameters at the corresponding
+		 *   index could be used to create a new note.
+		 * - `error` contains an explanation of why a note cannot be added.
+		 */
 		canAddNotesWithErrorDetail: this.build('canAddNotesWithErrorDetail'),
+		/**
+		 * Clears all the unused tags in the notes for the current user.
+		 */
 		clearUnusedTags: this.build('clearUnusedTags'),
+		/**
+		 * Deletes notes with the given ids. If a note has several cards associated
+		 * with it, all associated cards will be deleted.
+		 */
 		deleteNotes: this.build('deleteNotes'),
+		/**
+		 * Returns an array of note IDs for a given query. Query syntax is
+		 * [documented here](https://docs.ankiweb.net/searching.html).
+		 */
 		findNotes: this.build('findNotes'),
+		/**
+		 * Get a note's tags by note ID.
+		 */
 		getNoteTags: this.build('getNoteTags'),
+		/**
+		 * Gets the complete list of tags for the current user.
+		 */
 		getTags: this.build('getTags'),
+		/**
+		 * Returns a list of objects containing for each note ID the note fields,
+		 * tags, note type and the cards belonging to the note.
+		 */
 		notesInfo: this.build('notesInfo'),
+		/**
+		 * Removes all the empty notes for the current user.
+		 */
 		removeEmptyNotes: this.build('removeEmptyNotes'),
+		/**
+		 * Remove tags from notes by note ID.
+		 */
 		removeTags: this.build('removeTags'),
+		/**
+		 * Replace tags in notes by note ID.
+		 */
 		replaceTags: this.build('replaceTags'),
+		/**
+		 * Replace tags in all the notes for the current user.
+		 */
 		replaceTagsInAllNotes: this.build('replaceTagsInAllNotes'),
+		/**
+		 * Modify the fields and/or tags of an existing note. In other words,
+		 * combines `updateNoteFields` and `updateNoteTags`. Please see their
+		 * documentation for an explanation of all properties.
+		 *
+		 * Either `fields` or `tags` property can be omitted without affecting the
+		 * other. Thus valid requests to `updateNoteFields` also work with
+		 * `updateNote`. The note must have the `fields` property in order to update
+		 * the optional audio, video, or picture objects.
+		 *
+		 * If neither `fields` nor `tags` are provided, the method will fail. Fields
+		 * are updated first and are not rolled back if updating tags fails. Tags
+		 * are not updated if updating fields fails.
+		 *
+		 * > [!WARNING] You must not be viewing the note that you are updating on
+		 * > your Anki browser, otherwise the fields will not update. See [this
+		 * > issue](https://github.com/FooSoft/anki-connect/issues/82) for further
+		 * > details.
+		 */
 		updateNote: this.build('updateNote'),
+		/**
+		 * Modify the fields of an existing note. You can also include audio, video,
+		 * or picture files which will be added to the note with an optional
+		 * `audio`, `video`, or `picture` property. Please see the documentation for
+		 * `addNote` for an explanation of objects in the `audio`, `video`, or
+		 * `picture` array.
+		 *
+		 * > [!WARNING] You must not be viewing the note that you are updating on
+		 * > your Anki browser, otherwise the fields will not update. See [this
+		 * > issue](https://github.com/FooSoft/anki-connect/issues/82) for further
+		 * > details.
+		 */
 		updateNoteFields: this.build('updateNoteFields'),
+		/**
+		 * Update the model, fields, and tags of an existing note. This allows you
+		 * to change the note's model, update its fields with new content, and set
+		 * new tags.
+		 */
 		updateNoteModel: this.build('updateNoteModel'),
+		/**
+		 * Set a note's tags by note ID. Old tags will be removed.
+		 */
 		updateNoteTags: this.build('updateNoteTags'),
 	}
 
 	/**
-	 * Statistic
+	 * __Statistic Actions__
+	 *
+	 * [Documentation](https://foosoft.net/projects/anki-connect/index.html#statistic-actions)
 	 */
 	public readonly statistic = {
+		/**
+		 * Requests all card reviews for a specified deck after a certain time.
+		 * `startID` is the latest unix time not included in the result. Returns a
+		 * list of 9-tuples `(reviewTime, cardID, usn, buttonPressed, newInterval,
+		 * previousInterval, newFactor, reviewDuration, reviewType)`.
+		 */
 		cardReviews: this.build('cardReviews'),
+		/**
+		 * Gets the collection statistics report.
+		 */
 		getCollectionStatsHTML: this.build('getCollectionStatsHTML'),
+		/**
+		 * Returns the unix time of the latest review for the given deck. 0 if no
+		 * review has ever been made for the deck.
+		 */
 		getLatestReviewID: this.build('getLatestReviewID'),
+		/**
+		 * Gets the number of cards reviewed as a list of pairs of (`dateString`,
+		 * `number`).
+		 */
 		getNumCardsReviewedByDay: this.build('getNumCardsReviewedByDay'),
+		/**
+		 * Gets the count of cards that have been reviewed in the current day. (With
+		 * day start time as configured by user in Anki).
+		 */
 		getNumCardsReviewedToday: this.build('getNumCardsReviewedToday'),
+		/**
+		 * Requests all card reviews for each card ID. Returns a dictionary mapping
+		 * each card ID to a list of dictionaries of the format:
+		 *
+		 * ```ts
+		 * {
+		 *    "id": reviewTime,
+		 *    "usn": usn,
+		 *    "ease": buttonPressed,
+		 *    "ivl": newInterval,
+		 *    "lastIvl": previousInterval,
+		 *    "factor": newFactor,
+		 *    "time": reviewDuration,
+		 *    "type": reviewType,
+		 * }
+		 * ```
+		 *
+		 * The reason why these key values are used instead of the more descriptive
+		 * counterparts is because these are the exact key values used in Anki's
+		 * database.
+		 */
 		getReviewsOfCards: this.build('getReviewsOfCards'),
+		/**
+		 * Inserts the given reviews into the database. Required format: list of
+		 * 9-tuples `(reviewTime, cardID, usn, buttonPressed, newInterval,
+		 * previousInterval, newFactor, reviewDuration, reviewType)`.
+		 */
 		insertReviews: this.build('insertReviews'),
 	}
 
@@ -606,10 +916,13 @@ export class YankiConnect {
 		}
 	}
 
+	// Single point of contact with the Anki Connect API.
+
 	/**
-	 *  Single point of contact with the Anki Connect API.
+	 * Directly invoke the Anki Connect API.
 	 *
-	 *  Primarily for internal use, since the client provides a more convenient methods on its class.
+	 * Primarily for internal use, since the client provides a more convenient
+	 * methods on its class.
 	 */
 	public async invoke<T extends ActionsWithoutParams>(action: T): Promise<ResponseForAction<T>>
 	public async invoke<T extends ActionsWithParams>(
