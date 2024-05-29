@@ -2,7 +2,7 @@
 	"name": "yanki-connect",
 	"version": "0.0.0",
 	"type": "module",
-	"description": "A fully-typed Anki-Connect API client for doing all kind of things with your Anki decks.",
+	"description": "A fully-typed Anki-Connect API client.",
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/kitschpatrol/yanki-connect.git"
