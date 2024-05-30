@@ -921,8 +921,21 @@ export class YankiConnect {
 	/**
 	 * Directly invoke the Anki Connect API.
 	 *
+	 * [Documentation](https://foosoft.net/projects/anki-connect/index.html)
+	 *
 	 * Primarily for internal use, since the client provides a more convenient
-	 * methods on its class.
+	 * methods on its class, e.g. instead of:
+	 *
+	 * ```ts
+	 * const client = new AnkiConnectClient()
+	 * const response = await client.invoke('version')
+	 * ```
+	 *
+	 * You can use:
+	 * ```ts
+	 * const client = new AnkiConnectClient()
+	 * const result = await client.miscellaneous.version()
+	 * ```
 	 */
 	public async invoke<T extends ActionsWithoutParams>(action: T): Promise<ResponseForAction<T>>
 	public async invoke<T extends ActionsWithParams>(

@@ -10,10 +10,10 @@ importers:
     devDependencies:
       '@kitschpatrol/shared-config':
         specifier: ^4.6.6
-        version: 4.6.6(cspell@8.8.3)(eslint@8.57.0)(mdat@0.6.12(@types/node@20.12.12)(typescript@5.4.5))(postcss-html@1.7.0)(prettier@3.2.5)(stylelint@16.6.0(typescript@5.4.5))(svelte@4.2.17)(typescript@5.4.5)
+        version: 4.6.6(cspell@8.8.3)(eslint@8.57.0)(mdat@0.6.12(@types/node@20.12.13)(typescript@5.4.5))(postcss-html@1.7.0)(prettier@3.2.5)(stylelint@16.6.0(typescript@5.4.5))(svelte@4.2.17)(typescript@5.4.5)
       '@types/node':
-        specifier: ^20.12.12
-        version: 20.12.12
+        specifier: ^20.12.13
+        version: 20.12.13
       esbuild:
         specifier: ^0.21.4
         version: 0.21.4
@@ -25,7 +25,7 @@ importers:
         version: 4.11.0
       vitest:
         specifier: ^1.6.0
-        version: 1.6.0(@types/node@20.12.12)
+        version: 1.6.0(@types/node@20.12.13)
 
 packages:
 
@@ -887,8 +887,8 @@ packages:
   '@types/ms@0.7.34':
     resolution: {integrity: sha512-nG96G3Wp6acyAgJqGasjODb+acrI7KltPiRxzHPXnP3NgI28bpQDRv53olbqGXbfcgF5aiiHmO3xpwEpS5Ld9g==}
 
-  '@types/node@20.12.12':
-    resolution: {integrity: sha512-eWLDGF/FOSPtAvEqeRAQ4C8LSA7M1I7i0ky1I8U7kD1J5ITyW3AsRhQrKVoWf5pFKZ2kILsEGJhsI9r93PYnOw==}
+  '@types/node@20.12.13':
+    resolution: {integrity: sha512-gBGeanV41c1L171rR7wjbMiEpEI/l5XFQdLLfhr/REwpgDy/4U8y89+i8kRiLzDyZdOkXh+cRaTetUnCYutoXA==}
 
   '@types/normalize-package-data@2.4.4':
     resolution: {integrity: sha512-37i+OaWTh9qeK4LSHPsyRC7NahnGotNuZvjLSgcPzblpHB3rrCJxAOgI5gCdKm7coonsaX1Of0ILiTcnZjbfxA==}
@@ -4863,13 +4863,13 @@ snapshots:
       - typescript
       - vue-eslint-parser
 
-  '@kitschpatrol/mdat-config@4.6.6(mdat@0.6.12(@types/node@20.12.12)(typescript@5.4.5))(typescript@5.4.5)':
+  '@kitschpatrol/mdat-config@4.6.6(mdat@0.6.12(@types/node@20.12.13)(typescript@5.4.5))(typescript@5.4.5)':
     dependencies:
       '@pinojs/json-colorizer': 4.0.0
       cosmiconfig: 9.0.0(typescript@5.4.5)
       execa: 8.0.1
       fs-extra: 11.2.0
-      mdat: 0.6.12(@types/node@20.12.12)(typescript@5.4.5)
+      mdat: 0.6.12(@types/node@20.12.13)(typescript@5.4.5)
     transitivePeerDependencies:
       - typescript
 
@@ -4974,11 +4974,11 @@ snapshots:
     transitivePeerDependencies:
       - typescript
 
-  '@kitschpatrol/shared-config@4.6.6(cspell@8.8.3)(eslint@8.57.0)(mdat@0.6.12(@types/node@20.12.12)(typescript@5.4.5))(postcss-html@1.7.0)(prettier@3.2.5)(stylelint@16.6.0(typescript@5.4.5))(svelte@4.2.17)(typescript@5.4.5)':
+  '@kitschpatrol/shared-config@4.6.6(cspell@8.8.3)(eslint@8.57.0)(mdat@0.6.12(@types/node@20.12.13)(typescript@5.4.5))(postcss-html@1.7.0)(prettier@3.2.5)(stylelint@16.6.0(typescript@5.4.5))(svelte@4.2.17)(typescript@5.4.5)':
     dependencies:
       '@kitschpatrol/cspell-config': 4.6.6(cspell@8.8.3)(typescript@5.4.5)
       '@kitschpatrol/eslint-config': 4.6.6(eslint@8.57.0)(svelte@4.2.17)(typescript@5.4.5)
-      '@kitschpatrol/mdat-config': 4.6.6(mdat@0.6.12(@types/node@20.12.12)(typescript@5.4.5))(typescript@5.4.5)
+      '@kitschpatrol/mdat-config': 4.6.6(mdat@0.6.12(@types/node@20.12.13)(typescript@5.4.5))(typescript@5.4.5)
       '@kitschpatrol/prettier-config': 4.6.6(prettier@3.2.5)(svelte@4.2.17)(typescript@5.4.5)
       '@kitschpatrol/remark-config': 4.6.6(prettier@3.2.5)(typescript@5.4.5)
       '@kitschpatrol/repo-config': 4.6.6(typescript@5.4.5)
@@ -5180,7 +5180,7 @@ snapshots:
 
   '@types/concat-stream@2.0.3':
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 20.12.13
 
   '@types/debug@4.1.12':
     dependencies:
@@ -5210,7 +5210,7 @@ snapshots:
 
   '@types/ms@0.7.34': {}
 
-  '@types/node@20.12.12':
+  '@types/node@20.12.13':
     dependencies:
       undici-types: 5.26.5
 
@@ -5228,7 +5228,7 @@ snapshots:
 
   '@types/yauzl@2.10.3':
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 20.12.13
     optional: true
 
   '@typescript-eslint/eslint-plugin@7.10.0(@typescript-eslint/parser@7.10.0(eslint@8.57.0)(typescript@5.4.5))(eslint@8.57.0)(typescript@5.4.5)':
@@ -5791,9 +5791,9 @@ snapshots:
 
   core-util-is@1.0.3: {}
 
-  cosmiconfig-typescript-loader@5.0.0(@types/node@20.12.12)(cosmiconfig@9.0.0(typescript@5.4.5))(typescript@5.4.5):
+  cosmiconfig-typescript-loader@5.0.0(@types/node@20.12.13)(cosmiconfig@9.0.0(typescript@5.4.5))(typescript@5.4.5):
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 20.12.13
       cosmiconfig: 9.0.0(typescript@5.4.5)
       jiti: 1.21.0
       typescript: 5.4.5
@@ -7478,7 +7478,7 @@ snapshots:
       unist-util-is: 6.0.0
       unist-util-visit: 5.0.0
 
-  mdat@0.6.12(@types/node@20.12.12)(typescript@5.4.5):
+  mdat@0.6.12(@types/node@20.12.13)(typescript@5.4.5):
     dependencies:
       '@clack/prompts': 0.7.0
       '@kitschpatrol/tldraw-cli': 4.5.3(typescript@5.4.5)
@@ -7487,7 +7487,7 @@ snapshots:
       chalk: 5.3.0
       chevrotain: 11.0.3
       cosmiconfig: 9.0.0(typescript@5.4.5)
-      cosmiconfig-typescript-loader: 5.0.0(@types/node@20.12.12)(cosmiconfig@9.0.0(typescript@5.4.5))(typescript@5.4.5)
+      cosmiconfig-typescript-loader: 5.0.0(@types/node@20.12.13)(cosmiconfig@9.0.0(typescript@5.4.5))(typescript@5.4.5)
       execa: 9.1.0
       find-up: 7.0.0
       globby: 14.0.1
@@ -9443,7 +9443,7 @@ snapshots:
       '@types/concat-stream': 2.0.3
       '@types/debug': 4.1.12
       '@types/is-empty': 1.2.3
-      '@types/node': 20.12.12
+      '@types/node': 20.12.13
       '@types/unist': 3.0.2
       concat-stream: 2.0.0
       debug: 4.3.4
@@ -9605,13 +9605,13 @@ snapshots:
       unist-util-stringify-position: 4.0.0
       vfile-message: 4.0.2
 
-  vite-node@1.6.0(@types/node@20.12.12):
+  vite-node@1.6.0(@types/node@20.12.13):
     dependencies:
       cac: 6.7.14
       debug: 4.3.4
       pathe: 1.1.2
       picocolors: 1.0.1
-      vite: 5.2.11(@types/node@20.12.12)
+      vite: 5.2.11(@types/node@20.12.13)
     transitivePeerDependencies:
       - '@types/node'
       - less
@@ -9622,16 +9622,16 @@ snapshots:
       - supports-color
       - terser
 
-  vite@5.2.11(@types/node@20.12.12):
+  vite@5.2.11(@types/node@20.12.13):
     dependencies:
       esbuild: 0.20.2
       postcss: 8.4.38
       rollup: 4.18.0
     optionalDependencies:
-      '@types/node': 20.12.12
+      '@types/node': 20.12.13
       fsevents: 2.3.3
 
-  vitest@1.6.0(@types/node@20.12.12):
+  vitest@1.6.0(@types/node@20.12.13):
     dependencies:
       '@vitest/expect': 1.6.0
       '@vitest/runner': 1.6.0
@@ -9650,11 +9650,11 @@ snapshots:
       strip-literal: 2.1.0
       tinybench: 2.8.0
       tinypool: 0.8.4
-      vite: 5.2.11(@types/node@20.12.12)
-      vite-node: 1.6.0(@types/node@20.12.12)
+      vite: 5.2.11(@types/node@20.12.13)
+      vite-node: 1.6.0(@types/node@20.12.13)
       why-is-node-running: 2.2.2
     optionalDependencies:
-      '@types/node': 20.12.12
+      '@types/node': 20.12.13
     transitivePeerDependencies:
       - less
       - lightningcss

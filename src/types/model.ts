@@ -50,23 +50,19 @@ export type Model = {
 	usn: number
 }
 
+export type ModelToCreate = {
+	cardTemplates: Array<{
+		Back: string
+		Front: string
+		Name?: string // Default is 'Card 1', 'Card 2', etc.
+	}>
+	css?: string
+	inOrderFields: string[]
+	isCloze?: boolean
+	modelName: string
+}
+
 export type ModelRequests =
-	| Request<
-			'createModel',
-			6,
-			{
-				cardTemplates: Array<{
-					Back: string
-					Front: string
-					Name?: string // Default is 'Card 1', 'Card 2', etc.
-				}>
-				css?: string
-				inOrderFields: string[]
-				isCloze?: boolean
-				modelName: string
-			},
-			Model
-	  >
 	| Request<
 			'findAndReplaceInModels',
 			6,
@@ -174,8 +170,9 @@ export type ModelRequests =
 				}
 			}
 	  >
-	| Request<'findModelsById', 6, { modelNames: string[] }, Model[]>
-	| Request<'findModelsByName', 6, { modelIds: number[] }, Model[]>
+	| Request<'createModel', 6, ModelToCreate, Model>
+	| Request<'findModelsById', 6, { modelIds: number[] }, Model[]>
+	| Request<'findModelsByName', 6, { modelNames: string[] }, Model[]>
 	| Request<'modelFieldAdd', 6, { fieldName: string; index: number; modelName: string }>
 	| Request<'modelFieldNames', 6, { modelName: string }, string[]>
 	| Request<'modelFieldRemove', 6, { fieldName: string; modelName: string }>

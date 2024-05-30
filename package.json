@@ -47,13 +47,12 @@
 		"build": "tsx ./scripts/build.ts && tsc -p tsconfig.build.json",
 		"fix": "shared-config --fix",
 		"lint": "shared-config --lint",
-		"preview": "vite preview",
 		"release": "pnpm build && pnpm bumpp --commit 'Release: %s' && pnpm publish --otp $(op read 'op://Personal/Npmjs/one-time password?attribute=otp')",
 		"test": "vitest"
 	},
 	"devDependencies": {
 		"@kitschpatrol/shared-config": "^4.6.6",
-		"@types/node": "^20.12.12",
+		"@types/node": "^20.12.13",
 		"esbuild": "^0.21.4",
 		"open": "^10.1.0",
 		"tsx": "^4.11.0",

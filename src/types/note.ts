@@ -30,8 +30,8 @@ export type Note = {
 export type NoteWithCreationOptions = {
 	options?: {
 		allowDuplicate?: boolean
-		duplicateScope: 'deck' | ({} & string) // Only deck is official, any other value represents the entire collection
-		duplicateScopeOptions: {
+		duplicateScope?: 'deck' | ({} & string) // Only deck is official, any other value represents the entire collection
+		duplicateScopeOptions?: {
 			checkAllModels?: boolean
 			checkChildren?: boolean
 			deckName?: null | string
@@ -84,7 +84,14 @@ export type NoteRequests =
 				notes: number[]
 			},
 			Array<{
-				fields: Record<string, string>
+				cards: number[]
+				fields: Record<
+					string,
+					{
+						order: number
+						value: string
+					}
+				>
 				modelName: string
 				noteId: number
 				tags: string[]
@@ -169,10 +176,10 @@ export type NoteRequests =
 				tags: string[]
 			}
 	  >
-	| Request<'addNote', 6, { note: NoteWithCreationOptions }, number>
+	| Request<'addNote', 6, { note: NoteWithCreationOptions }, null | number>
 	| Request<'addNotes', 6, { notes: NoteWithCreationOptions[] }, Array<null | string>>
 	| Request<'canAddNotes', 6, { notes: NoteWithCreationOptions[] }, boolean[]>
 	| Request<'clearUnusedTags', 6, never, string[]>
-	| Request<'deleteNotes', 6, { notes: number[] }, number>
+	| Request<'deleteNotes', 6, { notes: number[] }>
 	| Request<'getTags', 6, never, string[]>
 	| Request<'removeEmptyNotes', 6>
