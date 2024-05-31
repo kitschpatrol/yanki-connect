@@ -52,9 +52,9 @@ export type Model = {
 
 export type ModelToCreate = {
 	cardTemplates: Array<{
+		[key: string]: string
 		Back: string
 		Front: string
-		Name?: string // Default is 'Card 1', 'Card 2', etc.
 	}>
 	css?: string
 	inOrderFields: string[]
@@ -113,9 +113,9 @@ export type ModelRequests =
 			{
 				modelName: string
 				template: {
+					[key: string]: string
 					Back: string
 					Front: string
-					Name: string
 				}
 			}
 	  >
@@ -144,7 +144,7 @@ export type ModelRequests =
 			Record<
 				string,
 				{
-					// More fields?
+					[key: string]: string
 					Back: string
 					Front: string
 				}

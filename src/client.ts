@@ -34,7 +34,7 @@ export type YankiConnectOptions = {
 	 *
 	 * @default false
 	 */
-	autoLaunchAnki?: 'immediately' | boolean
+	autoLaunch?: 'immediately' | boolean
 	/**
 	 * Host where the Anki-Connect service is running.
 	 *
@@ -73,7 +73,7 @@ export type YankiConnectOptions = {
  * readme.md](https://git.foosoft.net/alex/anki-connect/src/commit/306103c618f817a809b8043c1b8386dceedc4b0e/README.md)
  */
 export class YankiConnect {
-	private readonly autoLaunchAnki: 'immediately' | boolean
+	private readonly autoLaunch: 'immediately' | boolean
 	private readonly host: string
 	private readonly key?: string
 	private readonly port: number
@@ -866,11 +866,11 @@ export class YankiConnect {
 		this.port = options?.port ?? 8765
 		this.version = options?.version ?? 6
 
-		if (platform !== 'darwin' && options?.autoLaunchAnki !== false) {
-			console.warn('The autoLaunchAnki option is only supported on macOS')
-			this.autoLaunchAnki = false
+		if (platform !== 'darwin' && options?.autoLaunch !== false) {
+			console.warn('The autoLaunch option is only supported on macOS')
+			this.autoLaunch = false
 		} else {
-			this.autoLaunchAnki = options?.autoLaunchAnki ?? false
+			this.autoLaunch = options?.autoLaunch ?? false
 		}
 
 		this.key = options?.key ?? undefined
@@ -880,7 +880,7 @@ export class YankiConnect {
 			throw new Error('YankiConnect currently only supports Anki-Connect API version 6')
 		}
 
-		if (this.autoLaunchAnki === 'immediately') {
+		if (this.autoLaunch === 'immediately') {
 			void launchAnkiApp()
 		}
 	}
@@ -968,12 +968,12 @@ export class YankiConnect {
 
 			responseJson = (await response.json()) as ResponseForAction<T>
 
-			if (this.autoLaunchAnki !== false && responseJson.error === 'collection is not available') {
+			if (this.autoLaunch !== false && responseJson.error === 'collection is not available') {
 				throw new Error(responseJson.error)
 			}
 		} catch (error) {
 			// Attempt restart
-			if (this.autoLaunchAnki !== false) {
+			if (this.autoLaunch !== false) {
 				console.log("Can't connect to Anki app, retrying...")
 
 				// Internally throttled
