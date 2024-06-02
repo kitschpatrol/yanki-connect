@@ -7,13 +7,14 @@ settings:
 importers:
 
   .:
+    dependencies:
+      '@types/node':
+        specifier: ^20.12.13
+        version: 20.12.13
     devDependencies:
       '@kitschpatrol/shared-config':
         specifier: ^4.6.6
         version: 4.6.6(cspell@8.8.3)(eslint@8.57.0)(mdat@0.6.12(@types/node@20.12.13)(typescript@5.4.5))(postcss-html@1.7.0)(prettier@3.2.5)(stylelint@16.6.0(typescript@5.4.5))(svelte@4.2.17)(typescript@5.4.5)
-      '@types/node':
-        specifier: ^20.12.13
-        version: 20.12.13
       esbuild:
         specifier: ^0.21.4
         version: 0.21.4

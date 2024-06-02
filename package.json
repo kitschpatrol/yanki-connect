@@ -37,6 +37,7 @@
 	],
 	"keywords": [
 		"anki",
+		"flashcards",
 		"spaced-repetition",
 		"anki-connect",
 		"client",
@@ -45,14 +46,17 @@
 	],
 	"scripts": {
 		"build": "tsx ./scripts/build.ts && tsc -p tsconfig.build.json",
+		"clean": "git clean -fdX && rm ./pnpm-lock.yaml",
 		"fix": "shared-config --fix",
 		"lint": "shared-config --lint",
 		"release": "pnpm build && pnpm bumpp --commit 'Release: %s' && pnpm publish --otp $(op read 'op://Personal/Npmjs/one-time password?attribute=otp')",
 		"test": "vitest"
 	},
+	"dependencies": {
+		"@types/node": "^20.12.13"
+	},
 	"devDependencies": {
 		"@kitschpatrol/shared-config": "^4.6.6",
-		"@types/node": "^20.12.13",
 		"esbuild": "^0.21.4",
 		"open": "^10.1.0",
 		"tsx": "^4.11.0",
