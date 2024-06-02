@@ -1,4 +1,4 @@
-import openApp from 'open'
+import { detectEnvironment, detectPlatform } from './platform'
 
 let lastLaunchAttemptTime = 0
 const launchAttemptInterval = 5000
@@ -6,6 +6,16 @@ let launchAttemptCount = 0
 const matchLaunchAttemptsPerSession = 100
 
 export async function launchAnkiApp(): Promise<void> {
+	const platform = detectPlatform()
+	const environment = detectEnvironment()
+
+	if (platform !== 'mac' || environment !== 'node') {
+		console.warn('Anki App launch is only supported on Mac OS in Node.js environment')
+		return
+	}
+
+	const { openApp } = await import('open')
+
 	if (launchAttemptCount >= matchLaunchAttemptsPerSession) {
 		console.log('Too many Anki App launch attempts this session, ignoring')
 		return

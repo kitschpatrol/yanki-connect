@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/member-ordering */
 /* eslint-disable @typescript-eslint/unified-signatures */
 
-import { launchAnkiApp } from './launcher'
 import type {
 	Actions,
 	ActionsWithParams,
@@ -11,7 +10,8 @@ import type {
 	ResponseForAction,
 	ResultForAction,
 } from './types/shared'
-import { platform } from 'node:process'
+import { launchAnkiApp } from './utilities/launcher'
+import { detectEnvironment, detectPlatform } from './utilities/platform'
 
 /** Optional options to pass when instantiating a new YankiConnect instance. */
 export type YankiConnectOptions = {
@@ -34,25 +34,25 @@ export type YankiConnectOptions = {
 	 *
 	 * @default false
 	 */
-	autoLaunch?: 'immediately' | boolean
+	autoLaunch: 'immediately' | boolean
 	/**
 	 * Host where the Anki-Connect service is running.
 	 *
 	 * @default 'http://127.0.0.1'
 	 */
-	host?: string
+	host: string
 	/**
 	 * Anki-Connect security key (optional)
 	 *
 	 * @default undefined
 	 */
-	key?: string
+	key: string | undefined
 	/**
 	 * Port where the Anki-Connect service is running.
 	 *
 	 * @default 8765
 	 */
-	port?: number
+	port: number
 	/**
 	 * Anki-Connect API version.
 	 *
@@ -60,7 +60,15 @@ export type YankiConnectOptions = {
 	 *
 	 * @default 6
 	 */
-	version?: AnkiConnectVersion
+	version: AnkiConnectVersion
+}
+
+export const defaultYankiConnectOptions: YankiConnectOptions = {
+	autoLaunch: false,
+	host: 'http://127.0.0.1',
+	key: undefined,
+	port: 8765,
+	version: 6,
 }
 
 /**
@@ -862,19 +870,20 @@ export class YankiConnect {
 		insertReviews: this.build('insertReviews'),
 	}
 
-	constructor(options?: YankiConnectOptions) {
-		this.port = options?.port ?? 8765
-		this.version = options?.version ?? 6
+	constructor(options?: Partial<YankiConnectOptions>) {
+		this.host = options?.host ?? defaultYankiConnectOptions.host
+		this.port = options?.port ?? defaultYankiConnectOptions.port
+		this.version = options?.version ?? defaultYankiConnectOptions.version
+		this.key = options?.key ?? defaultYankiConnectOptions.key
+		this.autoLaunch = options?.autoLaunch ?? defaultYankiConnectOptions.autoLaunch
 
-		if (platform !== 'darwin' && options?.autoLaunch !== false) {
-			console.warn('The autoLaunch option is only supported on macOS')
+		if (
+			(detectPlatform() !== 'mac' || detectEnvironment() !== 'node') &&
+			this.autoLaunch !== false
+		) {
+			console.warn('The autoLaunch option is only supported in a Node environment on macOS')
 			this.autoLaunch = false
-		} else {
-			this.autoLaunch = options?.autoLaunch ?? false
 		}
-
-		this.key = options?.key ?? undefined
-		this.host = options?.host ?? 'http://127.0.0.1'
 
 		if (this.version !== 6) {
 			throw new Error('YankiConnect currently only supports Anki-Connect API version 6')
@@ -957,9 +966,11 @@ export class YankiConnect {
 					version: this.version,
 				}),
 				headers: {
+					'Access-Control-Allow-Origin': '*', // Not all servers honor this
 					'Content-Type': 'application/json',
 				},
 				method: 'POST',
+				mode: 'cors', // Ensure CORS mode is enabled
 			})
 
 			if (response === undefined) {

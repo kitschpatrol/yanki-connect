@@ -52,13 +52,13 @@ This library is used in the [`yanki-md`](https://github.com/kitschpatrol/yanki-m
   const client = new YankiConnect({ autoLaunch: true })
   ```
 
-  _Warning: This feature is experimental, and is currently only supported on macOS._
+  _Warning: This feature is experimental, and is currently only supported in a Node environment on macOS._
 
 ## Getting started
 
 ### Dependencies
 
-Yanki Connect requires a Node 18+ compatible runtime. The exported APIs are ESM-only and share the. It's implemented in TypeScript and bundles extensive type definitions.
+Yanki Connect runs in the browser and Node 18+ compatible runtime. The exported APIs are ESM-only. It's implemented in TypeScript and bundles extensive type definitions.
 
 The Anki desktop app with the Anki-Connect add-on installed and configured is also required to do anything useful with the library.
 
