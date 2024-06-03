@@ -13,6 +13,28 @@ import type {
 import { launchAnkiApp } from './utilities/launcher'
 import { environment, platform } from './utilities/platform'
 
+/**
+ * Subset of built-in Fetch interface that's actually used by Anki, for ease of
+ * external re-implementation when passing a custom fetch function to
+ * YankiClient.
+ */
+export type YankiFetch = (
+	input: string,
+	init: {
+		body: string
+		headers: Record<string, string>
+		method: string
+		mode: RequestMode
+	},
+) => Promise<
+	| {
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			json(): Promise<any>
+			status: number
+	  }
+	| undefined
+>
+
 /** Optional options to pass when instantiating a new YankiConnect instance. */
 export type YankiConnectOptions = {
 	/**
@@ -35,6 +57,16 @@ export type YankiConnectOptions = {
 	 * @default false
 	 */
 	autoLaunch: 'immediately' | boolean
+	/**
+	 * Advanced option to customize the resource fetch implementation used to make requests to Anki-Connect.
+	 *
+	 * Note that the signature reflects the subset of the built-in Fetch interface that's actually used by yanki-connect.
+	 *
+	 * The exact signature of this option is subject to change in the future.
+	 *
+	 * @default fetch
+	 */
+	customFetch: YankiFetch
 	/**
 	 * Host where the Anki-Connect service is running.
 	 *
@@ -65,6 +97,7 @@ export type YankiConnectOptions = {
 
 export const defaultYankiConnectOptions: YankiConnectOptions = {
 	autoLaunch: false,
+	customFetch: fetch,
 	host: 'http://127.0.0.1',
 	key: undefined,
 	port: 8765,
@@ -82,6 +115,7 @@ export const defaultYankiConnectOptions: YankiConnectOptions = {
  */
 export class YankiConnect {
 	private readonly autoLaunch: 'immediately' | boolean
+	private readonly customFetch: YankiFetch
 	private readonly host: string
 	private readonly key?: string
 	private readonly port: number
@@ -876,6 +910,7 @@ export class YankiConnect {
 		this.version = options?.version ?? defaultYankiConnectOptions.version
 		this.key = options?.key ?? defaultYankiConnectOptions.key
 		this.autoLaunch = options?.autoLaunch ?? defaultYankiConnectOptions.autoLaunch
+		this.customFetch = options?.customFetch ?? defaultYankiConnectOptions.customFetch
 
 		if ((platform !== 'mac' || environment !== 'node') && this.autoLaunch !== false) {
 			console.warn('The autoLaunch option is only supported in a Node environment on macOS')
@@ -952,10 +987,10 @@ export class YankiConnect {
 		action: T,
 		params?: T extends ActionsWithParams ? ParamsForAction<T> : undefined,
 	): Promise<ResponseForAction<T>> {
-		let response: Response
+		let response: Awaited<ReturnType<YankiFetch>> // Fetch Response
 		let responseJson: ResponseForAction<T>
 		try {
-			response = await fetch(`${this.host}:${this.port}`, {
+			response = await this.customFetch(`${this.host}:${this.port}`, {
 				body: JSON.stringify({
 					action,
 					...(this.key === undefined ? {} : { key: this.key }),
@@ -967,11 +1002,17 @@ export class YankiConnect {
 					'Content-Type': 'application/json',
 				},
 				method: 'POST',
-				mode: 'cors', // Ensure CORS mode is enabled
+				// TODO how necessary is this?
+				// Ensure CORS mode is enabled
+				mode: 'cors',
 			})
 
 			if (response === undefined) {
 				throw new Error('Anki-Connect response is undefined')
+			}
+
+			if (response.status !== 200) {
+				throw new Error(`Anki-Connect response status is ${response.status}`)
 			}
 
 			responseJson = (await response.json()) as ResponseForAction<T>

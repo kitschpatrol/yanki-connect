@@ -1,4 +1,9 @@
-export { YankiConnect, type YankiConnectOptions, defaultYankiConnectOptions } from './client'
+export {
+	YankiConnect,
+	type YankiConnectOptions,
+	type YankiFetch,
+	defaultYankiConnectOptions,
+} from './client'
 export type {
 	ParamsForAction as YankiParamsForAction,
 	ResponseForAction as YankiResponseForAction,
