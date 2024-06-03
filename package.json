@@ -50,7 +50,8 @@
 		"fix": "shared-config --fix",
 		"lint": "shared-config --lint",
 		"release": "pnpm build && pnpm bumpp --commit 'Release: %s' && pnpm publish --otp $(op read 'op://Personal/Npmjs/one-time password?attribute=otp')",
-		"test": "vitest"
+		"test": "vitest",
+		"test-browser": "vite"
 	},
 	"dependencies": {
 		"@types/node": "^20.13.0",
@@ -63,6 +64,7 @@
 		"esbuild": "^0.21.4",
 		"tsx": "^4.11.0",
 		"typescript": "^5.4.5",
+		"vite": "^5.2.12",
 		"vitest": "^1.6.0"
 	},
 	"publishConfig": {

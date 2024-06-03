@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Document</title>
+		<script type="module">
+			import { YankiConnect } from '../dist/index'
+
+			console.log('----------------- YankiConnect Client Instantiated -----------------')
+			const client = new YankiConnect()
+			console.log(client)
+
+			console.log('----------------- Get Anki Notes -----------------')
+			try {
+				const notes = await client.note.findNotes({ query: '*' })
+				console.log(notes)
+			} catch (error) {
+				console.log(error)
+			}
+
+			console.log('----------------- Get Anki Deck Names and IDs -----------------')
+			const results = await client.deck.deckNamesAndIds()
+			console.log(results)
+		</script>
+	</head>
+	<body></body>
+</html>

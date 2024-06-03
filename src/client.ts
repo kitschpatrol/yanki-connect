@@ -97,7 +97,7 @@ export type YankiConnectOptions = {
 
 export const defaultYankiConnectOptions: YankiConnectOptions = {
 	autoLaunch: false,
-	customFetch: fetch,
+	customFetch: fetch.bind(globalThis),
 	host: 'http://127.0.0.1',
 	key: undefined,
 	port: 8765,
