@@ -45,7 +45,7 @@
 		"npm-package"
 	],
 	"scripts": {
-		"build": "tsx ./scripts/build.ts && tsc -p tsconfig.build.json",
+		"build": "pkgroll --clean-dist",
 		"clean": "git clean -fdX && rm ./pnpm-lock.yaml",
 		"fix": "shared-config --fix",
 		"lint": "shared-config --lint",
@@ -61,7 +61,7 @@
 	"devDependencies": {
 		"@ephox/sand": "^6.0.10",
 		"@kitschpatrol/shared-config": "^4.6.6",
-		"esbuild": "^0.21.4",
+		"pkgroll": "^2.1.1",
 		"tsx": "^4.11.0",
 		"typescript": "^5.4.5",
 		"vite": "^5.2.12",
