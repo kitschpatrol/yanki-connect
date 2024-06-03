@@ -11,7 +11,7 @@ import type {
 	ResultForAction,
 } from './types/shared'
 import { launchAnkiApp } from './utilities/launcher'
-import { detectEnvironment, detectPlatform } from './utilities/platform'
+import { environment, platform } from './utilities/platform'
 
 /** Optional options to pass when instantiating a new YankiConnect instance. */
 export type YankiConnectOptions = {
@@ -877,10 +877,7 @@ export class YankiConnect {
 		this.key = options?.key ?? defaultYankiConnectOptions.key
 		this.autoLaunch = options?.autoLaunch ?? defaultYankiConnectOptions.autoLaunch
 
-		if (
-			(detectPlatform() !== 'mac' || detectEnvironment() !== 'node') &&
-			this.autoLaunch !== false
-		) {
+		if ((platform !== 'mac' || environment !== 'node') && this.autoLaunch !== false) {
 			console.warn('The autoLaunch option is only supported in a Node environment on macOS')
 			this.autoLaunch = false
 		}
