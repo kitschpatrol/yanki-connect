@@ -54,7 +54,7 @@
 		"test-browser": "vite"
 	},
 	"dependencies": {
-		"@types/node": "^20.14.1",
+		"@types/node": "^20.14.2",
 		"open": "^10.1.0"
 	},
 	"devDependencies": {

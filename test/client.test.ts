@@ -12,7 +12,13 @@ describe('deck actions', () => {
 	it('deckNames', async () => {
 		expect(await client.deck.deckNames()).toMatchInlineSnapshot(`
 			[
+			  "Anki",
+			  "Anki::Fancy Cards",
+			  "Anki::Note Type Tests",
+			  "Anki::Regex",
+			  "Anki::TypeScript",
 			  "Default",
+			  "minimal-notes",
 			]
 		`)
 	})
@@ -20,7 +26,13 @@ describe('deck actions', () => {
 	it('deckNamesAndIds', async () => {
 		expect(await client.deck.deckNamesAndIds()).toMatchInlineSnapshot(`
 			{
+			  "Anki": 1717543995750,
+			  "Anki::Fancy Cards": 1717543996570,
+			  "Anki::Note Type Tests": 1717543995949,
+			  "Anki::Regex": 1717543995826,
+			  "Anki::TypeScript": 1717543995751,
 			  "Default": 1,
+			  "minimal-notes": 1717264591375,
 			}
 		`)
 	})
@@ -50,7 +62,13 @@ describe('direct invocation', () => {
 			{
 			  "error": null,
 			  "result": [
+			    "Anki",
+			    "Anki::Fancy Cards",
+			    "Anki::Note Type Tests",
+			    "Anki::Regex",
+			    "Anki::TypeScript",
 			    "Default",
+			    "minimal-notes",
 			  ],
 			}
 		`)
