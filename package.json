@@ -58,7 +58,7 @@
 		"open": "^10.1.0"
 	},
 	"devDependencies": {
-		"@kitschpatrol/shared-config": "^4.6.6",
+		"@kitschpatrol/shared-config": "^4.6.7",
 		"bumpp": "^9.4.1",
 		"pkgroll": "^2.1.1",
 		"typescript": "^5.4.5",
