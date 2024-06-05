@@ -19,6 +19,9 @@
 
 <!-- /short-description -->
 
+> \[!IMPORTANT]
+> Yanki Connect is feature-complete but will remain zero-versioned until it's been thoroughly tested. Please exercise caution and make backups of your Anki notes until the 1.0.0 release.
+
 ## Overview
 
 Yanki Connect exists to streamline development of JavaScript and TypeScript applications that use Alex Yatskov's [Anki-Connect](https://foosoft.net/projects/anki-connect/). The library provides extensive type annotations for the Anki-Connect API, and includes a turn-key client implementation.
@@ -58,7 +61,7 @@ This library is used in the [`yanki-md`](https://github.com/kitschpatrol/yanki-m
 
 ### Dependencies
 
-Yanki Connect runs in the browser and Node 18+ compatible runtimes. The exported APIs are ESM-only. It's implemented in TypeScript and bundles extensive type definitions.
+Yanki Connect is isomorphic: runs in the browser and Node 18+ compatible environments. The exported APIs are ESM-only. It's implemented in TypeScript and bundles extensive type definitions.
 
 The Anki desktop app with the Anki-Connect add-on installed and configured is also required to do anything useful with the library.
 
@@ -176,7 +179,9 @@ Chen Lijun's [autoanki](https://github.com/chenlijun99/autoanki) also implements
 
 ## Acknowledgements
 
-Alex Yatskov created Anki-Connect. All of the embedded action descriptions in Yanki Connect are directly from the Anki-Connect project readme.
+Thanks to Alex Yatskov for creating [Anki-Connect](https://foosoft.net/projects/anki-connect/).
+
+All of the embedded action descriptions in Yanki Connect are directly from the [Anki-Connect project readme](https://git.foosoft.net/alex/anki-connect/src/branch/master/README.md).
 
 <!-- contributing -->
 
