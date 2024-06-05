@@ -66,7 +66,7 @@ export type YankiConnectOptions = {
 	 *
 	 * @default fetch
 	 */
-	customFetch: YankiFetch
+	customFetch: YankiFetch | undefined
 	/**
 	 * Host where the Anki-Connect service is running.
 	 *
@@ -117,7 +117,7 @@ export class YankiConnect {
 	private readonly autoLaunch: 'immediately' | boolean
 	private readonly customFetch: YankiFetch
 	private readonly host: string
-	private readonly key?: string
+	private readonly key: string | undefined
 	private readonly port: number
 	private readonly version: AnkiConnectVersion
 
@@ -910,6 +910,12 @@ export class YankiConnect {
 		this.version = options?.version ?? defaultYankiConnectOptions.version
 		this.key = options?.key ?? defaultYankiConnectOptions.key
 		this.autoLaunch = options?.autoLaunch ?? defaultYankiConnectOptions.autoLaunch
+
+		if (defaultYankiConnectOptions.customFetch === undefined) {
+			// Just type issues with the default object
+			throw new Error('A fetch implementation is required')
+		}
+
 		this.customFetch = options?.customFetch ?? defaultYankiConnectOptions.customFetch
 
 		if ((platform !== 'mac' || environment !== 'node') && this.autoLaunch !== false) {
