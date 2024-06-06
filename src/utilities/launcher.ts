@@ -10,12 +10,12 @@ export async function launchAnkiApp(): Promise<void> {
 		const { openApp } = await import('open')
 
 		if (launchAttemptCount >= matchLaunchAttemptsPerSession) {
-			console.log('Too many Anki App launch attempts this session, ignoring')
+			console.warn('Too many Anki App launch attempts this session, ignoring')
 			return
 		}
 
 		if (lastLaunchAttemptTime === 0 || Date.now() - lastLaunchAttemptTime > launchAttemptInterval) {
-			console.log('Attempting to launch Anki app')
+			console.warn('Attempting to launch Anki app')
 
 			lastLaunchAttemptTime = Date.now()
 			launchAttemptCount++

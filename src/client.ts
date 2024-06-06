@@ -1029,7 +1029,7 @@ export class YankiConnect {
 		} catch (error) {
 			// Attempt restart
 			if (this.autoLaunch !== false) {
-				console.log("Can't connect to Anki app, retrying...")
+				console.warn("Can't connect to Anki app, retrying...")
 
 				// Internally throttled
 				await launchAnkiApp()

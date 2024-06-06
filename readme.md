@@ -25,7 +25,7 @@ Yanki Connect exists to streamline development of JavaScript and TypeScript appl
 
 The "Y" prefix in "Yanki" is in the "Yet another" naming tradition; a nod to Anki's robust and occasionally duplicative ecosystem of third-party tools. (Also, appropriately, Yankī are a variety of [truant youth](https://en.wikipedia.org/wiki/Yankee#/media/File:ヤンキー.jpg).)
 
-This library is used in the [`yanki-md`](https://github.com/kitschpatrol/yanki-md) CLI tool, which in turn powers the [`yanki-obsidian`](https://github.com/kitschpatrol/yanki-obsidian) plugin.
+This library is used in the [`yanki-md`](https://github.com/kitschpatrol/yanki-md) CLI tool, which in turn powers the soon-to-be-released `yanki-obsidian` plugin.
 
 ## Features
 
