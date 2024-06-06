@@ -19,9 +19,6 @@
 
 <!-- /short-description -->
 
-> \[!IMPORTANT]
-> Yanki Connect is feature-complete but will remain zero-versioned until it's been thoroughly tested. Please exercise caution and make backups of your Anki notes until the 1.0.0 release.
-
 ## Overview
 
 Yanki Connect exists to streamline development of JavaScript and TypeScript applications that use Alex Yatskov's [Anki-Connect](https://foosoft.net/projects/anki-connect/). The library provides extensive type annotations for the Anki-Connect API, and includes a turn-key client implementation.
