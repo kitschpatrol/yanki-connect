@@ -20,8 +20,12 @@
 			}
 
 			console.log('----------------- Get Anki Deck Names and IDs -----------------')
-			const results = await client.deck.deckNamesAndIds()
-			console.log(results)
+			try {
+				const results = await client.deck.deckNamesAndIds()
+				console.log(results)
+			} catch (error) {
+				console.log(error)
+			}
 
 			console.log('----------------- Done -----------------')
 		</script>
