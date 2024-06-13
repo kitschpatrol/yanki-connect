@@ -18,7 +18,7 @@
 		"url": "https://ericmika.com"
 	},
 	"license": "MIT",
-	"packageManager": "pnpm@9.2.0",
+	"packageManager": "pnpm@9.3.0",
 	"engines": {
 		"node": ">=18.0.0",
 		"pnpm": ">=8.0.0"
@@ -58,11 +58,11 @@
 		"open": "^10.1.0"
 	},
 	"devDependencies": {
-		"@kitschpatrol/shared-config": "^4.6.7",
+		"@kitschpatrol/shared-config": "^4.7.1",
 		"bumpp": "^9.4.1",
 		"pkgroll": "^2.1.1",
 		"typescript": "^5.4.5",
-		"vite": "^5.2.12",
+		"vite": "^5.2.13",
 		"vitest": "^1.6.0"
 	},
 	"publishConfig": {

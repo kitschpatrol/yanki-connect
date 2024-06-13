@@ -97,6 +97,7 @@ export type YankiConnectOptions = {
 
 export const defaultYankiConnectOptions: YankiConnectOptions = {
 	autoLaunch: false,
+	// eslint-disable-next-line n/no-unsupported-features/node-builtins
 	customFetch: fetch.bind(globalThis),
 	host: 'http://127.0.0.1',
 	key: undefined,
