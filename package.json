@@ -58,11 +58,11 @@
 		"open": "^10.1.0"
 	},
 	"devDependencies": {
-		"@kitschpatrol/shared-config": "^4.7.1",
+		"@kitschpatrol/shared-config": "^4.7.2",
 		"bumpp": "^9.4.1",
 		"pkgroll": "^2.1.1",
 		"typescript": "^5.4.5",
-		"vite": "^5.2.13",
+		"vite": "^5.3.1",
 		"vitest": "^1.6.0"
 	},
 	"publishConfig": {

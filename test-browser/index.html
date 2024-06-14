@@ -7,8 +7,16 @@
 		<script type="module">
 			import { YankiConnect } from '../dist/index'
 
+			async function customFetch(url, options) {
+				console.log('----------------- custom fetch! -----------------')
+				// eslint-disable-next-line n/no-unsupported-features/node-builtins
+				return fetch(url, options)
+			}
+
 			console.log('----------------- YankiConnect Client Instantiated -----------------')
-			const client = new YankiConnect()
+			const client = new YankiConnect({
+				customFetch,
+			})
 			console.log(client)
 
 			console.log('----------------- Get Anki Notes -----------------')
