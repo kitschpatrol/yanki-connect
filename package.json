@@ -18,7 +18,7 @@
 		"url": "https://ericmika.com"
 	},
 	"license": "MIT",
-	"packageManager": "pnpm@9.3.0",
+	"packageManager": "pnpm@9.4.0",
 	"engines": {
 		"node": ">=18.0.0",
 		"pnpm": ">=8.0.0"
@@ -54,7 +54,7 @@
 		"test-browser": "vite"
 	},
 	"dependencies": {
-		"@types/node": "^20.14.2",
+		"@types/node": "^20.14.5",
 		"open": "^10.1.0"
 	},
 	"devDependencies": {
