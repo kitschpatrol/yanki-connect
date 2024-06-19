@@ -101,7 +101,7 @@ client.note
 client.statistic
 ```
 
-Note that at the moment, only the latest Anki-Connect API version 6 is supported.
+Note that at the moment, only the latest Anki-Connect API version 6 is supported, and Anki-Connect release >24.6.17.0 is required for compatibility with all features.
 
 ### API
 
