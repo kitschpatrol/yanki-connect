@@ -11,10 +11,11 @@ export type NoteModel =
 	| ({} & string) // Allow arbitrary strings too
 
 export type NoteMedia = {
+	data?: string // First priority, must have one of these three
 	fields: string[]
-	filename: string
+	path?: string // Second priority, must have one of these three
 	skipHash?: false
-	url: string
+	url?: string // Third priority, must have one of these three
 }
 
 export type Note = {

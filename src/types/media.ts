@@ -13,11 +13,11 @@ export type MediaRequests =
 			'storeMediaFile',
 			6,
 			{
-				data: string // First priority
-				deleteExisting: boolean
+				data?: string // First priority, must have one of these three
+				deleteExisting?: boolean // Defaults to true
 				filename: string
-				path: string // Second priority
-				url: string // Third priority
+				path?: string // Second priority, must have one of these three
+				url?: string // Third priority, must have one of these three
 			},
 			string
 	  >
