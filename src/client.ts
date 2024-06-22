@@ -18,7 +18,7 @@ import { environment, platform } from './utilities/platform'
  * external re-implementation when passing a custom fetch function to
  * YankiClient.
  */
-export type YankiFetch = (
+export type YankiFetchAdapter = (
 	input: string,
 	init: {
 		body: string
@@ -66,7 +66,7 @@ export type YankiConnectOptions = {
 	 *
 	 * @default fetch
 	 */
-	customFetch: YankiFetch | undefined
+	fetchAdapter: YankiFetchAdapter | undefined
 	/**
 	 * Host where the Anki-Connect service is running.
 	 *
@@ -98,7 +98,7 @@ export type YankiConnectOptions = {
 export const defaultYankiConnectOptions: YankiConnectOptions = {
 	autoLaunch: false,
 	// eslint-disable-next-line n/no-unsupported-features/node-builtins
-	customFetch: fetch.bind(globalThis),
+	fetchAdapter: fetch.bind(globalThis),
 	host: 'http://127.0.0.1',
 	key: undefined,
 	port: 8765,
@@ -116,7 +116,7 @@ export const defaultYankiConnectOptions: YankiConnectOptions = {
  */
 export class YankiConnect {
 	private readonly autoLaunch: 'immediately' | boolean
-	private readonly customFetch: YankiFetch
+	private readonly fetchAdapter: YankiFetchAdapter
 	private readonly host: string
 	private readonly key: string | undefined
 	private readonly port: number
@@ -912,12 +912,12 @@ export class YankiConnect {
 		this.key = options?.key ?? defaultYankiConnectOptions.key
 		this.autoLaunch = options?.autoLaunch ?? defaultYankiConnectOptions.autoLaunch
 
-		if (defaultYankiConnectOptions.customFetch === undefined) {
+		if (defaultYankiConnectOptions.fetchAdapter === undefined) {
 			// Just type issues with the default object
 			throw new Error('A fetch implementation is required')
 		}
 
-		this.customFetch = options?.customFetch ?? defaultYankiConnectOptions.customFetch
+		this.fetchAdapter = options?.fetchAdapter ?? defaultYankiConnectOptions.fetchAdapter
 
 		if ((platform !== 'mac' || environment !== 'node') && this.autoLaunch !== false) {
 			console.warn('The autoLaunch option is only supported in a Node environment on macOS')
@@ -994,10 +994,10 @@ export class YankiConnect {
 		action: T,
 		params?: T extends ActionsWithParams ? ParamsForAction<T> : undefined,
 	): Promise<ResponseForAction<T>> {
-		let response: Awaited<ReturnType<YankiFetch>> // Fetch Response
+		let response: Awaited<ReturnType<YankiFetchAdapter>> // Fetch Response
 		let responseJson: ResponseForAction<T>
 		try {
-			response = await this.customFetch(`${this.host}:${this.port}`, {
+			response = await this.fetchAdapter(`${this.host}:${this.port}`, {
 				body: JSON.stringify({
 					action,
 					...(this.key === undefined ? {} : { key: this.key }),

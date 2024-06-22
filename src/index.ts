@@ -1,7 +1,7 @@
 export {
 	YankiConnect,
 	type YankiConnectOptions,
-	type YankiFetch,
+	type YankiFetchAdapter,
 	defaultYankiConnectOptions,
 } from './client'
 export type {
