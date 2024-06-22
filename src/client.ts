@@ -13,6 +13,15 @@ import type {
 import { launchAnkiApp } from './utilities/launcher'
 import { environment, platform } from './utilities/platform'
 
+// For ease of extracting fields from connection errors
+// type TypeErrorCause = {
+// 	address?: string
+// 	code?: string
+// 	errno?: number
+// 	port?: number
+// 	syscall?: string
+// }
+
 /**
  * Subset of built-in Fetch interface that's actually used by Anki, for ease of
  * external re-implementation when passing a custom fetch function to
@@ -1028,9 +1037,14 @@ export class YankiConnect {
 				throw new Error(responseJson.error)
 			}
 		} catch (error) {
-			// Attempt restart
-			if (this.autoLaunch !== false) {
-				console.warn("Can't connect to Anki app, retrying...")
+			// Attempt restart, but if it's a permissions issue then throw and stop trying
+			if (
+				this.autoLaunch !== false
+				// TODO what about permission denial, or missing Anki-Connect plugin?
+				// &&
+				// !(error instanceof TypeError && (error.cause as TypeErrorCause)?.code === 'ECONNREFUSED')
+			) {
+				console.warn(`Can't connect to Anki app, retrying with auto-launch...`)
 
 				// Internally throttled
 				await launchAnkiApp()

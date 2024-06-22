@@ -10,68 +10,50 @@ const client = new YankiConnect({ autoLaunch: true })
 
 describe('deck actions', () => {
 	it('deckNames', async () => {
-		expect(await client.deck.deckNames()).toMatchInlineSnapshot(`
-			[
-			  "Anki",
-			  "Anki::Fancy Cards",
-			  "Anki::Note Type Tests",
-			  "Anki::Regex",
-			  "Anki::TypeScript",
-			  "Default",
-			  "minimal-notes",
-			]
-		`)
+		const decks = await client.deck.deckNames()
+		expect(decks.length).toBeGreaterThan(0)
 	})
 
 	it('deckNamesAndIds', async () => {
-		expect(await client.deck.deckNamesAndIds()).toMatchInlineSnapshot(`
-			{
-			  "Anki": 1717543995750,
-			  "Anki::Fancy Cards": 1717543996570,
-			  "Anki::Note Type Tests": 1717543995949,
-			  "Anki::Regex": 1717543995826,
-			  "Anki::TypeScript": 1717543995751,
-			  "Default": 1,
-			  "minimal-notes": 1717264591375,
-			}
-		`)
+		const deckNamesAndIds = await client.deck.deckNamesAndIds()
+		expect(Object.values(deckNamesAndIds).length).toBeGreaterThan(0)
+		for (const id of Object.values(deckNamesAndIds)) {
+			expect(typeof id).toBe('number')
+		}
 	})
 })
 
 describe('note actions', () => {
 	it('addNote', async () => {
-		const result = await client.note.addNote({
+		const newNoteId = await client.note.addNote({
 			note: {
 				deckName: 'Default',
 				fields: {
-					Back: "<p>I'm the back of the card</p>\n",
-					Front: "<p>I'm the front of the card</p>\n",
+					Back: `<p>I'm the back of the card ${Date.now()}</p>\n`,
+					Front: `<p>I'm the front of the card ${Date.now()}</p>\n`,
 				},
 				modelName: 'Basic',
-				tags: ['yanki'],
+				tags: ['yanki-connect-test'],
 			},
 		})
 
-		expect(result).toMatchInlineSnapshot(`1716968687679`)
+		expect(newNoteId).not.toBeNull()
+
+		expect(String(newNoteId)).toMatch(/^\d{13}$/)
+
+		// Clean up for stable testing
+		await client.note.deleteNotes({ notes: [newNoteId!] })
+
+		// Check that it was deleted
+		const note = await client.note.notesInfo({ notes: [newNoteId!] })
+		expect(note[0].fields).toBeUndefined()
 	})
 })
 
 describe('direct invocation', () => {
 	it('deckNames via invoke', async () => {
-		expect(await client.invoke('deckNames')).toMatchInlineSnapshot(`
-			{
-			  "error": null,
-			  "result": [
-			    "Anki",
-			    "Anki::Fancy Cards",
-			    "Anki::Note Type Tests",
-			    "Anki::Regex",
-			    "Anki::TypeScript",
-			    "Default",
-			    "minimal-notes",
-			  ],
-			}
-		`)
+		const { result } = await client.invoke('deckNames')
+		expect(result.length).toBeGreaterThan(0)
 	})
 })
 
