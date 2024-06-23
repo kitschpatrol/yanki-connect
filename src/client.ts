@@ -11,7 +11,7 @@ import type {
 	ResultForAction,
 } from './types/shared'
 import { launchAnkiApp } from './utilities/launcher'
-import { environment, platform } from './utilities/platform'
+import { ENVIRONMENT, PLATFORM } from './utilities/platform'
 
 // For ease of extracting fields from connection errors
 // type TypeErrorCause = {
@@ -930,7 +930,7 @@ export class YankiConnect {
 
 		this.fetchAdapter = options?.fetchAdapter ?? defaultYankiConnectOptions.fetchAdapter
 
-		if ((platform !== 'mac' || environment !== 'node') && this.autoLaunch !== false) {
+		if ((PLATFORM !== 'mac' || ENVIRONMENT !== 'node') && this.autoLaunch !== false) {
 			console.warn('The autoLaunch option is only supported in a Node environment on macOS')
 			this.autoLaunch = false
 		}

@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/naming-convention */
-
 import { YankiConnect } from '../src'
 import { describe, expect, it } from 'vitest'
 
