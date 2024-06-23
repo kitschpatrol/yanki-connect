@@ -1,4 +1,4 @@
-import { environment, platform } from './platform'
+import { ENVIRONMENT, PLATFORM } from './platform'
 
 let lastLaunchAttemptTime = 0
 const launchAttemptInterval = 5000
@@ -6,7 +6,7 @@ let launchAttemptCount = 0
 const matchLaunchAttemptsPerSession = 100
 
 export async function launchAnkiApp(): Promise<void> {
-	if (platform === 'mac' && environment === 'node') {
+	if (PLATFORM === 'mac' && ENVIRONMENT === 'node') {
 		const { openApp } = await import('open')
 
 		if (launchAttemptCount >= matchLaunchAttemptsPerSession) {
