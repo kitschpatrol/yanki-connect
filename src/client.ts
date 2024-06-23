@@ -29,11 +29,11 @@ import { environment, platform } from './utilities/platform'
  */
 export type YankiFetchAdapter = (
 	input: string,
-	init: {
-		body: string
-		headers: Record<string, string>
-		method: string
-		mode: RequestMode
+	init?: {
+		body?: string
+		headers?: Record<string, string>
+		method?: string
+		mode?: RequestMode
 	},
 ) => Promise<
 	| {
