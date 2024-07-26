@@ -92,10 +92,22 @@ export type NoteRequests =
 						value: string
 					}
 				>
+				mod: number
 				modelName: string
 				noteId: number
 				profile: string
 				tags: string[]
+			}>
+	  >
+	| Request<
+			'notesModTime',
+			6,
+			{
+				notes: number[]
+			},
+			Array<{
+				mod: number
+				noteId: number
 			}>
 	  >
 	| Request<

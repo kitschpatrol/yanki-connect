@@ -794,10 +794,15 @@ export class YankiConnect {
 		getTags: this.build('getTags'),
 		/**
 		 * Returns a list of objects containing for each note ID the note fields,
-		 * tags, note type, the cards belonging to the note and the profile where
-		 * the note was created.
+		 * tags, note type, modification time, the cards belonging to the note and
+		 * the profile where the note was created.
 		 */
 		notesInfo: this.build('notesInfo'),
+		/**
+		 * Returns a list of objects containing for each note ID the modification
+		 * time.
+		 */
+		notesModTime: this.build('notesInfo'),
 		/**
 		 * Removes all the empty notes for the current user.
 		 */
