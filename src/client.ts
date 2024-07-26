@@ -744,7 +744,8 @@ export class YankiConnect {
 		/**
 		 * Creates multiple notes using the given deck and model, with the provided
 		 * field values and tags. Returns an array of identifiers of the created
-		 * notes (notes that could not be created will have a `null` identifier).
+		 * notes. In the event of any errors, all errors are gathered and returned.
+		 *
 		 * Please see the documentation for `addNote` for an explanation of objects
 		 * in the `notes` array.
 		 */
