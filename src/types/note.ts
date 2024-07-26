@@ -94,6 +94,7 @@ export type NoteRequests =
 				>
 				modelName: string
 				noteId: number
+				profile: string
 				tags: string[]
 			}>
 	  >

@@ -494,6 +494,10 @@ export class YankiConnect {
 		 */
 		exportPackage: this.build('exportPackage'),
 		/**
+		 * Retrieve the active profile.
+		 */
+		getActiveProfile: this.build('getActiveProfile'),
+		/**
 		 * Retrieve the list of profiles.
 		 */
 		getProfiles: this.build('getProfiles'),
@@ -790,7 +794,8 @@ export class YankiConnect {
 		getTags: this.build('getTags'),
 		/**
 		 * Returns a list of objects containing for each note ID the note fields,
-		 * tags, note type and the cards belonging to the note.
+		 * tags, note type, the cards belonging to the note and the profile where
+		 * the note was created.
 		 */
 		notesInfo: this.build('notesInfo'),
 		/**
