@@ -88,7 +88,7 @@ const decks = await client.decks.deckNames()
 console.log(decks) // ["Your", "Deck", "Names", "Here"]
 ```
 
-All 111 Anki-Connect actions are exposed under their respective groups, with type data for both parameters and return types:
+All 113 Anki-Connect actions are exposed under their respective groups, with type data for both parameters and return types:
 
 ```ts
 client.card
