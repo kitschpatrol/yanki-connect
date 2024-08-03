@@ -42,6 +42,7 @@
 		"anki-connect",
 		"client",
 		"api",
+		"yanki",
 		"npm-package"
 	],
 	"scripts": {
@@ -54,16 +55,16 @@
 		"test-browser": "vite"
 	},
 	"dependencies": {
-		"@types/node": "^20.14.12",
+		"@types/node": "^20.14.14",
 		"open": "^10.1.0"
 	},
 	"devDependencies": {
 		"@kitschpatrol/shared-config": "^4.7.2",
-		"bumpp": "^9.4.1",
-		"pkgroll": "^2.4.1",
+		"bumpp": "^9.4.2",
+		"pkgroll": "^2.4.2",
 		"typescript": "^5.5.4",
 		"vite": "^5.3.5",
-		"vitest": "^2.0.4"
+		"vitest": "^2.0.5"
 	},
 	"publishConfig": {
 		"access": "public"
