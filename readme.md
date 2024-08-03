@@ -83,7 +83,7 @@ import { YankiConnect } from 'yanki-connect'
 
 const client = new YankiConnect()
 
-const decks = await client.decks.deckNames()
+const decks = await client.deck.deckNames()
 
 console.log(decks) // ["Your", "Deck", "Names", "Here"]
 ```
@@ -150,7 +150,7 @@ console.log(noteId) // e.g. 1716968687679
 import { YankiConnect } from 'yanki-connect'
 
 const client = new YankiConnect()
-const decks = await client.decks.deckNames()
+const decks = await client.deck.deckNames()
 console.log(decks) // ["Your", "Deck", "Names", "Here"]
 ```
 
