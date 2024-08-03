@@ -55,8 +55,8 @@ export type MiscellaneousRequests =
 					version: boolean
 			  }
 	  >
-	| Request<'getProfiles', 6, never, string[]>
 	| Request<'getActiveProfile', 6, never, string>
+	| Request<'getProfiles', 6, never, string[]>
 	| Request<'loadProfile', 6, { name: string }, true> // Also false?
 	| Request<'reloadCollection', 6>
 	| Request<'sync', 6>
