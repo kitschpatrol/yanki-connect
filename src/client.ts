@@ -59,7 +59,7 @@ export type YankiConnectOptions = {
 	 *    instantiated.
 	 *
 	 * The Anki desktop app must be running for the client and the underlying
-	 * AnkiConnect service to work.
+	 * Anki-Connect service to work.
 	 *
 	 * Currently supported on macOS only.
 	 *
