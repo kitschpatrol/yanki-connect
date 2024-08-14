@@ -18,7 +18,7 @@
 		"url": "https://ericmika.com"
 	},
 	"license": "MIT",
-	"packageManager": "pnpm@9.6.0",
+	"packageManager": "pnpm@9.7.1",
 	"engines": {
 		"node": "^18.19.0 || >=20.5.0",
 		"pnpm": ">=9.0.0"
@@ -47,7 +47,7 @@
 	],
 	"scripts": {
 		"build": "pkgroll --clean-dist --minify --sourcemap",
-		"clean": "git clean -fdX && rm ./pnpm-lock.yaml",
+		"clean": "rimraf ./pnpm-lock.yaml && git clean -fdX",
 		"fix": "shared-config --fix",
 		"lint": "shared-config --lint",
 		"release": "pnpm bumpp --commit 'Release: %s' && pnpm build && pnpm publish --otp $(op read 'op://Personal/Npmjs/one-time password?attribute=otp')",
@@ -55,15 +55,16 @@
 		"test-browser": "vite"
 	},
 	"dependencies": {
-		"@types/node": "^20.14.14",
+		"@types/node": "18.19.0",
 		"open": "^10.1.0"
 	},
 	"devDependencies": {
 		"@kitschpatrol/shared-config": "^4.7.2",
-		"bumpp": "^9.4.2",
+		"bumpp": "^9.5.1",
 		"pkgroll": "^2.4.2",
+		"rimraf": "^6.0.1",
 		"typescript": "^5.5.4",
-		"vite": "^5.3.5",
+		"vite": "^5.4.0",
 		"vitest": "^2.0.5"
 	},
 	"publishConfig": {

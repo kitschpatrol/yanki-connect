@@ -4,6 +4,7 @@ import { name } from './package.json'
 import fs from 'node:fs/promises'
 import os from 'node:os'
 import path from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { defineConfig } from 'vite'
 
 const tempDirectory = await fs.mkdtemp(path.join(os.tmpdir(), name))
@@ -17,12 +18,12 @@ export default defineConfig({
 		},
 		target: 'esnext',
 	},
-	root: path.resolve(import.meta.dirname, 'test-browser'),
+	root: path.resolve(path.dirname(fileURLToPath(import.meta.url)), 'test-browser'),
 	server: {
 		open: true,
 	},
 	test: {
-		root: path.resolve(import.meta.dirname),
+		root: path.resolve(path.dirname(fileURLToPath(import.meta.url))),
 		// Enable serial mode
 		sequence: {
 			concurrent: false,
