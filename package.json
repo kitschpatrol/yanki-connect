@@ -1,6 +1,6 @@
 {
 	"name": "yanki-connect",
-	"version": "2.1.1",
+	"version": "2.1.2",
 	"type": "module",
 	"description": "A fully-typed Anki-Connect API client.",
 	"repository": {
