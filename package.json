@@ -59,7 +59,7 @@
 		"open": "^10.1.0"
 	},
 	"devDependencies": {
-		"@kitschpatrol/shared-config": "^4.7.4",
+		"@kitschpatrol/shared-config": "^4.7.5",
 		"@vitest/browser": "^2.0.5",
 		"@vitest/coverage-istanbul": "^2.0.5",
 		"bumpp": "^9.5.2",

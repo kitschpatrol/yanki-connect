@@ -1,25 +1,21 @@
 {
 	"$schema": "https://raw.githubusercontent.com/streetsidesoftware/cspell/main/cspell.schema.json",
-	"ignorePaths": ["bin/"],
+	"ignorePaths": [],
 	"import": "@kitschpatrol/cspell-config",
 	"words": [
 		"afmt",
-		"apkg",
 		"bafmt",
 		"bfont",
 		"bqfmt",
 		"bsize",
 		"flds",
 		"latexsvg",
-		"Lijun's",
 		"odid",
 		"odue",
 		"qfmt",
 		"replayq",
 		"Sched",
 		"sortf",
-		"tmpls",
-		"Yankī",
-		"Yatskov"
+		"tmpls"
 	]
 }
