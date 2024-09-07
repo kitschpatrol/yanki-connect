@@ -1,5 +1,5 @@
-import { YankiConnect } from '../src'
 import { describe, expect, it } from 'vitest'
+import { YankiConnect } from '../src'
 
 // These tests only run locally...
 // TODO load test fixture data in Anki

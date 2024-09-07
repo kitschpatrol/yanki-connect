@@ -54,8 +54,8 @@ export type DeckRequests =
 	| Request<'deckNamesAndIds', 6, never, Record<string, number>>
 	| Request<'deleteDecks', 6, { cardsToo: true; decks: string[] }>
 	| Request<'getDeckConfig', 6, { deck: string }, DeckConfig>
-	| Request<'getDeckStats', 6, { decks: string[] }, Record<string, DeckStats>>
 	| Request<'getDecks', 6, Record<'cards', number[]>, Record<string, number[]>>
+	| Request<'getDeckStats', 6, { decks: string[] }, Record<string, DeckStats>>
 	| Request<'removeDeckConfigId', 6, { configId: number }, boolean>
 	| Request<'saveDeckConfig', 6, { config: DeckConfig }, boolean>
 	| Request<'setDeckConfigId', 6, { configId: number; decks: string[] }, boolean>

@@ -3,8 +3,8 @@
 
 import type {
 	Actions,
-	ActionsWithParams,
 	ActionsWithoutParams,
+	ActionsWithParams,
 	AnkiConnectVersion,
 	ParamsForAction,
 	ResponseForAction,
@@ -77,7 +77,7 @@ export type YankiConnectOptions = {
 	 *
 	 * @default fetch
 	 */
-	fetchAdapter: YankiFetchAdapter | undefined
+	fetchAdapter: undefined | YankiFetchAdapter
 	/**
 	 * Host where the Anki-Connect service is running.
 	 *
@@ -273,14 +273,14 @@ export class YankiConnect {
 		 * Gets the configuration group object for the given deck.
 		 */
 		getDeckConfig: this.build('getDeckConfig'),
-		/** Gets statistics such as total cards and cards due for the given decks.
-		 */
-		getDeckStats: this.build('getDeckStats'),
 		/**
 		 * Accepts an array of card IDs and returns an object with each deck name as
 		 * a key, and its value an array of the given cards which belong to it.
 		 */
 		getDecks: this.build('getDecks'),
+		/** Gets statistics such as total cards and cards due for the given decks.
+		 */
+		getDeckStats: this.build('getDeckStats'),
 		/**
 		 * Removes the configuration group with the given ID, returning `true` if
 		 * successful, or `false` if attempting to remove either the default
@@ -393,17 +393,17 @@ export class YankiConnect {
 		 */
 		guiImportFile: this.build('guiImportFile'),
 		/**
-		 * Finds the open instance of the Card Browser dialog and selects a note
-		 * given a note identifier. Returns `true` if the _Card Browser_ is open,
-		 * `false` otherwise.
-		 */
-		guiSelectNote: this.build('guiSelectNote'),
-		/**
 		 * Finds the open instance of the _Card Browser_ dialog and returns an array
 		 * of identifiers of the notes that are selected. Returns an empty list if
 		 * the browser is not open.
 		 */
 		guiSelectedNotes: this.build('guiSelectedNotes'),
+		/**
+		 * Finds the open instance of the Card Browser dialog and selects a note
+		 * given a note identifier. Returns `true` if the _Card Browser_ is open,
+		 * `false` otherwise.
+		 */
+		guiSelectNote: this.build('guiSelectNote'),
 		/**
 		 * Shows answer text for the current card; returns `true` if in review mode
 		 * or `false` otherwise.
