@@ -3,22 +3,16 @@
 	"version": "2.1.5",
 	"type": "module",
 	"description": "A fully-typed Anki-Connect API client.",
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/kitschpatrol/yanki-connect.git"
-	},
+	"repository": "github:kitschpatrol/yanki-connect",
 	"homepage": "https://github.com/kitschpatrol/yanki-connect",
-	"bugs": {
-		"url": "https://github.com/kitschpatrol/yanki-connect/issues",
-		"email": "eric@ericmika.com"
-	},
+	"bugs": "https://github.com/kitschpatrol/yanki-connect/issues",
 	"author": {
 		"name": "Eric Mika",
 		"email": "eric@ericmika.com",
 		"url": "https://ericmika.com"
 	},
 	"license": "MIT",
-	"packageManager": "pnpm@9.9.0",
+	"packageManager": "pnpm@9.10.0",
 	"engines": {
 		"node": "^18.19.0 || >=20.5.0",
 		"pnpm": ">=9.0.0"
@@ -47,11 +41,11 @@
 	],
 	"scripts": {
 		"build": "pkgroll --clean-dist --minify --sourcemap",
-		"clean": "rimraf ./pnpm-lock.yaml && git clean -fdX",
+		"clean": "git rm -f pnpm-lock.yaml ; git clean -fdX",
 		"coverage": "vitest run --coverage",
 		"fix": "shared-config --fix",
 		"lint": "shared-config --lint",
-		"release": "pnpm bumpp --commit 'Release: %s' && pnpm build && pnpm publish --otp $(op read 'op://Personal/Npmjs/one-time password?attribute=otp')",
+		"release": "bumpp --commit 'Release: %s' && pnpm run build && pnpm publish --otp $(op read 'op://Personal/Npmjs/one-time password?attribute=otp')",
 		"test": "vitest"
 	},
 	"dependencies": {
@@ -59,16 +53,15 @@
 		"open": "^10.1.0"
 	},
 	"devDependencies": {
-		"@kitschpatrol/shared-config": "^4.7.5",
-		"@vitest/browser": "^2.0.5",
-		"@vitest/coverage-istanbul": "^2.0.5",
+		"@kitschpatrol/shared-config": "^4.7.9",
+		"@vitest/browser": "^2.1.1",
+		"@vitest/coverage-istanbul": "^2.1.1",
 		"bumpp": "^9.5.2",
-		"pkgroll": "^2.4.2",
-		"playwright": "^1.47.0",
-		"rimraf": "^6.0.1",
-		"typescript": "^5.5.4",
-		"vite": "^5.4.3",
-		"vitest": "^2.0.5"
+		"pkgroll": "^2.5.0",
+		"playwright": "^1.47.1",
+		"typescript": "^5.6.2",
+		"vite": "^5.4.5",
+		"vitest": "^2.1.1"
 	},
 	"publishConfig": {
 		"access": "public"
