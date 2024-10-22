@@ -117,6 +117,25 @@ The `YankiConnect` class features sensible defaults that should work fine for mo
 | `key`        | `string`                   | Anki-Connect security key. Usually not required.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   | `undefined`          |
 | `autoLaunch` | `boolean \| 'immediately'` | Attempt to launch the Anki desktop application if it's not already running.<br><ul><li>`true` will always attempt to open Anki _when a request is made_. This might introduce significant latency on the first launch.</li><li>`false` will never attempt to open Anki. Requests will fail until something or someone opens the Anki app.</li><li>`'immediately'` is a special option that will open Anki when the client is instantiated.</li></ul>The Anki desktop app must be running for the client and the underlying Anki-Connect service to work.<br><br>Currently supported on macOS only. | `false`              |
 
+### Bundling for the browser
+
+If you're using a build tool like [Vite](https://vite.dev/) to include Yanki Connect in your browser-based project, you'll need to externalize Node-specific dependencies.
+
+Add the following to your Vite config:
+
+```ts
+import { defineConfig } from 'vite'
+
+export default defineConfig({
+  build: {
+    minify: false,
+    rollupOptions: {
+      external: ['open'],
+    },
+  },
+})
+```
+
 ### Examples
 
 #### Creating a note
