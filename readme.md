@@ -21,7 +21,7 @@
 
 ## Overview
 
-Yanki Connect exists to streamline development of JavaScript and TypeScript applications that use Alex Yatskov's [Anki-Connect](https://git.foosoft.net/alex/anki-connect/src/branch/master/README.md#supported-actions). The library provides extensive type annotations for the Anki-Connect API, and includes a turn-key client implementation.
+Yanki Connect exists to streamline development of JavaScript and TypeScript applications that use Alex Yatskov's [Anki-Connect](https://git.foosoft.net/alex/anki-connect/src/branch/master/README.md#supported-actions) to interface with the [Anki](https://apps.ankiweb.net) spaced repetition flashcard software. The library provides extensive type annotations for the Anki-Connect API, and includes a turn-key client implementation.
 
 The "Y" prefix in "Yanki" is in the "Yet another" naming tradition; a nod to Anki's robust and occasionally duplicative ecosystem of third-party tools. (Also, appropriately, Yankī are a variety of [truant youth](https://en.wikipedia.org/wiki/Yankee#/media/File:ヤンキー.jpg).)
 
