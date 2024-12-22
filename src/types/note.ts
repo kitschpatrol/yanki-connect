@@ -3,9 +3,9 @@
 import { type Request } from './shared'
 
 export type NoteModel =
+	| 'Basic'
 	| 'Basic (and reversed card)'
 	| 'Basic (type in the answer)'
-	| 'Basic'
 	| 'Cloze'
 	| ({} & string) // Allow arbitrary strings too
 
@@ -40,6 +40,8 @@ export type NoteWithCreationOptions = {
 } & Note
 
 export type NoteRequests =
+	| Request<'addNote', 6, { note: NoteWithCreationOptions }, null | number>
+	| Request<'addNotes', 6, { notes: NoteWithCreationOptions[] }, Array<null | string>>
 	| Request<
 			'addTags',
 			6,
@@ -48,6 +50,7 @@ export type NoteRequests =
 				tags: string // Array allowed?
 			}
 	  >
+	| Request<'canAddNotes', 6, { notes: NoteWithCreationOptions[] }, boolean[]>
 	| Request<
 			'canAddNotesWithErrorDetail',
 			6,
@@ -60,6 +63,8 @@ export type NoteRequests =
 				| { canAdd: true }
 			>
 	  >
+	| Request<'clearUnusedTags', 6, never, string[]>
+	| Request<'deleteNotes', 6, { notes: number[] }>
 	| Request<
 			'findNotes',
 			6,
@@ -77,6 +82,7 @@ export type NoteRequests =
 			},
 			string[]
 	  >
+	| Request<'getTags', 6, never, string[]>
 	| Request<
 			'notesInfo',
 			6,
@@ -110,6 +116,7 @@ export type NoteRequests =
 				noteId: number
 			}>
 	  >
+	| Request<'removeEmptyNotes', 6>
 	| Request<
 			'removeTags',
 			6,
@@ -189,10 +196,3 @@ export type NoteRequests =
 				tags: string[]
 			}
 	  >
-	| Request<'addNote', 6, { note: NoteWithCreationOptions }, null | number>
-	| Request<'addNotes', 6, { notes: NoteWithCreationOptions[] }, Array<null | string>>
-	| Request<'canAddNotes', 6, { notes: NoteWithCreationOptions[] }, boolean[]>
-	| Request<'clearUnusedTags', 6, never, string[]>
-	| Request<'deleteNotes', 6, { notes: number[] }>
-	| Request<'getTags', 6, never, string[]>
-	| Request<'removeEmptyNotes', 6>

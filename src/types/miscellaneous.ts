@@ -22,6 +22,8 @@ export type MiscellaneousRequests =
 			},
 			boolean
 	  >
+	| Request<'getActiveProfile', 6, never, string>
+	| Request<'getProfiles', 6, never, string[]>
 	| Request<
 			'importPackage',
 			6,
@@ -30,6 +32,7 @@ export type MiscellaneousRequests =
 			},
 			boolean
 	  >
+	| Request<'loadProfile', 6, { name: string }, true> // Also false?
 	| Request<
 			'multi',
 			6, // Crazy, have to call this experimental
@@ -42,6 +45,7 @@ export type MiscellaneousRequests =
 			},
 			Array<{ error: null | string; result: Requests['response'] } | Requests['response']>
 	  >
+	| Request<'reloadCollection', 6>
 	| Request<
 			'requestPermission',
 			6,
@@ -55,9 +59,5 @@ export type MiscellaneousRequests =
 					version: boolean
 			  }
 	  >
-	| Request<'getActiveProfile', 6, never, string>
-	| Request<'getProfiles', 6, never, string[]>
-	| Request<'loadProfile', 6, { name: string }, true> // Also false?
-	| Request<'reloadCollection', 6>
 	| Request<'sync', 6>
 	| Request<'version', 6, never, number> // Currently versions 1 through 6 are defined.

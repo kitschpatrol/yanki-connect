@@ -5,6 +5,8 @@ import { type Note } from './note'
 import { type Request } from './shared'
 
 export type GraphicalRequests =
+	| Request<'guiAddCards', 6, { note: Note }, number>
+	| Request<'guiAnswerCard', 6, { ease: number }, boolean>
 	| Request<
 			'guiBrowse',
 			6,
@@ -17,8 +19,6 @@ export type GraphicalRequests =
 			},
 			number[]
 	  > // Query syntax: https://docs.ankiweb.net/searching.html
-	| Request<'guiAddCards', 6, { note: Note }, number>
-	| Request<'guiAnswerCard', 6, { ease: number }, boolean>
 	| Request<'guiCheckDatabase', 6, never, true> // True even if errors detected
 	| Request<'guiCurrentCard', 6, never, CardInfo | null>
 	| Request<'guiDeckBrowser', 6>

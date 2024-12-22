@@ -1,6 +1,9 @@
 import { type Request } from './shared'
 
 export type MediaRequests =
+	| Request<'deleteMediaFile', 6, { filename: string }>
+	| Request<'getMediaDirPath', 6, never, string>
+	| Request<'getMediaFilesNames', 6, { pattern: string }, string[]>
 	| Request<
 			'retrieveMediaFile',
 			6,
@@ -21,6 +24,3 @@ export type MediaRequests =
 			},
 			string
 	  >
-	| Request<'deleteMediaFile', 6, { filename: string }>
-	| Request<'getMediaDirPath', 6, never, string>
-	| Request<'getMediaFilesNames', 6, { pattern: string }, string[]>
