@@ -30,5 +30,6 @@
 	],
 	"prettier.enable": true,
 	"stylelint.enable": true,
-	"stylelint.validate": ["css", "html"]
+	"stylelint.validate": ["css", "html"],
+	"cSpell.blockCheckingWhenTextChunkSizeGreaterThan": 1000
 }
