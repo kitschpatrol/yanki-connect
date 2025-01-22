@@ -12,7 +12,7 @@
 		"url": "https://ericmika.com"
 	},
 	"license": "MIT",
-	"packageManager": "pnpm@9.15.1",
+	"packageManager": "pnpm@9.15.4",
 	"engines": {
 		"node": "^18.19.0 || >=20.5.0",
 		"pnpm": ">=9.0.0"
@@ -56,11 +56,11 @@
 		"@kitschpatrol/shared-config": "^4.7.12",
 		"@vitest/browser": "^2.1.8",
 		"@vitest/coverage-istanbul": "^2.1.8",
-		"bumpp": "^9.9.2",
-		"pkgroll": "^2.5.1",
+		"bumpp": "^9.10.2",
+		"pkgroll": "^2.6.1",
 		"playwright": "^1.49.1",
-		"typescript": "^5.7.2",
-		"vite": "^5.4.11",
+		"typescript": "^5.7.3",
+		"vite": "^5.4.14",
 		"vitest": "^2.1.8"
 	},
 	"publishConfig": {
