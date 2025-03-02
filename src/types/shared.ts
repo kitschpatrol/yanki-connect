@@ -45,7 +45,7 @@ export type Requests =
 export type AnkiConnectVersion = 6
 
 // Helpers
-export type ActionsForRequests<T extends Requests> = T['action']
+// export type ActionsForRequests<T extends Requests> = T['action']
 export type Actions = Requests['action']
 
 export type ActionsWithParams = {

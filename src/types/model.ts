@@ -2,7 +2,7 @@
 
 import { type Request } from './shared'
 
-export type ModelField = {
+type ModelField = {
 	collapsed: boolean
 	description: string
 	excludeFromSearch: boolean
@@ -18,7 +18,7 @@ export type ModelField = {
 	tag: null // Always?
 }
 
-export type ModelTemplate = {
+type ModelTemplate = {
 	afmt: string
 	bafmt: string
 	bfont: string
@@ -31,7 +31,7 @@ export type ModelTemplate = {
 	qfmt: string
 }
 
-export type Model = {
+type Model = {
 	css: string
 	did: null // Always?
 	flds: ModelField[]
@@ -49,7 +49,7 @@ export type Model = {
 	usn: number
 }
 
-export type ModelToCreate = {
+type ModelToCreate = {
 	cardTemplates: Array<{
 		[key: string]: string
 		Back: string

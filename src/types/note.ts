@@ -2,14 +2,14 @@
 
 import { type Request } from './shared'
 
-export type NoteModel =
+type NoteModel =
 	| 'Basic'
 	| 'Basic (and reversed card)'
 	| 'Basic (type in the answer)'
 	| 'Cloze'
 	| (string & {}) // Allow arbitrary strings too
 
-export type NoteMedia = {
+type NoteMedia = {
 	data?: string // First priority, must have one of these three
 	fields: string[]
 	path?: string // Second priority, must have one of these three
@@ -27,7 +27,7 @@ export type Note = {
 	video?: NoteMedia[]
 }
 
-export type NoteWithCreationOptions = Note & {
+type NoteWithCreationOptions = Note & {
 	options?: {
 		allowDuplicate?: boolean
 		duplicateScope?: 'deck' | (string & {}) // Only deck is official, any other value represents the entire collection

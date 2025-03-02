@@ -1,6 +1,6 @@
 import { type Request } from './shared'
 
-export type DeckStats = {
+type DeckStats = {
 	deck_id: number
 	learn_count: number
 	name: string
@@ -9,7 +9,7 @@ export type DeckStats = {
 	total_in_deck: number
 }
 
-export type DeckConfig = {
+type DeckConfig = {
 	autoplay: boolean
 	dyn: boolean
 	id: number

@@ -24,7 +24,7 @@ export type CardBrowserColumns =
 	| (string & {}) // Allow arbitrary strings too
 
 // See https://github.com/ankidroid/Anki-Android/wiki/Database-Structure#cards
-export type CardValueKeys =
+type CardValueKeys =
 	| 'data' // Text not null
 	| 'did' // Integer not null,
 	| 'due' // Integer not null,

@@ -1,6 +1,6 @@
 import { type Request } from './shared'
 
-export type ReviewStatisticTuple = [
+type ReviewStatisticTuple = [
 	reviewTime: number,
 	cardID: number,
 	usn: number,
