@@ -1,13 +1,14 @@
+/* eslint-disable node/no-unsupported-features/node-builtins */
+/* eslint-disable unicorn/prefer-global-this */
+
 export const ENVIRONMENT =
 	typeof window === 'undefined' ? (typeof process === 'undefined' ? 'other' : 'node') : 'browser'
 
 export const PLATFORM =
 	ENVIRONMENT === 'browser'
-		? // eslint-disable-next-line n/no-unsupported-features/node-builtins
-			/windows/i.test(navigator.userAgent)
+		? /windows/i.test(navigator.userAgent)
 			? 'windows'
-			: // eslint-disable-next-line n/no-unsupported-features/node-builtins
-				/mac/i.test(navigator.userAgent)
+			: /mac/i.test(navigator.userAgent)
 				? 'mac'
 				: 'other'
 		: ENVIRONMENT === 'node'

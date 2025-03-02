@@ -1,34 +1,7 @@
 {
 	"name": "yanki-connect",
 	"version": "2.1.10",
-	"type": "module",
 	"description": "A fully-typed Anki-Connect API client.",
-	"repository": "github:kitschpatrol/yanki-connect",
-	"homepage": "https://github.com/kitschpatrol/yanki-connect",
-	"bugs": "https://github.com/kitschpatrol/yanki-connect/issues",
-	"author": {
-		"name": "Eric Mika",
-		"email": "eric@ericmika.com",
-		"url": "https://ericmika.com"
-	},
-	"license": "MIT",
-	"packageManager": "pnpm@9.15.4",
-	"engines": {
-		"node": "^18.19.0 || >=20.5.0",
-		"pnpm": ">=9.0.0"
-	},
-	"main": "./dist/index.js",
-	"module": "./dist/index.js",
-	"exports": {
-		".": {
-			"import": "./dist/index.js",
-			"types": "./dist/index.d.ts"
-		}
-	},
-	"types": "./dist/index.d.ts",
-	"files": [
-		"dist"
-	],
 	"keywords": [
 		"anki",
 		"flashcards",
@@ -39,12 +12,37 @@
 		"yanki",
 		"npm-package"
 	],
+	"homepage": "https://github.com/kitschpatrol/yanki-connect",
+	"bugs": "https://github.com/kitschpatrol/yanki-connect/issues",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/kitschpatrol/yanki-connect"
+	},
+	"license": "MIT",
+	"author": {
+		"name": "Eric Mika",
+		"email": "eric@ericmika.com",
+		"url": "https://ericmika.com"
+	},
+	"type": "module",
+	"exports": {
+		".": {
+			"import": "./dist/index.js",
+			"types": "./dist/index.d.ts"
+		}
+	},
+	"main": "./dist/index.js",
+	"module": "./dist/index.js",
+	"types": "./dist/index.d.ts",
+	"files": [
+		"dist"
+	],
 	"scripts": {
-		"build": "pkgroll --clean-dist --minify --sourcemap",
+		"build": "pkgroll --clean-dist --minify --sourcemap --tsconfig tsconfig.build.json",
 		"clean": "git rm -f pnpm-lock.yaml ; git clean -fdX",
 		"coverage": "vitest run --coverage",
-		"fix": "shared-config --fix",
-		"lint": "shared-config --lint",
+		"fix": "kpi fix",
+		"lint": "kpi lint",
 		"release": "bumpp --commit 'Release: %s' && pnpm run build && pnpm publish --otp $(op read 'op://Personal/Npmjs/one-time password?attribute=otp')",
 		"test": "vitest"
 	},
@@ -53,17 +51,33 @@
 		"open": "^10.1.0"
 	},
 	"devDependencies": {
-		"@kitschpatrol/shared-config": "^4.7.12",
+		"@kitschpatrol/shared-config": "^5.0.6",
 		"@vitest/browser": "^2.1.8",
 		"@vitest/coverage-istanbul": "^2.1.8",
+		"@vitest/coverage-v8": "^3.0.7",
 		"bumpp": "^9.10.2",
 		"pkgroll": "^2.6.1",
 		"playwright": "^1.49.1",
-		"typescript": "^5.7.3",
+		"typescript": "~5.7.3",
 		"vite": "^5.4.14",
 		"vitest": "^2.1.8"
 	},
+	"packageManager": "pnpm@10.5.2",
+	"engines": {
+		"node": "^18.19.0 || >=20.11.0",
+		"pnpm": ">=10.0.0"
+	},
 	"publishConfig": {
 		"access": "public"
+	},
+	"pnpm": {
+		"onlyBuiltDependencies": [
+			"esbuild",
+			"msw",
+			"puppeteer"
+		],
+		"overrides": {
+			"eslint-plugin-markdown": "^5.1.0"
+		}
 	}
 }

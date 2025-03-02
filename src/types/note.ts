@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/ban-types */
+/* eslint-disable ts/no-restricted-types */
 
 import { type Request } from './shared'
 
@@ -7,7 +7,7 @@ export type NoteModel =
 	| 'Basic (and reversed card)'
 	| 'Basic (type in the answer)'
 	| 'Cloze'
-	| ({} & string) // Allow arbitrary strings too
+	| (string & {}) // Allow arbitrary strings too
 
 export type NoteMedia = {
 	data?: string // First priority, must have one of these three
@@ -27,17 +27,17 @@ export type Note = {
 	video?: NoteMedia[]
 }
 
-export type NoteWithCreationOptions = {
+export type NoteWithCreationOptions = Note & {
 	options?: {
 		allowDuplicate?: boolean
-		duplicateScope?: 'deck' | ({} & string) // Only deck is official, any other value represents the entire collection
+		duplicateScope?: 'deck' | (string & {}) // Only deck is official, any other value represents the entire collection
 		duplicateScopeOptions?: {
 			checkAllModels?: boolean
 			checkChildren?: boolean
 			deckName?: null | string
 		}
 	}
-} & Note
+}
 
 export type NoteRequests =
 	| Request<'addNote', 6, { note: NoteWithCreationOptions }, null | number>

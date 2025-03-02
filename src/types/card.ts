@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/ban-types */
+/* eslint-disable ts/no-restricted-types */
 
 import { type Request } from './shared'
 
@@ -21,7 +21,7 @@ export type CardBrowserColumns =
 	| 'noteTags'
 	| 'question'
 	| 'template'
-	| ({} & string) // Allow arbitrary strings too
+	| (string & {}) // Allow arbitrary strings too
 
 // See https://github.com/ankidroid/Anki-Android/wiki/Database-Structure#cards
 export type CardValueKeys =

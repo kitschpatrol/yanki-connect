@@ -160,7 +160,7 @@ const note = {
 
 const noteId = await client.note.addNote(note)
 
-console.log(noteId) // e.g. 1716968687679
+console.log(noteId) // E.g. 1716968687679
 ```
 
 #### Listing decks

@@ -1,5 +1,5 @@
-/* eslint-disable @typescript-eslint/member-ordering */
-/* eslint-disable @typescript-eslint/unified-signatures */
+/* eslint-disable ts/member-ordering */
+/* eslint-disable ts/unified-signatures */
 
 import type {
 	Actions,
@@ -36,14 +36,14 @@ export type YankiFetchAdapter = (
 		mode?: RequestMode
 	},
 ) => Promise<
+	| undefined
 	| {
-			// eslint-disable-next-line n/no-unsupported-features/node-builtins
+			// eslint-disable-next-line node/no-unsupported-features/node-builtins
 			headers: Headers | Record<string, string>
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			// eslint-disable-next-line ts/no-explicit-any
 			json(): Promise<any>
 			status: number
 	  }
-	| undefined
 >
 
 /** Optional options to pass when instantiating a new YankiConnect instance. */
@@ -52,11 +52,11 @@ export type YankiConnectOptions = {
 	 * Attempt to open the desktop Anki.app if it's not already running.
 	 *
 	 * - `true` will always attempt to open Anki _when a request is made_. This
-	 *   might introduce significant latency on the first launch.
+	 * might introduce significant latency on the first launch.
 	 * - `false` will never attempt to open Anki. Requests will fail until
-	 *   something or someone else opens the Anki app.
+	 * something or someone else opens the Anki app.
 	 * -  `immediately` is a special option that will open Anki when the client is
-	 *    instantiated.
+	 * instantiated.
 	 *
 	 * The Anki desktop app must be running for the client and the underlying
 	 * Anki-Connect service to work.
@@ -64,7 +64,6 @@ export type YankiConnectOptions = {
 	 * Currently supported on macOS only.
 	 *
 	 * The client does not attempt to close the app.
-	 *
 	 * @default false
 	 */
 	autoLaunch: 'immediately' | boolean
@@ -74,25 +73,21 @@ export type YankiConnectOptions = {
 	 * Note that the signature reflects the subset of the built-in Fetch interface that's actually used by yanki-connect.
 	 *
 	 * The exact signature of this option is subject to change in the future.
-	 *
 	 * @default fetch
 	 */
 	fetchAdapter: undefined | YankiFetchAdapter
 	/**
 	 * Host where the Anki-Connect service is running.
-	 *
 	 * @default 'http://127.0.0.1'
 	 */
 	host: string
 	/**
 	 * Anki-Connect security key (optional)
-	 *
 	 * @default undefined
 	 */
 	key: string | undefined
 	/**
 	 * Port where the Anki-Connect service is running.
-	 *
 	 * @default 8765
 	 */
 	port: number
@@ -100,7 +95,6 @@ export type YankiConnectOptions = {
 	 * Anki-Connect API version.
 	 *
 	 * Only API version 6 is supported for now.
-	 *
 	 * @default 6
 	 */
 	version: AnkiConnectVersion
@@ -108,7 +102,7 @@ export type YankiConnectOptions = {
 
 export const defaultYankiConnectOptions: YankiConnectOptions = {
 	autoLaunch: false,
-	// eslint-disable-next-line n/no-unsupported-features/node-builtins
+	// eslint-disable-next-line node/no-unsupported-features/node-builtins
 	fetchAdapter: fetch.bind(globalThis),
 	host: 'http://127.0.0.1',
 	key: undefined,
@@ -126,13 +120,6 @@ export const defaultYankiConnectOptions: YankiConnectOptions = {
  * readme.md](https://git.foosoft.net/alex/anki-connect/src/commit/306103c618f817a809b8043c1b8386dceedc4b0e/README.md)
  */
 export class YankiConnect {
-	private readonly autoLaunch: 'immediately' | boolean
-	private readonly fetchAdapter: YankiFetchAdapter
-	private readonly host: string
-	private readonly key: string | undefined
-	private readonly port: number
-	private readonly version: AnkiConnectVersion
-
 	/**
 	 * __Card Actions__
 	 *
@@ -231,7 +218,6 @@ export class YankiConnect {
 		 */
 		unsuspend: this.build('unsuspend'),
 	}
-
 	/**
 	 * __Deck Actions__
 	 *
@@ -248,7 +234,7 @@ export class YankiConnect {
 		 * group with the given ID, or from the default group if this is
 		 * unspecified. Returns the ID of the new configuration group, or `false` if
 		 * the specified group to clone from does not exist.
-		 * */
+		 */
 		cloneDeckConfigId: this.build('cloneDeckConfigId'),
 		/**
 		 * Create a new empty deck. Will not overwrite a deck that exists with the
@@ -278,7 +264,8 @@ export class YankiConnect {
 		 * a key, and its value an array of the given cards which belong to it.
 		 */
 		getDecks: this.build('getDecks'),
-		/** Gets statistics such as total cards and cards due for the given decks.
+		/**
+		  Gets statistics such as total cards and cards due for the given decks.
 		 */
 		getDeckStats: this.build('getDeckStats'),
 		/**
@@ -292,7 +279,7 @@ export class YankiConnect {
 		 * Saves the given configuration group, returning `true` on success or
 		 * `false` if the ID of the configuration group is invalid (such as when it
 		 * does not exist).
-		 * */
+		 */
 		saveDeckConfig: this.build('saveDeckConfig'),
 		/**
 		 * Changes the configuration group for the given decks to the one with the
@@ -301,7 +288,6 @@ export class YankiConnect {
 		 */
 		setDeckConfigId: this.build('setDeckConfigId'),
 	}
-
 	/**
 	 * __Graphical Actions__
 	 *
@@ -427,7 +413,6 @@ export class YankiConnect {
 		 */
 		guiUndo: this.build('guiUndo'),
 	}
-
 	/**
 	 * __Media Actions__
 	 *
@@ -468,7 +453,6 @@ export class YankiConnect {
 		 */
 		storeMediaFile: this.build('storeMediaFile'),
 	}
-
 	/**
 	 * __Miscellaneous Actions__
 	 *
@@ -556,7 +540,6 @@ export class YankiConnect {
 		 */
 		version: this.build('version'),
 	}
-
 	/**
 	 * __Model Actions__
 	 *
@@ -927,6 +910,18 @@ export class YankiConnect {
 		insertReviews: this.build('insertReviews'),
 	}
 
+	private readonly autoLaunch: 'immediately' | boolean
+
+	private readonly fetchAdapter: YankiFetchAdapter
+
+	private readonly host: string
+
+	private readonly key: string | undefined
+
+	private readonly port: number
+
+	private readonly version: AnkiConnectVersion
+
 	constructor(options?: Partial<YankiConnectOptions>) {
 		this.host = options?.host ?? defaultYankiConnectOptions.host
 		this.port = options?.port ?? defaultYankiConnectOptions.port
@@ -946,6 +941,7 @@ export class YankiConnect {
 			this.autoLaunch = false
 		}
 
+		// eslint-disable-next-line ts/no-unnecessary-condition
 		if (this.version !== 6) {
 			throw new Error('YankiConnect currently only supports Anki-Connect API version 6')
 		}
@@ -954,39 +950,6 @@ export class YankiConnect {
 			void launchAnkiApp()
 		}
 	}
-
-	/**
-	 * Factory for creating convenience functions for each action. Overload for
-	 * actions with / without params
-	 *
-	 * Note that the generated function returns the response's Result field! Any
-	 * errors, even from Anki, will throw.
-	 */
-	private build<T extends ActionsWithoutParams>(action: T): () => Promise<ResultForAction<T>>
-	private build<T extends ActionsWithParams>(
-		action: T,
-	): (params: ParamsForAction<T>) => Promise<ResultForAction<T>>
-
-	private build<T extends Actions>(
-		action: T,
-	): (params?: ParamsForAction<T>) => Promise<ResultForAction<T>>
-
-	// // Implementation, have to lie about the action type
-	private build<T extends ActionsWithParams>(
-		action: T,
-	): (params?: ParamsForAction<T>) => Promise<ResultForAction<T>> {
-		// Bang is a type appeasement...
-		return async (params?: ParamsForAction<T>) => {
-			const response = await this.invoke<T>(action, params!)
-			if (response.error !== null) {
-				throw new Error(String(response.error))
-			}
-
-			return response.result as ResultForAction<T>
-		}
-	}
-
-	// Single point of contact with the Anki Connect API.
 
 	/**
 	 * Directly invoke the Anki Connect API.
@@ -1086,6 +1049,36 @@ export class YankiConnect {
 		}
 
 		return responseJson
+	}
+
+	/**
+	 * Factory for creating convenience functions for each action. Overload for
+	 * actions with / without params
+	 *
+	 * Note that the generated function returns the response's Result field! Any
+	 * errors, even from Anki, will throw.
+	 */
+	private build<T extends ActionsWithoutParams>(action: T): () => Promise<ResultForAction<T>>
+	// Single point of contact with the Anki Connect API.
+	private build<T extends ActionsWithParams>(
+		action: T,
+	): (params: ParamsForAction<T>) => Promise<ResultForAction<T>>
+	private build<T extends Actions>(
+		action: T,
+	): (params?: ParamsForAction<T>) => Promise<ResultForAction<T>>
+	// Implementation, have to lie about the action type
+	private build<T extends ActionsWithParams>(
+		action: T,
+	): (params?: ParamsForAction<T>) => Promise<ResultForAction<T>> {
+		// Bang is a type appeasement...
+		return async (params?: ParamsForAction<T>) => {
+			const response = await this.invoke<T>(action, params!)
+			if (response.error !== null) {
+				throw new Error(String(response.error))
+			}
+
+			return response.result as ResultForAction<T>
+		}
 	}
 }
 

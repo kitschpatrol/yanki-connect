@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/ban-types */
+/* eslint-disable ts/no-restricted-types */
 
 import type { Request, Requests } from './shared'
 
@@ -43,7 +43,7 @@ export type MiscellaneousRequests =
 					version?: number
 				}>
 			},
-			Array<{ error: null | string; result: Requests['response'] } | Requests['response']>
+			Array<Requests['response'] | { error: null | string; result: Requests['response'] }>
 	  >
 	| Request<'reloadCollection', 6>
 	| Request<

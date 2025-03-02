@@ -5,6 +5,12 @@ const launchAttemptInterval = 5000
 let launchAttemptCount = 0
 const matchLaunchAttemptsPerSession = 100
 
+/**
+ * Launches the Anki desktop app if it is not already running.
+ *
+ * Mac only for now, and works on a best-effort basis.
+ * Retries as necessary, but times out eventually.
+ */
 export async function launchAnkiApp(): Promise<void> {
 	if (PLATFORM === 'mac' && ENVIRONMENT === 'node') {
 		const { openApp } = await import('open')

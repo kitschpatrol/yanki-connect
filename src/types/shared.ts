@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/ban-types */
+/* eslint-disable ts/no-restricted-types */
 
 import type { CardRequests } from './card'
 import type { DeckRequests } from './deck'
