@@ -1,6 +1,6 @@
 {
 	"name": "yanki-connect",
-	"version": "2.1.11",
+	"version": "2.1.12",
 	"description": "A fully-typed Anki-Connect API client.",
 	"keywords": [
 		"anki",
