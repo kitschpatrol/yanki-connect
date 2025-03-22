@@ -27,6 +27,7 @@ export type GraphicalRequests =
 	| Request<'guiEditNote', 6, { note: number }>
 	| Request<'guiExitAnki', 6> // Returns before it actually closes
 	| Request<'guiImportFile', 6, { path: string }>
+	| Request<'guiSelectCard', 6, { card: number }, boolean>
 	| Request<'guiSelectedNotes', 6, never, number[]>
 	| Request<'guiSelectNote', 6, { note: number }, boolean>
 	| Request<'guiShowAnswer', 6, never, boolean>

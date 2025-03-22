@@ -388,15 +388,19 @@ export class YankiConnect {
 		 */
 		guiImportFile: this.build('guiImportFile'),
 		/**
+		 * Finds the open instance of the Card Browser dialog and selects a card
+		 * given a card identifier. Returns true if the Card Browser is open, false
+		 * otherwise.
+		 */
+		guiSelectCard: this.build('guiSelectCard'),
+		/**
 		 * Finds the open instance of the _Card Browser_ dialog and returns an array
 		 * of identifiers of the notes that are selected. Returns an empty list if
 		 * the browser is not open.
 		 */
 		guiSelectedNotes: this.build('guiSelectedNotes'),
 		/**
-		 * Finds the open instance of the Card Browser dialog and selects a note
-		 * given a note identifier. Returns `true` if the _Card Browser_ is open,
-		 * `false` otherwise.
+		 * @deprecated Actually selects card IDs. Use `guiSelectCard` instead.'
 		 */
 		guiSelectNote: this.build('guiSelectNote'),
 		/**
