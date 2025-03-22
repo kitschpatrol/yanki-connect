@@ -112,9 +112,9 @@ export const defaultYankiConnectOptions: YankiConnectOptions = {
 
 /**
  * __YankiConnect is a client for the [Anki-Connect
- * API](https://git.sr.ht/~foosoft/anki-connect/)__.
+ * API](https://git.sr.ht/~foosoft/anki-connect/tree/ab4d964d96712788889eb35d79471966aaf17ef6/item/README.md)__.
  *
- * It implements every endpoint as of March 2025.
+ * It implements every endpoint from Anki-Connect version 25.2.25.0, released 2025-02-25.
  *
  * Inline documentation is by the Anki-Connect authors, generated from [the
  * readme.md](https://git.sr.ht/~foosoft/anki-connect/tree/47da1c5039f42ad004acc57f528d6f873caffdc9/item/README.md)
@@ -123,7 +123,7 @@ export class YankiConnect {
 	/**
 	 * __Card Actions__
 	 *
-	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/#card-actions)
+	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/ab4d964d96712788889eb35d79471966aaf17ef6/item/README.md#card-actions)
 	 */
 	public readonly card = {
 		/**
@@ -230,7 +230,7 @@ export class YankiConnect {
 	/**
 	 * __Deck Actions__
 	 *
-	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/#deck-actions)
+	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/ab4d964d96712788889eb35d79471966aaf17ef6/item/README.md#deck-actions)
 	 */
 	public readonly deck = {
 		/**
@@ -300,7 +300,7 @@ export class YankiConnect {
 	/**
 	 * __Graphical Actions__
 	 *
-	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/#graphical-actions)
+	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/ab4d964d96712788889eb35d79471966aaf17ef6/item/README.md#graphical-actions)
 	 */
 	public readonly graphical = {
 		/**
@@ -429,7 +429,7 @@ export class YankiConnect {
 	/**
 	 * __Media Actions__
 	 *
-	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/#media-actions)
+	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/ab4d964d96712788889eb35d79471966aaf17ef6/item/README.md#media-actions)
 	 */
 	public readonly media = {
 		/**
@@ -469,7 +469,7 @@ export class YankiConnect {
 	/**
 	 * __Miscellaneous Actions__
 	 *
-	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/#miscellaneous-actions)
+	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/ab4d964d96712788889eb35d79471966aaf17ef6/item/README.md#miscellaneous-actions)
 	 */
 	public readonly miscellaneous = {
 		/**
@@ -556,7 +556,7 @@ export class YankiConnect {
 	/**
 	 * __Model Actions__
 	 *
-	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/#model-actions)
+	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/ab4d964d96712788889eb35d79471966aaf17ef6/item/README.md#model-actions)
 	 */
 	public readonly model = {
 		/**
@@ -697,7 +697,7 @@ export class YankiConnect {
 	/**
 	 * __Note Actions__
 	 *
-	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/#note-actions)
+	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/ab4d964d96712788889eb35d79471966aaf17ef6/item/README.md#note-actions)
 	 */
 	public readonly note = {
 		/**
@@ -864,7 +864,7 @@ export class YankiConnect {
 	/**
 	 * __Statistic Actions__
 	 *
-	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/#statistic-actions)
+	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/ab4d964d96712788889eb35d79471966aaf17ef6/item/README.md#statistic-actions)
 	 */
 	public readonly statistic = {
 		/**
@@ -967,7 +967,7 @@ export class YankiConnect {
 	/**
 	 * Directly invoke the Anki Connect API.
 	 *
-	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/)
+	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/ab4d964d96712788889eb35d79471966aaf17ef6/item/README.md)
 	 *
 	 * Primarily for internal use, since the client provides a more convenient
 	 * methods on its class, e.g. instead of:
