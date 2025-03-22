@@ -89,6 +89,7 @@ export type CardRequests =
 	| Request<'getEaseFactors', 6, { cards: number[] }, number[]>
 	| Request<'getIntervals', 6, { cards: number[]; complete?: boolean }, number[] | number[][]>
 	| Request<'relearnCards', 6, { cards: number[] }>
+	| Request<'setDueDate', 6, { cards: number[]; days: string }, boolean>
 	| Request<'setEaseFactors', 6, { cards: number[]; easeFactors: number[] }, boolean[]> // TODO confirm return quantity
 	| Request<
 			'setSpecificValueOfCard',

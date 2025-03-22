@@ -187,6 +187,15 @@ export class YankiConnect {
 		 */
 		relearnCards: this.build('relearnCards'),
 		/**
+		 * Set Due Date. Turns cards into review cards if they are new, and makes
+		 * them due on a certain date.
+		 *
+		 * - 0 = today
+		 * - 1! = tomorrow + change interval to 1
+		 * - 3-7 = random choice of 3-7 days
+		 */
+		setDueDate: this.build('setDueDate'),
+		/**
 		 * Sets ease factor of cards by card ID; returns `true` if successful (all
 		 * cards existed) or `false` otherwise.
 		 */
