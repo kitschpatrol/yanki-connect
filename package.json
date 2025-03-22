@@ -47,22 +47,22 @@
 		"test": "vitest"
 	},
 	"dependencies": {
-		"@types/node": "^18.19.79",
+		"@types/node": "^18.19.81",
 		"open": "^10.1.0"
 	},
 	"devDependencies": {
-		"@kitschpatrol/shared-config": "^5.2.0",
-		"@vitest/browser": "^3.0.7",
-		"@vitest/coverage-istanbul": "^3.0.7",
-		"@vitest/coverage-v8": "^3.0.7",
-		"bumpp": "^10.0.3",
+		"@kitschpatrol/shared-config": "^5.3.1",
+		"@vitest/browser": "^3.0.9",
+		"@vitest/coverage-istanbul": "^3.0.9",
+		"@vitest/coverage-v8": "^3.0.9",
+		"bumpp": "^10.1.0",
 		"pkgroll": "^2.11.2",
-		"playwright": "^1.50.1",
-		"typescript": "~5.7.3",
-		"vite": "^6.2.0",
-		"vitest": "^3.0.7"
+		"playwright": "^1.51.1",
+		"typescript": "~5.8.2",
+		"vite": "^6.2.2",
+		"vitest": "^3.0.9"
 	},
-	"packageManager": "pnpm@10.5.2",
+	"packageManager": "pnpm@10.6.5",
 	"engines": {
 		"node": "^18.15.0 || >=20.11.0"
 	},
@@ -74,9 +74,6 @@
 			"esbuild",
 			"msw",
 			"puppeteer"
-		],
-		"overrides": {
-			"eslint-plugin-markdown": "^5.1.0"
-		}
+		]
 	}
 }
