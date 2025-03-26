@@ -30,7 +30,7 @@ This library is used in the [`yanki`](https://github.com/kitschpatrol/yanki) CLI
 ## Features
 
 - **Action method organization + convenience methods**\
-  Instead of putting 100+ methods in a single namespace, action convenience methods are organized into the same groups used in the [Anki-Connect documentation](https://git.sr.ht/~foosoft/anki-connect/tree/ab4d964d96712788889eb35d79471966aaf17ef6/item/README.md#supported-actions), to simplify auto-complete discoverability.
+  Instead of putting all <!-- actionCount -->115<!-- /actionCount --> methods in a single namespace, action convenience methods are organized into the same groups used in the [Anki-Connect documentation](https://git.sr.ht/~foosoft/anki-connect/tree/ab4d964d96712788889eb35d79471966aaf17ef6/item/README.md#supported-actions), to simplify auto-complete discoverability.
 
 - **Low-level access through the provided `invoke` method**\
   If you don't want to use the convenience methods, an `invoke(action, params)` method is also exposed on the YankiConnect class for direct interaction with the Anki-Connect API.
@@ -90,18 +90,136 @@ const decks = await client.deck.deckNames()
 console.log(decks) // ["Your", "Deck", "Names", "Here"]
 ```
 
-All 113 Anki-Connect actions are exposed under their respective groups, with type data for both parameters and return types:
+All <!-- actionCount -->115<!-- /actionCount --> Anki-Connect actions are exposed under their respective groups, with type data for both parameters and return types:
+
+<!-- actionList -->
 
 ```ts
-client.card
-client.deck
-client.graphical
-client.media
-client.miscellaneous
-client.model
-client.note
-client.statistic
+client.card.answerCards
+client.card.areDue
+client.card.areSuspended
+client.card.cardsInfo
+client.card.cardsModTime
+client.card.cardsToNotes
+client.card.findCards
+client.card.forgetCards
+client.card.getEaseFactors
+client.card.getIntervals
+client.card.relearnCards
+client.card.setDueDate
+client.card.setEaseFactors
+client.card.setSpecificValueOfCard
+client.card.suspend
+client.card.suspended
+client.card.unsuspend
+
+client.deck.changeDeck
+client.deck.cloneDeckConfigId
+client.deck.createDeck
+client.deck.deckNames
+client.deck.deckNamesAndIds
+client.deck.deleteDecks
+client.deck.getDeckConfig
+client.deck.getDeckStats
+client.deck.getDecks
+client.deck.removeDeckConfigId
+client.deck.saveDeckConfig
+client.deck.setDeckConfigId
+
+client.graphical.guiAddCards
+client.graphical.guiAnswerCard
+client.graphical.guiBrowse
+client.graphical.guiCheckDatabase
+client.graphical.guiCurrentCard
+client.graphical.guiDeckBrowser
+client.graphical.guiDeckOverview
+client.graphical.guiDeckReview
+client.graphical.guiEditNote
+client.graphical.guiExitAnki
+client.graphical.guiImportFile
+client.graphical.guiSelectCard
+client.graphical.guiSelectNote
+client.graphical.guiSelectedNotes
+client.graphical.guiShowAnswer
+client.graphical.guiShowQuestion
+client.graphical.guiStartCardTimer
+client.graphical.guiUndo
+
+client.media.deleteMediaFile
+client.media.getMediaDirPath
+client.media.getMediaFilesNames
+client.media.retrieveMediaFile
+client.media.storeMediaFile
+
+client.miscellaneous.apiReflect
+client.miscellaneous.exportPackage
+client.miscellaneous.getActiveProfile
+client.miscellaneous.getProfiles
+client.miscellaneous.importPackage
+client.miscellaneous.loadProfile
+client.miscellaneous.multi
+client.miscellaneous.reloadCollection
+client.miscellaneous.requestPermission
+client.miscellaneous.sync
+client.miscellaneous.version
+
+client.model.createModel
+client.model.findAndReplaceInModels
+client.model.findModelsById
+client.model.findModelsByName
+client.model.modelFieldAdd
+client.model.modelFieldDescriptions
+client.model.modelFieldFonts
+client.model.modelFieldNames
+client.model.modelFieldRemove
+client.model.modelFieldRename
+client.model.modelFieldReposition
+client.model.modelFieldSetDescription
+client.model.modelFieldSetFont
+client.model.modelFieldSetFontSize
+client.model.modelFieldsOnTemplates
+client.model.modelNames
+client.model.modelNamesAndIds
+client.model.modelStyling
+client.model.modelTemplateAdd
+client.model.modelTemplateRemove
+client.model.modelTemplateRename
+client.model.modelTemplateReposition
+client.model.modelTemplates
+client.model.updateModelStyling
+client.model.updateModelTemplates
+
+client.note.addNote
+client.note.addNotes
+client.note.addTags
+client.note.canAddNotes
+client.note.canAddNotesWithErrorDetail
+client.note.clearUnusedTags
+client.note.deleteNotes
+client.note.findNotes
+client.note.getNoteTags
+client.note.getTags
+client.note.notesInfo
+client.note.notesModTime
+client.note.removeEmptyNotes
+client.note.removeTags
+client.note.replaceTags
+client.note.replaceTagsInAllNotes
+client.note.updateNote
+client.note.updateNoteFields
+client.note.updateNoteModel
+client.note.updateNoteTags
+
+client.statistic.cardReviews
+client.statistic.getCollectionStatsHTML
+client.statistic.getLatestReviewID
+client.statistic.getNumCardsReviewedByDay
+client.statistic.getNumCardsReviewedToday
+client.statistic.getReviewsOfCards
+client.statistic.insertReviews
 ```
+
+<!-- /actionList -->
 
 Note that at the moment, only the latest Anki-Connect API version 6 is supported, and Anki-Connect release >24.7.25.0 is required for compatibility with all features.
 

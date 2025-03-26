@@ -58,6 +58,8 @@
 		"bumpp": "^10.1.0",
 		"pkgroll": "^2.11.2",
 		"playwright": "^1.51.1",
+		"ts-api-utils": "^2.1.0",
+		"ts-morph": "^25.0.1",
 		"typescript": "~5.8.2",
 		"vite": "^6.2.2",
 		"vitest": "^3.0.9"
