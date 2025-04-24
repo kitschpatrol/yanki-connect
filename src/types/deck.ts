@@ -1,4 +1,4 @@
-import { type Request } from './shared'
+import type { Request } from './shared'
 
 type DeckStats = {
 	deck_id: number

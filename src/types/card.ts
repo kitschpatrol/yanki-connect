@@ -1,6 +1,6 @@
 /* eslint-disable ts/no-restricted-types */
 
-import { type Request } from './shared'
+import type { Request } from './shared'
 
 // Not sure if this is definitive
 // https://github.com/ankitects/anki/blob/main/rslib/src/browser_table.rs

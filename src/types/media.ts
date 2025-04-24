@@ -1,4 +1,4 @@
-import { type Request } from './shared'
+import type { Request } from './shared'
 
 export type MediaRequests =
 	| Request<'deleteMediaFile', 6, { filename: string }>

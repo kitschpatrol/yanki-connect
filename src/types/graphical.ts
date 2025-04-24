@@ -1,8 +1,8 @@
 /* eslint-disable ts/no-restricted-types */
 
 import type { CardBrowserColumns, CardInfo } from './card'
-import { type Note } from './note'
-import { type Request } from './shared'
+import type { Note } from './note'
+import type { Request } from './shared'
 
 export type GraphicalRequests =
 	| Request<'guiAddCards', 6, { note: Note }, number>

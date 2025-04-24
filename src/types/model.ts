@@ -1,6 +1,6 @@
 /* eslint-disable ts/no-restricted-types */
 
-import { type Request } from './shared'
+import type { Request } from './shared'
 
 type ModelField = {
 	collapsed: boolean

@@ -1,4 +1,4 @@
-import { type Request } from './shared'
+import type { Request } from './shared'
 
 type ReviewStatisticTuple = [
 	reviewTime: number,

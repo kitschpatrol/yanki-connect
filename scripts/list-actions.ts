@@ -1,4 +1,5 @@
-import { Project, type Type } from 'ts-morph'
+import type { Type } from 'ts-morph'
+import { Project } from 'ts-morph'
 
 /**
  * Generate a tree structure of methods for the YankiConnect client
