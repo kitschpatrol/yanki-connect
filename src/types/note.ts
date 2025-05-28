@@ -14,7 +14,7 @@ type NoteMedia = {
 	fields: string[]
 	filename: string
 	path?: string // Second priority, must have one of these three
-	skipHash?: false
+	skipHash?: string
 	url?: string // Third priority, must have one of these three
 }
 
