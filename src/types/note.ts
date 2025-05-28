@@ -10,9 +10,9 @@ type NoteModel =
 	| (string & {}) // Allow arbitrary strings too
 
 type NoteMedia = {
-	filename: string
 	data?: string // First priority, must have one of these three
 	fields: string[]
+	filename: string
 	path?: string // Second priority, must have one of these three
 	skipHash?: false
 	url?: string // Third priority, must have one of these three

@@ -1020,6 +1020,7 @@ export class YankiConnect {
 				throw new Error(`Anki-Connect response status is ${response.status}`)
 			}
 
+			// eslint-disable-next-line ts/no-unsafe-type-assertion
 			responseJson = (await response.json()) as ResponseForAction<T>
 
 			if (this.autoLaunch !== false && responseJson.error === 'collection is not available') {
@@ -1043,9 +1044,11 @@ export class YankiConnect {
 				})
 
 				if (params === undefined) {
+					// eslint-disable-next-line ts/no-unsafe-type-assertion
 					return this.invoke(action as ActionsWithoutParams) as Promise<ResponseForAction<T>>
 				}
 
+				// eslint-disable-next-line ts/no-unsafe-type-assertion
 				return this.invoke(action as ActionsWithParams, params) as Promise<ResponseForAction<T>>
 			}
 
@@ -1090,6 +1093,7 @@ export class YankiConnect {
 				throw new Error(String(response.error))
 			}
 
+			// eslint-disable-next-line ts/no-unsafe-type-assertion
 			return response.result as ResultForAction<T>
 		}
 	}
