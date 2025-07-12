@@ -2,7 +2,6 @@ import { cspellConfig } from '@kitschpatrol/cspell-config'
 
 export default cspellConfig({
 	words: [
-		'autoanki',
 		'afmt',
 		'bafmt',
 		'bfont',
@@ -11,8 +10,6 @@ export default cspellConfig({
 		'latexsvg',
 		'odid',
 		'odue',
-		'qfmt',
-		'replayq',
 		'sched',
 		'sortf',
 		'tmpls',

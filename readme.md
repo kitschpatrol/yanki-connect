@@ -315,9 +315,9 @@ Chen Lijun's [autoanki](https://github.com/chenlijun99/autoanki) also implements
 
 ## Acknowledgments
 
-Thanks to Alex Yatskov for creating [Anki-Connect](https://ankiweb.net/shared/info/2055492159).
+Thanks to [Alex Yatskov](https://foosoft.net/) for creating [Anki-Connect](https://ankiweb.net/shared/info/2055492159).
 
-All of the embedded action descriptions in Yanki Connect are directly from the [Anki-Connect project readme](https://git.sr.ht/~foosoft/anki-connect/tree/ab4d964d96712788889eb35d79471966aaf17ef6/item/README.md).
+All of the embedded action descriptions in Yanki Connect are taken directly from the [Anki-Connect project readme](https://git.sr.ht/~foosoft/anki-connect/tree/ab4d964d96712788889eb35d79471966aaf17ef6/item/README.md).
 
 <!-- contributing -->
 
