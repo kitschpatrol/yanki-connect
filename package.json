@@ -47,15 +47,15 @@
 		"test": "vitest"
 	},
 	"dependencies": {
-		"@types/node": "^18.19.118",
-		"open": "^10.1.2"
+		"@types/node": "^18.19.119",
+		"open": "^10.2.0"
 	},
 	"devDependencies": {
 		"@kitschpatrol/shared-config": "^5.5.0",
 		"@vitest/browser": "^3.2.4",
 		"@vitest/coverage-istanbul": "^3.2.4",
 		"bumpp": "^10.2.0",
-		"pkgroll": "^2.14.1",
+		"pkgroll": "^2.14.3",
 		"playwright": "^1.54.1",
 		"ts-morph": "^26.0.0",
 		"typescript": "~5.8.3",
