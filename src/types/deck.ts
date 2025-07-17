@@ -49,7 +49,7 @@ type DeckConfig = {
 export type DeckRequests =
 	| Request<'changeDeck', 6, { cards: number[]; deck: string }>
 	| Request<'cloneDeckConfigId', 6, { cloneFrom: number; name: string }, false | number>
-	| Request<'createDeck', 6, { deck: string }, Record<string, number>>
+	| Request<'createDeck', 6, { deck: string }, number>
 	| Request<'deckNames', 6, never, string[]>
 	| Request<'deckNamesAndIds', 6, never, Record<string, number>>
 	| Request<'deleteDecks', 6, { cardsToo: true; decks: string[] }>
