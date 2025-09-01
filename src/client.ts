@@ -1086,11 +1086,11 @@ export class YankiConnect {
 	private build<T extends ActionsWithParams>(
 		action: T,
 	): (params?: ParamsForAction<T>) => Promise<ResultForAction<T>> {
-		// Bang is a type appeasement...
 		return async (params?: ParamsForAction<T>) => {
+			// Bang is a type appeasement...
 			const response = await this.invoke<T>(action, params!)
 			if (response.error !== null) {
-				throw new Error(String(response.error))
+				throw new Error(response.error)
 			}
 
 			// eslint-disable-next-line ts/no-unsafe-type-assertion
