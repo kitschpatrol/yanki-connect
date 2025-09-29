@@ -11,7 +11,7 @@ type DeckStats = {
 
 type DeckConfig = {
 	autoplay: boolean
-	dyn: boolean
+	dyn: 1 | false
 	id: number
 	lapse: {
 		delays: number[]
