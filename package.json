@@ -43,7 +43,7 @@
 		"coverage": "vitest run --coverage",
 		"fix": "ksc fix",
 		"lint": "ksc lint",
-		"release": "bumpp --commit 'Release: %s' && pnpm run build && pnpm publish --otp $(op read 'op://Personal/Npmjs/one-time password?attribute=otp')",
+		"release": "bumpp --commit 'Release: %s' && pnpm run build && pnpm publish",
 		"test": "vitest"
 	},
 	"dependencies": {
