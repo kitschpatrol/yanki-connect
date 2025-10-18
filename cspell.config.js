@@ -8,6 +8,7 @@ export default cspellConfig({
 		'bqfmt',
 		'flds',
 		'latexsvg',
+		'npmjs',
 		'odid',
 		'odue',
 		'sched',

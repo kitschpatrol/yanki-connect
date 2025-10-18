@@ -43,7 +43,7 @@
 		"coverage": "vitest run --coverage",
 		"fix": "ksc fix",
 		"lint": "ksc lint",
-		"release": "bumpp --commit 'Release: %s' && pnpm run build && pnpm publish",
+		"release": "bumpp --commit 'Release: %s' && pnpm run build && NPM_AUTH_TOKEN=$(op read 'op://Personal/npm/token') && pnpm publish",
 		"test": "vitest"
 	},
 	"dependencies": {
