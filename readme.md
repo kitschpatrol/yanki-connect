@@ -58,7 +58,7 @@ This library is used in the [`yanki`](https://github.com/kitschpatrol/yanki) CLI
 
 ### Dependencies
 
-Yanki Connect is isomorphic: it runs in the browser and Node 18+ compatible environments (specifically Node `^18.19.0 || >=20.5.0`). The exported APIs are ESM-only. It's implemented in TypeScript and bundles extensive type definitions.
+Yanki Connect is universal / isomorphic: it runs in the browser and Node 18+ compatible environments. The exported APIs are ESM-only. It's implemented in TypeScript and bundles extensive type definitions.
 
 The Anki desktop app (>=2.1.45, released 2021-07-30) with the Anki-Connect add-on installed and configured is also required to do anything useful with the library.
 

@@ -38,7 +38,7 @@
 		"dist"
 	],
 	"scripts": {
-		"build": "pkgroll --clean-dist --minify --sourcemap --tsconfig tsconfig.build.json",
+		"build": "tsdown --minify --platform neutral --tsconfig tsconfig.build.json",
 		"clean": "git rm -f pnpm-lock.yaml ; git clean -fdX",
 		"coverage": "vitest run --coverage",
 		"fix": "ksc fix",
@@ -58,9 +58,9 @@
 		"@vitest/coverage-v8": "^3.2.4",
 		"bumpp": "^10.3.1",
 		"jsdom": "^27.0.1",
-		"pkgroll": "^2.20.0",
 		"playwright": "^1.56.1",
 		"ts-morph": "^27.0.2",
+		"tsdown": "^0.15.7",
 		"typescript": "~5.9.3",
 		"vite": "^7.1.10",
 		"vitest": "^3.2.4"
