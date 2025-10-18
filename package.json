@@ -35,8 +35,7 @@
 	"module": "./dist/index.js",
 	"types": "./dist/index.d.ts",
 	"files": [
-		"dist",
-		"src"
+		"dist"
 	],
 	"scripts": {
 		"build": "tsdown --minify --platform neutral --tsconfig tsconfig.build.json",
@@ -61,7 +60,7 @@
 		"jsdom": "^27.0.1",
 		"playwright": "^1.56.1",
 		"ts-morph": "^27.0.2",
-		"tsdown": "^0.15.7",
+		"tsdown": "^0.15.8",
 		"typescript": "~5.9.3",
 		"vite": "^7.1.10",
 		"vitest": "^3.2.4"

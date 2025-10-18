@@ -43,8 +43,8 @@ importers:
         specifier: ^27.0.2
         version: 27.0.2
       tsdown:
-        specifier: ^0.15.7
-        version: 0.15.7(oxc-resolver@11.10.0)(typescript@5.9.3)
+        specifier: ^0.15.8
+        version: 0.15.8(oxc-resolver@11.10.0)(typescript@5.9.3)
       typescript:
         specifier: ~5.9.3
         version: 5.9.3
@@ -4818,8 +4818,8 @@ packages:
   ts-pattern@5.8.0:
     resolution: {integrity: sha512-kIjN2qmWiHnhgr5DAkAafF9fwb0T5OhMVSWrm8XEdTFnX6+wfXwYOFjeF86UZ54vduqiR7BfqScFmXSzSaH8oA==}
 
-  tsdown@0.15.7:
-    resolution: {integrity: sha512-uFaVgWAogjOMqjY+CQwrUt3C6wzy6ynt82CIoXymnbS17ipUZ8WDXUceJjkislUahF/BZc5+W44Ue3p2oWtqUg==}
+  tsdown@0.15.8:
+    resolution: {integrity: sha512-A9CY3lO2SC6G5wyQV38cNdPkDmCoIQ6zYVd+lLnEGH09BxNRTJkCHfb7cBeBxZYJDYGFtgg/3yBpEryYJjBd+Q==}
     engines: {node: '>=20.19.0'}
     hasBin: true
     peerDependencies:
@@ -11312,7 +11312,7 @@ snapshots:
 
   ts-pattern@5.8.0: {}
 
-  tsdown@0.15.7(oxc-resolver@11.10.0)(typescript@5.9.3):
+  tsdown@0.15.8(oxc-resolver@11.10.0)(typescript@5.9.3):
     dependencies:
       ansis: 4.2.0
       cac: 6.7.14
