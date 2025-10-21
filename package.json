@@ -60,9 +60,9 @@
 		"jsdom": "^27.0.1",
 		"playwright": "^1.56.1",
 		"ts-morph": "^27.0.2",
-		"tsdown": "^0.15.8",
+		"tsdown": "^0.15.9",
 		"typescript": "~5.9.3",
-		"vite": "^7.1.10",
+		"vite": "^7.1.11",
 		"vitest": "^3.2.4"
 	},
 	"packageManager": "pnpm@10.18.3",
