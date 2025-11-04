@@ -30,7 +30,7 @@ This library is used in the [`yanki`](https://github.com/kitschpatrol/yanki) CLI
 ## Features
 
 - **Action method organization + convenience methods**\
-  Instead of putting all <!-- actionCount -->115<!-- /actionCount --> methods in a single namespace, action convenience methods are organized into the same groups used in the [Anki-Connect documentation](https://git.sr.ht/~foosoft/anki-connect/tree/ab4d964d96712788889eb35d79471966aaf17ef6/item/README.md#supported-actions), to simplify auto-complete discoverability.
+  Instead of putting all <!-- actionCount -->115<!-- /actionCount --> methods in a single namespace, action convenience methods are organized into the same groups used in the [Anki-Connect documentation](https://git.sr.ht/~foosoft/anki-connect/tree/25.11.2.0/item/README.md#supported-actions), to simplify auto-complete discoverability.
 
 - **Low-level access through the provided `invoke` method**\
   If you don't want to use the convenience methods, an `invoke(action, params)` method is also exposed on the YankiConnect class for direct interaction with the Anki-Connect API.
@@ -62,7 +62,7 @@ Yanki Connect is universal / isomorphic: it runs in the browser and Node 18+ com
 
 The Anki desktop app (>=2.1.45, released 2021-07-30) with the Anki-Connect add-on installed and configured is also required to do anything useful with the library.
 
-The API calls are written against version [25.2.25.0](https://git.sr.ht/~foosoft/anki-connect/tree/ab4d964d96712788889eb35d79471966aaf17ef6/item/README.md) of the Anki-Connect add-on, released 2025-02-25. You must use either this or a newer version of the Anki-Connect add-on for compatibility with all available calls. A majority of the calls are compatible with older version of the Anki-Connect add-on, but this is at your own risk.
+The API calls are written against version [25.11.2.0](https://git.sr.ht/~foosoft/anki-connect/tree/25.11.2.0/item/README.md) of the Anki-Connect add-on, released 2025-11-02. You must use either this or a newer version of the Anki-Connect add-on for compatibility with all available calls. A majority of the calls are compatible with older version of the Anki-Connect add-on, but this is at your own risk.
 
 ### Installation
 
@@ -76,7 +76,7 @@ npm install yanki-connect
 
 Yanki Connect aims to be discoverable and self-documenting when used in an environment with a robust autocompletion / language service implementation. (VS Code, for example.)
 
-The library exports the `YankiConnect` class, which groups methods into the same structure of "supported actions" used in the official [Anki-Connect documentation](https://git.sr.ht/~foosoft/anki-connect/tree/ab4d964d96712788889eb35d79471966aaf17ef6/item/README.md#supported-actions).
+The library exports the `YankiConnect` class, which groups methods into the same structure of "supported actions" used in the official [Anki-Connect documentation](https://git.sr.ht/~foosoft/anki-connect/tree/25.11.2.0/item/README.md#supported-actions).
 
 Here's a simple example:
 
@@ -317,7 +317,7 @@ Chen Lijun's [autoanki](https://github.com/chenlijun99/autoanki) also implements
 
 Thanks to [Alex Yatskov](https://foosoft.net/) for creating [Anki-Connect](https://ankiweb.net/shared/info/2055492159).
 
-All of the embedded action descriptions in Yanki Connect are taken directly from the [Anki-Connect project readme](https://git.sr.ht/~foosoft/anki-connect/tree/ab4d964d96712788889eb35d79471966aaf17ef6/item/README.md).
+All of the embedded action descriptions in Yanki Connect are taken directly from the [Anki-Connect project readme](https://git.sr.ht/~foosoft/anki-connect/tree/25.11.2.0/item/README.md).
 
 <!-- contributing -->
 

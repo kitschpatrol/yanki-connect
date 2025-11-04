@@ -703,7 +703,7 @@ export class YankiConnect {
 		/**
 		 * Creates a note using the given deck and model, with the provided field
 		 * values and tags. Returns the identifier of the created note created on
-		 * success, and null on failure.
+		 * success, and `null` on failure.
 		 *
 		 * Anki-Connect can download audio, video, and picture files and embed them
 		 * in newly created notes. The corresponding `audio`, `video`, and `picture`
@@ -714,11 +714,11 @@ export class YankiConnect {
 		 * these fields. The `skipHash` field can be optionally provided to skip the
 		 * inclusion of files with an MD5 hash that matches the provided value. This
 		 * is useful for avoiding the saving of error pages and stub files. The
-		 * `fields` member is a list of fields that should play audio or video, or
-		 * show a picture when the card is displayed in Anki. The `allowDuplicate`
-		 * member inside `options` group can be set to true to enable adding
-		 * duplicate cards. Normally duplicate cards can not be added and trigger
-		 * exception.
+		 * `fields` member is a list of field names to which the inserted media
+		 * should be appended to. It can be omitted if this isn't required. The
+		 * `allowDuplicate` member inside `options` group can be set to true to
+		 * enable adding duplicate cards. Normally duplicate cards can not be added
+		 * and trigger exception.
 		 *
 		 * The `duplicateScope` member inside `options` can be used to specify the
 		 * scope for which duplicates are checked. A value of `"deck"` will only
@@ -729,12 +729,12 @@ export class YankiConnect {
 		 * settings:
 		 *
 		 * - `duplicateScopeOptions.deckName` will specify which deck to use for
-		 *   checking duplicates in. If undefined or null, the target deck will be
+		 *   checking duplicates in. If undefined or `null`, the target deck will be
 		 *   used.
 		 * - `duplicateScopeOptions.checkChildren` will change whether or not
-		 *   duplicate cards are checked in child decks. The default value is false.
+		 *   duplicate cards are checked in child decks. The default value is `false`.
 		 * - `duplicateScopeOptions.checkAllModels` specifies whether duplicate
-		 *   checks are performed across all note types. The default value is false.
+		 *   checks are performed across all note types. The default value is `false`.
 		 */
 		addNote: this.build('addNote'),
 		/**
