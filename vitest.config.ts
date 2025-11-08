@@ -1,28 +1,19 @@
-// eslint-disable-next-line ts/triple-slash-reference
-/// <reference types="vitest" />
-import path from 'node:path'
-import { fileURLToPath } from 'node:url'
-import { defineConfig } from 'vite'
+import { playwright } from '@vitest/browser-playwright'
+import { defineConfig } from 'vitest/config'
 
 export default defineConfig({
-	// See vitest.workspace.ts for additional configuration
 	test: {
 		coverage: {
-			all: false,
 			include: ['src/**/*.ts'],
-			provider: 'istanbul',
+			provider: 'v8',
 		},
-		// Disable concurrent test execution across files out of an abundance of
-		// caution
-		maxConcurrency: 1,
-		poolOptions: {
-			forks: {
-				singleFork: true,
-			},
-		},
+		isolate: false,
+		maxWorkers: 1,
+		pool: 'forks',
+		// Define separate projects for browser and node tests
 		projects: [
 			{
-				extends: './vite.config.ts',
+				// Browser project
 				test: {
 					browser: {
 						// Conflicts between VS Code extension and vitest CLI command...
@@ -33,7 +24,8 @@ export default defineConfig({
 						enabled: true,
 						headless: true,
 						instances: [{ browser: 'chromium' }],
-						provider: 'playwright',
+						provider: playwright(),
+						screenshotFailures: false,
 					},
 					exclude: ['test/**/*.node.test.ts'],
 					include: ['test/**/*.test.ts'],
@@ -41,15 +33,15 @@ export default defineConfig({
 				},
 			},
 			{
-				extends: './vite.config.ts',
+				// Node project
 				test: {
 					environment: 'node',
 					exclude: ['test/**/*.browser.test.ts'],
 					include: ['test/**/*.test.ts'],
 					name: 'node',
-					root: path.resolve(path.dirname(fileURLToPath(import.meta.url))),
 				},
 			},
 		],
+		silent: 'passed-only', // Suppress console output during tests
 	},
 })

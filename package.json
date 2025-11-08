@@ -51,19 +51,17 @@
 		"open": "^10.2.0"
 	},
 	"devDependencies": {
-		"@kitschpatrol/shared-config": "^5.8.0",
+		"@kitschpatrol/shared-config": "^5.8.3",
 		"@types/jsdom": "^27.0.0",
-		"@vitest/browser": "^3.2.4",
-		"@vitest/coverage-istanbul": "^3.2.4",
-		"@vitest/coverage-v8": "^3.2.4",
+		"@vitest/browser-playwright": "^4.0.8",
+		"@vitest/coverage-v8": "^4.0.8",
 		"bumpp": "^10.3.1",
 		"jsdom": "^27.1.0",
 		"playwright": "^1.56.1",
 		"ts-morph": "^27.0.2",
-		"tsdown": "^0.15.12",
+		"tsdown": "^0.16.1",
 		"typescript": "~5.9.3",
-		"vite": "^7.1.12",
-		"vitest": "^3.2.4"
+		"vitest": "^4.0.8"
 	},
 	"packageManager": "pnpm@10.20.0",
 	"engines": {
