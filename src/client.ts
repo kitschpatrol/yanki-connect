@@ -114,7 +114,7 @@ export const defaultYankiConnectOptions: YankiConnectOptions = {
  * __YankiConnect is a client for the [Anki-Connect
  * API](https://git.sr.ht/~foosoft/anki-connect/tree/ab4d964d96712788889eb35d79471966aaf17ef6/item/README.md)__.
  *
- * It implements every endpoint from Anki-Connect version 25.2.25.0, released 2025-02-25.
+ * It implements every endpoint from Anki-Connect version 25.11.5.0, released 2025-11-05.
  *
  * Inline documentation is by the Anki-Connect authors, generated from [the
  * readme.md](https://git.sr.ht/~foosoft/anki-connect/tree/47da1c5039f42ad004acc57f528d6f873caffdc9/item/README.md)
@@ -387,6 +387,11 @@ export class YankiConnect {
 		 * Anki 2.1.52+.
 		 */
 		guiImportFile: this.build('guiImportFile'),
+		/**
+		 * Plays any Audio for the current side of the current card; returns true if
+		 * succeeded or false otherwise.
+		 */
+		guiPlayAudio: this.build('guiPlayAudio'),
 		/**
 		 * Finds the open instance of the Card Browser dialog and selects a card
 		 * given a card identifier. Returns true if the Card Browser is open, false

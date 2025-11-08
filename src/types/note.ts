@@ -11,7 +11,7 @@ type NoteModel =
 
 type NoteMedia = {
 	data?: string // First priority, must have one of these three
-	fields?: string[] // Optional as of AnkiConnect 25.11.2.0
+	fields?: string[] // Optional as of AnkiConnect 25.11.5.0
 	filename: string
 	path?: string // Second priority, must have one of these three
 	skipHash?: string
