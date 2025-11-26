@@ -12,8 +12,8 @@ export default defineConfig({
 		pool: 'forks',
 		// Define separate projects for browser and node tests
 		projects: [
+			// Browser project
 			{
-				// Browser project
 				test: {
 					browser: {
 						// Conflicts between VS Code extension and vitest CLI command...
@@ -32,8 +32,8 @@ export default defineConfig({
 					name: 'browser',
 				},
 			},
+			// Node project
 			{
-				// Node project
 				test: {
 					environment: 'node',
 					exclude: ['test/**/*.browser.test.ts'],
