@@ -51,19 +51,19 @@
 		"open": "^10.2.0"
 	},
 	"devDependencies": {
-		"@kitschpatrol/shared-config": "^5.9.1",
+		"@kitschpatrol/shared-config": "^5.10.0",
 		"@types/jsdom": "^27.0.0",
-		"@vitest/browser-playwright": "^4.0.14",
-		"@vitest/coverage-v8": "^4.0.14",
-		"bumpp": "^10.3.1",
-		"jsdom": "^27.2.0",
+		"@vitest/browser-playwright": "^4.0.15",
+		"@vitest/coverage-v8": "^4.0.15",
+		"bumpp": "^10.3.2",
+		"jsdom": "^27.3.0",
 		"playwright": "^1.57.0",
 		"ts-morph": "^27.0.2",
-		"tsdown": "^0.16.7",
+		"tsdown": "^0.17.2",
 		"typescript": "~5.9.3",
-		"vitest": "^4.0.14"
+		"vitest": "^4.0.15"
 	},
-	"packageManager": "pnpm@10.23.0",
+	"packageManager": "pnpm@10.25.0",
 	"engines": {
 		"node": "^18.15.0 || >=20.11.0"
 	}
