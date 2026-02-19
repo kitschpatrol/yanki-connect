@@ -34,6 +34,6 @@ export async function launchAnkiApp(): Promise<void> {
 			})
 		}
 	} else {
-		console.warn('Automatic Anki App launch is only supported on Mac OS in Node.js environment')
+		console.warn('Automatic Anki App launch is only supported on macOS in Node.js environment')
 	}
 }

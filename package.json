@@ -38,7 +38,7 @@
 		"dist"
 	],
 	"scripts": {
-		"build": "tsdown --minify --platform neutral --tsconfig tsconfig.build.json",
+		"build": "tsdown --minify --platform neutral --no-fixed-extension --tsconfig tsconfig.build.json",
 		"clean": "git rm -f pnpm-lock.yaml ; git clean -fdX",
 		"coverage": "vitest run --coverage",
 		"fix": "ksc fix",
@@ -51,19 +51,17 @@
 		"open": "^10.2.0"
 	},
 	"devDependencies": {
-		"@kitschpatrol/shared-config": "^5.12.0",
-		"@types/jsdom": "^27.0.0",
-		"@vitest/browser-playwright": "^4.0.17",
-		"@vitest/coverage-v8": "^4.0.17",
-		"bumpp": "^10.4.0",
-		"jsdom": "^27.4.0",
-		"playwright": "^1.57.0",
+		"@kitschpatrol/shared-config": "^5.13.0",
+		"@vitest/browser-playwright": "^4.0.18",
+		"@vitest/coverage-v8": "^4.0.18",
+		"bumpp": "^10.4.1",
+		"playwright": "^1.58.2",
 		"ts-morph": "^27.0.2",
-		"tsdown": "^0.19.0",
+		"tsdown": "^0.20.3",
 		"typescript": "~5.9.3",
-		"vitest": "^4.0.17"
+		"vitest": "^4.0.18"
 	},
-	"packageManager": "pnpm@10.28.1",
+	"packageManager": "pnpm@10.30.0",
 	"engines": {
 		"node": "^18.15.0 || >=20.11.0"
 	}
