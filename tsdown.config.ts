@@ -8,7 +8,8 @@ export default defineConfig([
 		fixedExtension: false,
 		minify: true,
 		platform: 'neutral',
-		target: ['node18.15.0', 'chrome100', 'safari18', 'firefox110'],
+		publint: true,
+		target: ['node20.11.0', 'chrome100', 'safari18', 'firefox110'],
 		tsconfig: 'tsconfig.build.json',
 	},
 ])

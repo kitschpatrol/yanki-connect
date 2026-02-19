@@ -47,15 +47,17 @@
 		"test": "vitest"
 	},
 	"dependencies": {
-		"@types/node": "^18.19.130",
-		"open": "^10.2.0"
+		"@types/node": "~20.11.30",
+		"open": "^11.0.0"
 	},
 	"devDependencies": {
+		"@arethetypeswrong/core": "^0.18.2",
 		"@kitschpatrol/shared-config": "^5.13.0",
 		"@vitest/browser-playwright": "^4.0.18",
 		"@vitest/coverage-v8": "^4.0.18",
 		"bumpp": "^10.4.1",
 		"playwright": "^1.58.2",
+		"publint": "^0.3.17",
 		"ts-morph": "^27.0.2",
 		"tsdown": "^0.20.3",
 		"typescript": "~5.9.3",
@@ -63,6 +65,9 @@
 	},
 	"packageManager": "pnpm@10.30.0",
 	"engines": {
-		"node": "^18.15.0 || >=20.11.0"
+		"node": ">=20.11"
+	},
+	"devEngines": {
+		"node": ">=20.19"
 	}
 }
