@@ -15,6 +15,9 @@ importers:
         specifier: ^10.2.0
         version: 10.2.0
     devDependencies:
+      '@arethetypeswrong/core':
+        specifier: ^0.18.2
+        version: 0.18.2
       '@kitschpatrol/shared-config':
         specifier: ^5.13.0
         version: 5.13.0(@eslint/markdown@7.5.1)(@types/estree@1.0.8)(@types/node@18.19.130)(@typescript-eslint/utils@8.56.0(eslint@9.39.2(jiti@2.6.1))(typescript@5.9.3))(jiti@2.6.1)(postcss-html@1.8.1)(stylelint-order@7.0.1(stylelint@17.3.0(typescript@5.9.3)))(svelte@5.53.0)(typescript@5.9.3)(vitest@4.0.18)
@@ -35,7 +38,7 @@ importers:
         version: 27.0.2
       tsdown:
         specifier: ^0.20.3
-        version: 0.20.3(oxc-resolver@11.17.1)(synckit@0.11.12)(typescript@5.9.3)
+        version: 0.20.3(@arethetypeswrong/core@0.18.2)(oxc-resolver@11.17.1)(synckit@0.11.12)(typescript@5.9.3)
       typescript:
         specifier: ~5.9.3
         version: 5.9.3
@@ -47,6 +50,13 @@ packages:
 
   '@altano/repository-tools@2.0.1':
     resolution: {integrity: sha512-YE/52CkFtb+YtHPgbWPai7oo5N9AKnMuP5LM+i2AG7G1H2jdYBCO1iDnkDE3dZ3C1MIgckaF+d5PNRulgt0bdw==}
+
+  '@andrewbranch/untar.js@1.0.3':
+    resolution: {integrity: sha512-Jh15/qVmrLGhkKJBdXlK1+9tY4lZruYjsgkDFj08ZmDiWVBLJcqkok7Z0/R0In+i1rScBpJlSvrTS2Lm41Pbnw==}
+
+  '@arethetypeswrong/core@0.18.2':
+    resolution: {integrity: sha512-GiwTmBFOU1/+UVNqqCGzFJYfBXEytUkiI+iRZ6Qx7KmUVtLm00sYySkfe203C9QtPG11yOz1ZaMek8dT/xnlgg==}
+    engines: {node: '>=20'}
 
   '@astrojs/compiler@2.13.1':
     resolution: {integrity: sha512-f3FN83d2G/v32ipNClRKgYv30onQlMZX1vCeZMjPsMMPl1mDpmbl0+N5BYo4S/ofzqJyS5hvwacEo0CCVDn/Qg==}
@@ -96,6 +106,9 @@ packages:
   '@bcoe/v8-coverage@1.0.2':
     resolution: {integrity: sha512-6zABk/ECA/QYSCQ1NGiVwwbQerUCZ+TQbp64Q3AgmfNvurHH0j8TtXa1qbShXA6qqkpAj4V5W8pP6mLe1mcMqA==}
     engines: {node: '>=18'}
+
+  '@braidai/lang@1.1.2':
+    resolution: {integrity: sha512-qBcknbBufNHlui137Hft8xauQMTZDKdophmLFv05r2eNmdIv/MlPuP4TdUknHG68UdWLgVZwgxVe735HzJNIwA==}
 
   '@cacheable/memory@2.0.7':
     resolution: {integrity: sha512-RbxnxAMf89Tp1dLhXMS7ceft/PGsDl1Ip7T20z5nZ+pwIAsQ1p2izPjVG69oCLv/jfQ7HDPHTWK0c9rcAWXN3A==}
@@ -773,6 +786,9 @@ packages:
     hasBin: true
     peerDependencies:
       typescript: ^5.8.3
+
+  '@loaderkit/resolve@1.0.4':
+    resolution: {integrity: sha512-rJzYKVcV4dxJv+vW6jlvagF8zvGxHJ2+HTr1e2qOejfmGhAApgJHl8Aog4mMszxceTRiKTTbnpgmTO1bEZHV/A==}
 
   '@napi-rs/wasm-runtime@0.2.12':
     resolution: {integrity: sha512-ZVWUcfwY4E/yPitQJl481FjFo3K22D6qF0DuFH6Y/nbnE11GY5uguDxZMGXPQ8WQ0128MXQD7TnfHyK4oWoIJQ==}
@@ -1798,6 +1814,9 @@ packages:
   citty@0.2.1:
     resolution: {integrity: sha512-kEV95lFBhQgtogAPlQfJJ0WGVSokvLr/UEoFPiKKOXF7pl98HfUVUD0ejsuTCld/9xH9vogSywZ5KqHzXrZpqg==}
 
+  cjs-module-lexer@1.4.3:
+    resolution: {integrity: sha512-9z8TZaGM1pfswYeXrUpzPrkx8UnWYdhJclsiYMm6x/w5+nN+8Tf/LnAgfLGQCm59qAOxU8WwHEq2vNwF6i4j+Q==}
+
   clean-regexp@1.0.0:
     resolution: {integrity: sha512-GfisEZEJvzKrmGWkvfhgzcz/BllN1USeqD2V6tg14OAOgaCD2Z/PUEuxnAZ/nPvmaHRG7a8y77p1T/IRQ4D1Hw==}
     engines: {node: '>=4'}
@@ -2527,6 +2546,9 @@ packages:
     peerDependenciesMeta:
       picomatch:
         optional: true
+
+  fflate@0.8.2:
+    resolution: {integrity: sha512-cPJU47OaAoCbg0pBvzsgpTPhmhqI5eJjh/JIu8tPj5q+T7iLvW/JAYUqmE7KOB4R1ZyEhzBaIQpQpardBF5z8A==}
 
   figures@6.1.0:
     resolution: {integrity: sha512-d+l3qxjSesT4V7v2fh+QnmFnUWv9lSpjarhShNTgBOfA0ttejbQUAlHLitbjkoRiDulW0OPoQPYIGhIC8ohejg==}
@@ -4506,6 +4528,11 @@ packages:
   typedarray@0.0.6:
     resolution: {integrity: sha512-/aCDEGatGvZ2BIk+HmLf4ifCJFwvKFNb9/JeZPMulfgFracn9QFcAf5GO8B/mweUjSoblS5In0cWhqpfs/5PQA==}
 
+  typescript@5.6.1-rc:
+    resolution: {integrity: sha512-E3b2+1zEFu84jB0YQi9BORDjz9+jGbwwy1Zi3G0LUNw7a7cePUrHMRNy8aPh53nXpkFGVHSxIZo5vKTfYaFiBQ==}
+    engines: {node: '>=14.17'}
+    hasBin: true
+
   typescript@5.9.3:
     resolution: {integrity: sha512-jl1vZzPDinLr9eUt3J/t7V6FgNEw9QjvBPdysz9KfQDD41fQrC2Y4vKQdiaUpFT4bXlb1RHhLpp8wtm6M5TgSw==}
     engines: {node: '>=14.17'}
@@ -4842,6 +4869,19 @@ snapshots:
 
   '@altano/repository-tools@2.0.1': {}
 
+  '@andrewbranch/untar.js@1.0.3': {}
+
+  '@arethetypeswrong/core@0.18.2':
+    dependencies:
+      '@andrewbranch/untar.js': 1.0.3
+      '@loaderkit/resolve': 1.0.4
+      cjs-module-lexer: 1.4.3
+      fflate: 0.8.2
+      lru-cache: 11.2.6
+      semver: 7.7.4
+      typescript: 5.6.1-rc
+      validate-npm-package-name: 5.0.1
+
   '@astrojs/compiler@2.13.1': {}
 
   '@babel/code-frame@7.29.0':
@@ -4886,6 +4926,8 @@ snapshots:
       '@babel/helper-validator-identifier': 8.0.0-rc.1
 
   '@bcoe/v8-coverage@1.0.2': {}
+
+  '@braidai/lang@1.1.2': {}
 
   '@cacheable/memory@2.0.7':
     dependencies:
@@ -5832,6 +5874,10 @@ snapshots:
     transitivePeerDependencies:
       - '@types/node'
 
+  '@loaderkit/resolve@1.0.4':
+    dependencies:
+      '@braidai/lang': 1.1.2
+
   '@napi-rs/wasm-runtime@0.2.12':
     dependencies:
       '@emnapi/core': 1.8.1
@@ -6768,6 +6814,8 @@ snapshots:
       consola: 3.4.2
 
   citty@0.2.1: {}
+
+  cjs-module-lexer@1.4.3: {}
 
   clean-regexp@1.0.0:
     dependencies:
@@ -7813,6 +7861,8 @@ snapshots:
   fdir@6.5.0(picomatch@4.0.3):
     optionalDependencies:
       picomatch: 4.0.3
+
+  fflate@0.8.2: {}
 
   figures@6.1.0:
     dependencies:
@@ -10321,7 +10371,7 @@ snapshots:
 
   ts-pattern@5.9.0: {}
 
-  tsdown@0.20.3(oxc-resolver@11.17.1)(synckit@0.11.12)(typescript@5.9.3):
+  tsdown@0.20.3(@arethetypeswrong/core@0.18.2)(oxc-resolver@11.17.1)(synckit@0.11.12)(typescript@5.9.3):
     dependencies:
       ansis: 4.2.0
       cac: 6.7.14
@@ -10340,6 +10390,7 @@ snapshots:
       unconfig-core: 7.5.0
       unrun: 0.2.27(synckit@0.11.12)
     optionalDependencies:
+      '@arethetypeswrong/core': 0.18.2
       typescript: 5.9.3
     transitivePeerDependencies:
       - '@ts-macro/tsc'
@@ -10396,6 +10447,8 @@ snapshots:
       reflect.getprototypeof: 1.0.10
 
   typedarray@0.0.6: {}
+
+  typescript@5.6.1-rc: {}
 
   typescript@5.9.3: {}
 

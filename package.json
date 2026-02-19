@@ -38,7 +38,7 @@
 		"dist"
 	],
 	"scripts": {
-		"build": "tsdown --minify --platform neutral --no-fixed-extension --tsconfig tsconfig.build.json",
+		"build": "tsdown",
 		"clean": "git rm -f pnpm-lock.yaml ; git clean -fdX",
 		"coverage": "vitest run --coverage",
 		"fix": "ksc fix",
