@@ -1,15 +1,23 @@
 import { defineConfig } from 'tsdown'
 
 export default defineConfig([
+	// For bundlers
 	{
-		attw: {
-			profile: 'esm-only',
-		},
+		dts: true,
+		fixedExtension: false,
+		minify: false,
+		platform: 'neutral',
+		target: ['node20.11.0', 'chrome100', 'safari18', 'firefox110'],
+		tsconfig: 'tsconfig.build.json',
+	},
+	// Standalone build for CDNs
+	{
+		dts: true,
 		fixedExtension: false,
 		minify: true,
-		platform: 'neutral',
-		publint: true,
-		target: ['node20.11.0', 'chrome100', 'safari18', 'firefox110'],
+		outDir: 'dist/standalone',
+		platform: 'browser',
+		target: ['chrome100', 'safari18', 'firefox110'],
 		tsconfig: 'tsconfig.build.json',
 	},
 ])

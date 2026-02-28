@@ -72,6 +72,18 @@ Add the library to your project:
 npm install yanki-connect
 ```
 
+Or, a bundled and minified ES module is available on CDNs:
+
+```ts
+import { YankiConnect } from 'https://cdn.jsdelivr.net/npm/yanki-connect'
+```
+
+or
+
+```ts
+import { YankiConnect } from 'https://unpkg.com/yanki-connect'
+```
+
 ## Usage
 
 Yanki Connect aims to be discoverable and self-documenting when used in an environment with a robust autocompletion / language service implementation. (VS Code, for example.)

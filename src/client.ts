@@ -1,4 +1,3 @@
-/* eslint-disable ts/member-ordering */
 /* eslint-disable ts/unified-signatures */
 
 import type {

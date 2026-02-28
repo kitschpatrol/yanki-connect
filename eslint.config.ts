@@ -22,7 +22,7 @@ export default eslintConfig(
 	{
 		files: ['readme.md/**/*.ts'],
 		rules: {
-			'import/no-unresolved': ['error', { ignore: ['vite'] }],
+			'import/no-unresolved': ['error', { ignore: ['vite', '^https?://.+'] }],
 		},
 	},
 )

@@ -24,21 +24,28 @@
 		"email": "eric@ericmika.com",
 		"url": "https://ericmika.com"
 	},
+	"sideEffects": false,
 	"type": "module",
 	"exports": {
 		".": {
 			"types": "./dist/index.d.ts",
 			"import": "./dist/index.js"
+		},
+		"./standalone": {
+			"types": "./dist/standalone/index.d.ts",
+			"import": "./dist/standalone/index.js"
 		}
 	},
 	"main": "./dist/index.js",
+	"jsdelivr": "./dist/standalone/index.js",
+	"unpkg": "./dist/standalone/index.js",
 	"module": "./dist/index.js",
 	"types": "./dist/index.d.ts",
 	"files": [
 		"dist"
 	],
 	"scripts": {
-		"build": "tsdown",
+		"build": "tsdown && attw -P --profile esm-only && publint",
 		"clean": "git rm -f pnpm-lock.yaml ; git clean -fdX",
 		"coverage": "vitest run --coverage",
 		"fix": "ksc fix",
@@ -51,8 +58,8 @@
 		"open": "^11.0.0"
 	},
 	"devDependencies": {
-		"@arethetypeswrong/core": "^0.18.2",
-		"@kitschpatrol/shared-config": "^5.13.0",
+		"@arethetypeswrong/cli": "^0.18.2",
+		"@kitschpatrol/shared-config": "^6.0.2",
 		"@vitest/browser-playwright": "^4.0.18",
 		"@vitest/coverage-v8": "^4.0.18",
 		"bumpp": "^10.4.1",
@@ -63,11 +70,14 @@
 		"typescript": "~5.9.3",
 		"vitest": "^4.0.18"
 	},
-	"packageManager": "pnpm@10.30.0",
+	"packageManager": "pnpm@10.30.3",
 	"engines": {
 		"node": ">=20.11"
 	},
 	"devEngines": {
-		"node": ">=20.19"
+		"runtime": {
+			"name": "node",
+			"version": ">=20.19.0"
+		}
 	}
 }
