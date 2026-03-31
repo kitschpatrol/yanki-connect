@@ -30,6 +30,9 @@ importers:
       bumpp:
         specifier: ^11.0.1
         version: 11.0.1
+      execa:
+        specifier: ^9.6.1
+        version: 9.6.1
       playwright:
         specifier: ^1.58.2
         version: 1.58.2
