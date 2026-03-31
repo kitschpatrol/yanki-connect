@@ -6,3 +6,4 @@ pnpm-lock.yaml
 package-lock.json
 
 # Customizations
+test/fixtures/anki-data-folder/
