@@ -1,5 +1,10 @@
 import { playwright } from '@vitest/browser-playwright'
+import os from 'node:os'
 import { defineConfig } from 'vitest/config'
+
+const isCI = Boolean(process.env.CI)
+const isWindows = os.platform() === 'win32'
+const isSlow = isCI || isWindows
 
 export default defineConfig({
 	test: {
@@ -7,10 +12,10 @@ export default defineConfig({
 			include: ['src/**/*.ts'],
 			provider: 'v8',
 		},
+		globalSetup: './test/utilities/global-setup.ts',
 		isolate: false,
 		maxWorkers: 1,
 		pool: 'forks',
-		// Define separate projects for browser and node tests
 		projects: [
 			// Browser project
 			{
@@ -23,13 +28,14 @@ export default defineConfig({
 						},
 						enabled: true,
 						headless: true,
-						instances: [{ browser: 'chromium' }],
+						instances: [{ browser: 'chromium' as const }],
 						provider: playwright(),
 						screenshotFailures: false,
 					},
 					exclude: ['test/**/*.node.test.ts'],
 					include: ['test/**/*.test.ts'],
 					name: 'browser',
+					testTimeout: isSlow ? 30_000 : 5000,
 				},
 			},
 			// Node project
@@ -39,9 +45,10 @@ export default defineConfig({
 					exclude: ['test/**/*.browser.test.ts'],
 					include: ['test/**/*.test.ts'],
 					name: 'node',
+					testTimeout: isSlow ? 30_000 : 5000,
 				},
 			},
 		],
-		silent: 'passed-only', // Suppress console output during tests
+		silent: 'passed-only',
 	},
 })

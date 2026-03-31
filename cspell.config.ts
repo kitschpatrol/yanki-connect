@@ -1,5 +1,6 @@
 import { cspellConfig } from '@kitschpatrol/cspell-config'
 
 export default cspellConfig({
-	words: ['afmt', 'bafmt', 'bfont', 'bqfmt', 'flds', 'odid', 'odue', 'sched', 'tmpls'],
+	ignorePaths: ['test/fixtures/anki-data-folder/**/*'],
+	words: ['afmt', 'bafmt', 'bfont', 'bqfmt', 'flds', 'odid', 'odue', 'pycache', 'sched', 'tmpls'],
 })

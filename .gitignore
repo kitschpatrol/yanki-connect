@@ -21,3 +21,4 @@ vendor/
 
 # Customizations
 /.claude
+__pycache__

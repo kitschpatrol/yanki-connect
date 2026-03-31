@@ -1,10 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { YankiConnect } from '../src'
 
-// These tests only run locally...
-// TODO load test fixture data in Anki
-
-const client = new YankiConnect({ autoLaunch: true })
+const client = new YankiConnect({ autoLaunch: false })
 
 describe('deck actions', () => {
 	it('deckNames', async () => {
