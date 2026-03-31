@@ -1092,6 +1092,7 @@ export class YankiConnect {
 	): (params?: ParamsForAction<T>) => Promise<ResultForAction<T>> {
 		return async (params?: ParamsForAction<T>) => {
 			// Bang is a type appeasement...
+			// eslint-disable-next-line ts/no-unnecessary-type-arguments
 			const response = await this.invoke<T>(action, params!)
 			if (response.error !== null) {
 				throw new Error(response.error)
