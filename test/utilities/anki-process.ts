@@ -16,7 +16,17 @@ const platform =
  */
 function findAnkiWindows(): string {
 	const candidates = [
-		path.join(os.homedir(), 'scoop', 'apps', 'anki', 'current', 'programfiles', '.venv', 'Scripts', 'anki.exe'),
+		path.join(
+			os.homedir(),
+			'scoop',
+			'apps',
+			'anki',
+			'current',
+			'programfiles',
+			'.venv',
+			'Scripts',
+			'anki.exe',
+		),
 		path.join('C:', 'Program Files', 'Anki', 'anki.exe'),
 	]
 
@@ -157,12 +167,23 @@ export async function closeAnki(): Promise<void> {
 					ankiPid = undefined
 				}
 
-				await execa('pkill', ['-x', 'anki']).catch(() => {})
+				await execa('pkill', ['-x', 'anki']).catch(() => {
+					// Ignore
+				})
 				break
 			}
 
 			case 'mac': {
-				if (ankiPid !== undefined) {
+				if (ankiPid === undefined) {
+					await execa('osascript', ['-e', 'tell application "Anki" to quit']).catch(async () => {
+						await execa('sh', [
+							'-c',
+							"launchctl stop $(launchctl list | grep ankiweb | awk '{print $3}')",
+						]).catch(() => {
+							// Ignore
+						})
+					})
+				} else {
 					try {
 						process.kill(-ankiPid, 'SIGKILL')
 					} catch {
@@ -170,29 +191,26 @@ export async function closeAnki(): Promise<void> {
 					}
 
 					ankiPid = undefined
-				} else {
-					await execa('osascript', ['-e', 'tell application "Anki" to quit']).catch(
-						async () => {
-							await execa('sh', [
-								'-c',
-								"launchctl stop $(launchctl list | grep ankiweb | awk '{print $3}')",
-							]).catch(() => {})
-						},
-					)
 				}
 
 				// Fallback for pip-installed Anki in worker processes where ankiPid is lost
-				await execa('pkill', ['-9', '-f', 'bin/anki']).catch(() => {})
+				await execa('pkill', ['-9', '-f', 'bin/anki']).catch(() => {
+					// Ignore
+				})
 				break
 			}
 
 			case 'windows': {
 				if (ankiPid !== undefined) {
-					await execa('taskkill', ['/PID', String(ankiPid), '/T', '/F']).catch(() => {})
+					await execa('taskkill', ['/PID', String(ankiPid), '/T', '/F']).catch(() => {
+						// Ignore
+					})
 					ankiPid = undefined
 				}
 
-				await execa('taskkill', ['/IM', 'anki.exe', '/T', '/F']).catch(() => {})
+				await execa('taskkill', ['/IM', 'anki.exe', '/T', '/F']).catch(() => {
+					// Ignore
+				})
 				break
 			}
 		}

@@ -5,6 +5,12 @@ export default eslintConfig(
 		ignores: ['test/fixtures/anki-data-folder/**/*'],
 		ts: {
 			overrides: {
+				'depend/ban-dependencies': [
+					'error',
+					{
+						allowed: ['execa'],
+					},
+				],
 				'ts/naming-convention': [
 					'error',
 					{
