@@ -18,6 +18,8 @@ describe('deck actions', () => {
 	})
 })
 
+const NOTE_ID_REGEX = /^\d{13}$/
+
 describe('note actions', () => {
 	it('addNote', async () => {
 		const newNoteId = await client.note.addNote({
@@ -34,7 +36,7 @@ describe('note actions', () => {
 
 		expect(newNoteId).not.toBeNull()
 
-		expect(String(newNoteId)).toMatch(/^\d{13}$/)
+		expect(String(newNoteId)).toMatch(NOTE_ID_REGEX)
 
 		// Clean up for stable testing
 		await client.note.deleteNotes({ notes: [newNoteId!] })
