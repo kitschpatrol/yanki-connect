@@ -4,17 +4,10 @@
 
 <!-- /title -->
 
-<!-- badges ({ custom: {
-    "CI": {
-      image: "https://github.com/kitschpatrol/yanki-connect/actions/workflows/ci.yml/badge.svg",
-      link: "https://github.com/kitschpatrol/yanki-connect/actions/workflows/ci.yml",
-    },
-  }
-}
--->
+<!-- badges -->
 
 [![NPM Package yanki-connect](https://img.shields.io/npm/v/yanki-connect.svg)](https://npmjs.com/package/yanki-connect)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/license/mit/)
 [![CI](https://github.com/kitschpatrol/yanki-connect/actions/workflows/ci.yml/badge.svg)](https://github.com/kitschpatrol/yanki-connect/actions/workflows/ci.yml)
 
 <!-- /badges -->
@@ -330,7 +323,7 @@ Chen Lijun's [autoanki](https://github.com/chenlijun99/autoanki) also implements
 
 ## Maintainers
 
-[@kitschpatrol](https://github.com/kitschpatrol)
+[kitschpatrol](https://github.com/kitschpatrol)
 
 ## Acknowledgments
 
@@ -342,7 +335,11 @@ All of the embedded action descriptions in Yanki Connect are taken directly from
 
 ## Contributing
 
-[Issues](https://github.com/kitschpatrol/yanki-connect/issues) and pull requests are welcome.
+[Issues](https://github.com/kitschpatrol/yanki-connect/issues) are welcome and appreciated.
+
+Please open an issue to discuss changes before submitting a pull request. Unsolicited PRs (especially AI-generated ones) are unlikely to be merged.
+
+This repository uses [@kitschpatrol/shared-config](https://github.com/kitschpatrol/shared-config) (via its `ksc` CLI) for linting and formatting, plus [MDAT](https://github.com/kitschpatrol/mdat) for readme placeholder expansion.
 
 <!-- /contributing -->
 
@@ -350,6 +347,6 @@ All of the embedded action descriptions in Yanki Connect are taken directly from
 
 ## License
 
-[MIT](license.txt) © Eric Mika
+[MIT](license.txt) © [Eric Mika](https://ericmika.com)
 
 <!-- /license -->

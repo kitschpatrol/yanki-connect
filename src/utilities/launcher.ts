@@ -8,8 +8,8 @@ const matchLaunchAttemptsPerSession = 100
 /**
  * Launches the Anki desktop app if it is not already running.
  *
- * Mac only for now, and works on a best-effort basis.
- * Retries as necessary, but times out eventually.
+ * Mac only for now, and works on a best-effort basis. Retries as necessary, but
+ * times out eventually.
  */
 export async function launchAnkiApp(): Promise<void> {
 	if (PLATFORM === 'mac' && ENVIRONMENT === 'node') {

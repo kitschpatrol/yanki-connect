@@ -3,6 +3,7 @@ import { Project } from 'ts-morph'
 
 /**
  * Generate a tree structure of methods for the YankiConnect client
+ *
  * @returns A hierarchical JSON object with all YankiConnect methods
  */
 function generateMethodTree() {
@@ -59,7 +60,9 @@ function generateMethodTree() {
 
 /**
  * Extract method names from a type
+ *
  * @param type The TypeScript type
+ *
  * @returns Array of method names
  */
 function extractMethodsFromType(type: Type): string[] {

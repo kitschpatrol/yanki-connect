@@ -14,6 +14,7 @@ export default mdatConfig({
 			for (const action of actions) {
 				actionList.push(`client.${group}.${action}`)
 			}
+
 			actionList.push('')
 		}
 

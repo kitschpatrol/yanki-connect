@@ -51,11 +51,11 @@ export type YankiConnectOptions = {
 	 * Attempt to open the desktop Anki.app if it's not already running.
 	 *
 	 * - `true` will always attempt to open Anki _when a request is made_. This
-	 * might introduce significant latency on the first launch.
-	 * - `false` will never attempt to open Anki. Requests will fail until
-	 * something or someone else opens the Anki app.
-	 * -  `immediately` is a special option that will open Anki when the client is
-	 * instantiated.
+	 *   might introduce significant latency on the first launch.
+	 * - `false` will never attempt to open Anki. Requests will fail until something
+	 *   or someone else opens the Anki app.
+	 * - `immediately` is a special option that will open Anki when the client is
+	 *   instantiated.
 	 *
 	 * The Anki desktop app must be running for the client and the underlying
 	 * Anki-Connect service to work.
@@ -63,30 +63,37 @@ export type YankiConnectOptions = {
 	 * Currently supported on macOS only.
 	 *
 	 * The client does not attempt to close the app.
+	 *
 	 * @default false
 	 */
 	autoLaunch: 'immediately' | boolean
 	/**
-	 * Advanced option to customize the resource fetch implementation used to make requests to Anki-Connect.
+	 * Advanced option to customize the resource fetch implementation used to make
+	 * requests to Anki-Connect.
 	 *
-	 * Note that the signature reflects the subset of the built-in Fetch interface that's actually used by yanki-connect.
+	 * Note that the signature reflects the subset of the built-in Fetch interface
+	 * that's actually used by yanki-connect.
 	 *
 	 * The exact signature of this option is subject to change in the future.
+	 *
 	 * @default fetch
 	 */
 	fetchAdapter: undefined | YankiFetchAdapter
 	/**
 	 * Host where the Anki-Connect service is running.
+	 *
 	 * @default 'http://127.0.0.1'
 	 */
 	host: string
 	/**
 	 * Anki-Connect security key (optional)
+	 *
 	 * @default undefined
 	 */
 	key: string | undefined
 	/**
 	 * Port where the Anki-Connect service is running.
+	 *
 	 * @default 8765
 	 */
 	port: number
@@ -94,6 +101,7 @@ export type YankiConnectOptions = {
 	 * Anki-Connect API version.
 	 *
 	 * Only API version 6 is supported for now.
+	 *
 	 * @default 6
 	 */
 	version: AnkiConnectVersion
@@ -110,17 +118,18 @@ export const defaultYankiConnectOptions: YankiConnectOptions = {
 }
 
 /**
- * __YankiConnect is a client for the [Anki-Connect
- * API](https://git.sr.ht/~foosoft/anki-connect/tree/25.11.9.0/item/README.md)__.
+ * **YankiConnect is a client for the [Anki-Connect
+ * API](https://git.sr.ht/~foosoft/anki-connect/tree/25.11.9.0/item/README.md)**.
  *
- * It implements every endpoint from Anki-Connect version 25.11.9.0, released 2025-11-09.
+ * It implements every endpoint from Anki-Connect version 25.11.9.0, released
+ * 2025-11-09.
  *
  * Inline documentation is by the Anki-Connect authors, generated from [the
  * readme.md](https://git.sr.ht/~foosoft/anki-connect/tree/25.11.9.0/item/README.md)
  */
 export class YankiConnect {
 	/**
-	 * __Card Actions__
+	 * **Card Actions**
 	 *
 	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/25.11.9.0/item/README.md#card-actions)
 	 */
@@ -227,7 +236,7 @@ export class YankiConnect {
 		unsuspend: this.build('unsuspend'),
 	}
 	/**
-	 * __Deck Actions__
+	 * **Deck Actions**
 	 *
 	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/25.11.9.0/item/README.md#deck-actions)
 	 */
@@ -273,7 +282,9 @@ export class YankiConnect {
 		 */
 		getDecks: this.build('getDecks'),
 		/**
-		  Gets statistics such as total cards and cards due for the given decks.
+		 * ```
+		 * 	  Gets statistics such as total cards and cards due for the given decks.
+		 * ```
 		 */
 		getDeckStats: this.build('getDeckStats'),
 		/**
@@ -297,7 +308,7 @@ export class YankiConnect {
 		setDeckConfigId: this.build('setDeckConfigId'),
 	}
 	/**
-	 * __Graphical Actions__
+	 * **Graphical Actions**
 	 *
 	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/25.11.9.0/item/README.md#graphical-actions)
 	 */
@@ -366,10 +377,10 @@ export class YankiConnect {
 		 * Opens the _Edit_ dialog with a note corresponding to given note ID. The
 		 * dialog is similar to the _Edit Current_ dialog, but:
 		 *
-		 * - has a Preview button to preview the cards for the note
-		 * - has a Browse button to open the browser with these cards
-		 * - has Previous/Back buttons to navigate the history of the dialog
-		 * - has no bar with the Close button
+		 * - Has a Preview button to preview the cards for the note
+		 * - Has a Browse button to open the browser with these cards
+		 * - Has Previous/Back buttons to navigate the history of the dialog
+		 * - Has no bar with the Close button
 		 */
 		guiEditNote: this.build('guiEditNote'),
 		/**
@@ -431,7 +442,7 @@ export class YankiConnect {
 		guiUndo: this.build('guiUndo'),
 	}
 	/**
-	 * __Media Actions__
+	 * **Media Actions**
 	 *
 	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/25.11.9.0/item/README.md#media-actions)
 	 */
@@ -471,7 +482,7 @@ export class YankiConnect {
 		storeMediaFile: this.build('storeMediaFile'),
 	}
 	/**
-	 * __Miscellaneous Actions__
+	 * **Miscellaneous Actions**
 	 *
 	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/25.11.9.0/item/README.md#miscellaneous-actions)
 	 */
@@ -558,7 +569,7 @@ export class YankiConnect {
 		version: this.build('version'),
 	}
 	/**
-	 * __Model Actions__
+	 * **Model Actions**
 	 *
 	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/25.11.9.0/item/README.md#model-actions)
 	 */
@@ -699,7 +710,7 @@ export class YankiConnect {
 	}
 
 	/**
-	 * __Note Actions__
+	 * **Note Actions**
 	 *
 	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/25.11.9.0/item/README.md#note-actions)
 	 */
@@ -736,9 +747,10 @@ export class YankiConnect {
 		 *   checking duplicates in. If undefined or `null`, the target deck will be
 		 *   used.
 		 * - `duplicateScopeOptions.checkChildren` will change whether or not
-		 *   duplicate cards are checked in child decks. The default value is `false`.
-		 * - `duplicateScopeOptions.checkAllModels` specifies whether duplicate
-		 *   checks are performed across all note types. The default value is `false`.
+		 *   duplicate cards are checked in child decks. The default value is
+		 *   `false`.
+		 * - `duplicateScopeOptions.checkAllModels` specifies whether duplicate checks
+		 *   are performed across all note types. The default value is `false`.
 		 */
 		addNote: this.build('addNote'),
 		/**
@@ -834,8 +846,8 @@ export class YankiConnect {
 		 * are updated first and are not rolled back if updating tags fails. Tags
 		 * are not updated if updating fields fails.
 		 *
-		 * > [!WARNING] You must not be viewing the note that you are updating on
-		 * > your Anki browser, otherwise the fields will not update. See [this
+		 * > [!WARNING] You must not be viewing the note that you are updating on your
+		 * > Anki browser, otherwise the fields will not update. See [this
 		 * > issue](https://github.com/FooSoft/anki-connect/issues/82) for further
 		 * > details.
 		 */
@@ -847,8 +859,8 @@ export class YankiConnect {
 		 * `addNote` for an explanation of objects in the `audio`, `video`, or
 		 * `picture` array.
 		 *
-		 * > [!WARNING] You must not be viewing the note that you are updating on
-		 * > your Anki browser, otherwise the fields will not update. See [this
+		 * > [!WARNING] You must not be viewing the note that you are updating on your
+		 * > Anki browser, otherwise the fields will not update. See [this
 		 * > issue](https://github.com/FooSoft/anki-connect/issues/82) for further
 		 * > details.
 		 */
@@ -866,7 +878,7 @@ export class YankiConnect {
 	}
 
 	/**
-	 * __Statistic Actions__
+	 * **Statistic Actions**
 	 *
 	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/25.11.9.0/item/README.md#statistic-actions)
 	 */
@@ -982,6 +994,7 @@ export class YankiConnect {
 	 * ```
 	 *
 	 * You can use:
+	 *
 	 * ```ts
 	 * const client = new AnkiConnectClient()
 	 * const result = await client.miscellaneous.version()
@@ -1092,7 +1105,7 @@ export class YankiConnect {
 	): (params?: ParamsForAction<T>) => Promise<ResultForAction<T>> {
 		return async (params?: ParamsForAction<T>) => {
 			// Bang is a type appeasement...
-			// eslint-disable-next-line ts/no-unnecessary-type-arguments
+
 			const response = await this.invoke<T>(action, params!)
 			if (response.error !== null) {
 				throw new Error(response.error)
