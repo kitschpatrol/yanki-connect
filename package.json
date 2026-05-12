@@ -1,12 +1,13 @@
 {
 	"name": "yanki-connect",
 	"version": "4.0.3",
-	"description": "A fully-typed Anki-Connect API client.",
+	"description": "A fully-typed AnkiConnect API client.",
 	"keywords": [
 		"anki",
 		"flashcards",
 		"spaced-repetition",
 		"anki-connect",
+		"ankiconnect",
 		"client",
 		"api",
 		"yanki",

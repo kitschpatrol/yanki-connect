@@ -14,13 +14,13 @@
 
 <!-- short-description -->
 
-**A fully-typed Anki-Connect API client.**
+**A fully-typed AnkiConnect API client.**
 
 <!-- /short-description -->
 
 ## Overview
 
-Yanki Connect exists to streamline development of JavaScript and TypeScript applications that use Alex Yatskov's [Anki-Connect](https://ankiweb.net/shared/info/2055492159) add-on to interface with the [Anki](https://apps.ankiweb.net) spaced repetition flashcard software. The library provides extensive type annotations for the Anki-Connect API, and includes a turn-key client implementation.
+Yanki Connect exists to streamline development of JavaScript and TypeScript applications that use Alex Yatskov's [AnkiConnect](https://ankiweb.net/shared/info/2055492159) add-on to interface with the [Anki](https://apps.ankiweb.net) spaced repetition flashcard software. The library provides extensive type annotations for the AnkiConnect API, and includes a turn-key client implementation.
 
 The "Y" prefix in "Yanki" is in the "Yet another" naming tradition; a nod to Anki's robust and occasionally duplicative ecosystem of third-party tools. (Also, appropriately, Yankī are a variety of [truant youth](https://en.wikipedia.org/wiki/Yankee#/media/File:ヤンキー.jpg).)
 
@@ -29,21 +29,21 @@ This library is used in the [`yanki`](https://github.com/kitschpatrol/yanki) CLI
 ## Features
 
 - **Action method organization + convenience methods**\
-  Instead of putting all <!-- actionCount -->116<!-- /actionCount --> methods in a single namespace, action convenience methods are organized into the same groups used in the [Anki-Connect documentation](https://git.sr.ht/~foosoft/anki-connect/tree/25.11.9.0/item/README.md#supported-actions), to simplify auto-complete discoverability.
+  Instead of putting all <!-- actionCount -->116<!-- /actionCount --> methods in a single namespace, action convenience methods are organized into the same groups used in the [AnkiConnect documentation](https://git.sr.ht/~foosoft/anki-connect/tree/25.11.9.0/item/README.md#supported-actions), to simplify auto-complete discoverability.
 
 - **Low-level access through the provided `invoke` method**\
-  If you don't want to use the convenience methods, an `invoke(action, params)` method is also exposed on the YankiConnect class for direct interaction with the Anki-Connect API.
+  If you don't want to use the convenience methods, an `invoke(action, params)` method is also exposed on the YankiConnect class for direct interaction with the AnkiConnect API.
 
 - **Inline documentation and full type annotations**\
   The action method types are annotated with JSDoc-style comments to provide documentation and links in your IDE's auto-complete pop-over.
 
 - **Errors from the API are thrown**\
-  Instead of returning an object with `result` and `error` keys, Yanki Connect's convenience methods checks for errors in responses from the Anki-Connect API, and throws them as errors. This gives more convenient access to the result, but means you'll need to do your own error handling.
+  Instead of returning an object with `result` and `error` keys, Yanki Connect's convenience methods checks for errors in responses from the AnkiConnect API, and throws them as errors. This gives more convenient access to the result, but means you'll need to do your own error handling.
 
-  _Note that this only applies to the convenience methods (`client.card.*`, etc.) the `invoke(action, params)` method returns the Anki-Connect API's raw `{"result": ..., "error": null}` responses._
+  _Note that this only applies to the convenience methods (`client.card.*`, etc.) the `invoke(action, params)` method returns the AnkiConnect API's raw `{"result": ..., "error": null}` responses._
 
 - **Anki desktop app auto-launch**\
-  Perhaps the most precarious aspect of the Anki-Connect add-on is that the Anki desktop application _must_ be running for any of the API calls to work. Yanki Connect tries to sand down this rough edge by (optionally) automatically launching the Anki desktop app if it's not running already.
+  Perhaps the most precarious aspect of the AnkiConnect add-on is that the Anki desktop application _must_ be running for any of the API calls to work. Yanki Connect tries to sand down this rough edge by (optionally) automatically launching the Anki desktop app if it's not running already.
 
   You can enable this behavior by passing a configuration option when the class is instantiated:
 
@@ -59,9 +59,9 @@ This library is used in the [`yanki`](https://github.com/kitschpatrol/yanki) CLI
 
 Yanki Connect is universal / isomorphic: it runs in the browser and Node 20.11+ compatible environments. The exported APIs are ESM-only. It's implemented in TypeScript and bundles extensive type definitions.
 
-The Anki desktop app (>=2.1.45, released 2021-07-30) with the Anki-Connect add-on installed and configured is also required to do anything useful with the library.
+The Anki desktop app (>=2.1.45, released 2021-07-30) with the AnkiConnect add-on installed and configured is also required to do anything useful with the library.
 
-The API calls are written against version [25.11.9.0](https://git.sr.ht/~foosoft/anki-connect/tree/25.11.9.0/item/README.md) of the Anki-Connect add-on, released 2025-11-02. You must use either this or a newer version of the Anki-Connect add-on for compatibility with all available calls. A majority of the calls are compatible with older version of the Anki-Connect add-on, but this is at your own risk.
+The API calls are written against version [25.11.9.0](https://git.sr.ht/~foosoft/anki-connect/tree/25.11.9.0/item/README.md) of the AnkiConnect add-on, released 2025-11-02. You must use either this or a newer version of the AnkiConnect add-on for compatibility with all available calls. A majority of the calls are compatible with older version of the AnkiConnect add-on, but this is at your own risk.
 
 ### Installation
 
@@ -87,7 +87,7 @@ import { YankiConnect } from 'https://unpkg.com/yanki-connect'
 
 Yanki Connect aims to be discoverable and self-documenting when used in an environment with a robust autocompletion / language service implementation. (VS Code, for example.)
 
-The library exports the `YankiConnect` class, which groups methods into the same structure of "supported actions" used in the official [Anki-Connect documentation](https://git.sr.ht/~foosoft/anki-connect/tree/25.11.9.0/item/README.md#supported-actions).
+The library exports the `YankiConnect` class, which groups methods into the same structure of "supported actions" used in the official [AnkiConnect documentation](https://git.sr.ht/~foosoft/anki-connect/tree/25.11.9.0/item/README.md#supported-actions).
 
 Here's a simple example:
 
@@ -101,7 +101,7 @@ const decks = await client.deck.deckNames()
 console.log(decks) // ["Your", "Deck", "Names", "Here"]
 ```
 
-All <!-- actionCount -->116<!-- /actionCount --> Anki-Connect actions are exposed under their respective groups, with type data for both parameters and return types:
+All <!-- actionCount -->116<!-- /actionCount --> AnkiConnect actions are exposed under their respective groups, with type data for both parameters and return types:
 
 <!-- actionList -->
 
@@ -233,21 +233,21 @@ client.statistic.insertReviews
 
 <!-- /actionList -->
 
-Note that at the moment, only the latest Anki-Connect API version 6 is supported, and Anki-Connect release >=25.11.9.0 is required for compatibility with all features.
+Note that at the moment, only the latest AnkiConnect API version 6 is supported, and AnkiConnect release >=25.11.9.0 is required for compatibility with all features.
 
 ### API
 
 #### Configuration
 
-The `YankiConnect` class features sensible defaults that should work fine for most configurations of Anki-Connect, but if you'd like to customize the client, you can pass an argument of type `YankiConnectOptions` with any of the following:
+The `YankiConnect` class features sensible defaults that should work fine for most configurations of AnkiConnect, but if you'd like to customize the client, you can pass an argument of type `YankiConnectOptions` with any of the following:
 
-| Key          | Type                       | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        | Default              |
-| ------------ | -------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------- |
-| `host`       | `string`                   | Host where the Anki-Connect service is running.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | `'http://127.0.0.1'` |
-| `port`       | `number`                   | Port where the Anki-Connect service is running.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | `8765`               |
-| `version`    | `AnkiConnectVersion`       | Anki-Connect API version. Only API version 6 is supported.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         | `6`                  |
-| `key`        | `string`                   | Anki-Connect security key. Usually not required.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   | `undefined`          |
-| `autoLaunch` | `boolean \| 'immediately'` | Attempt to launch the Anki desktop application if it's not already running.<br><ul><li>`true` will always attempt to open Anki _when a request is made_. This might introduce significant latency on the first launch.</li><li>`false` will never attempt to open Anki. Requests will fail until something or someone opens the Anki app.</li><li>`'immediately'` is a special option that will open Anki when the client is instantiated.</li></ul>The Anki desktop app must be running for the client and the underlying Anki-Connect service to work.<br><br>Currently supported on macOS only. | `false`              |
+| Key          | Type                       | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       | Default              |
+| ------------ | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------- |
+| `host`       | `string`                   | Host where the AnkiConnect service is running.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | `'http://127.0.0.1'` |
+| `port`       | `number`                   | Port where the AnkiConnect service is running.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | `8765`               |
+| `version`    | `AnkiConnectVersion`       | AnkiConnect API version. Only API version 6 is supported.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         | `6`                  |
+| `key`        | `string`                   | AnkiConnect security key. Usually not required.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   | `undefined`          |
+| `autoLaunch` | `boolean \| 'immediately'` | Attempt to launch the Anki desktop application if it's not already running.<br><ul><li>`true` will always attempt to open Anki _when a request is made_. This might introduce significant latency on the first launch.</li><li>`false` will never attempt to open Anki. Requests will fail until something or someone opens the Anki app.</li><li>`'immediately'` is a special option that will open Anki when the client is instantiated.</li></ul>The Anki desktop app must be running for the client and the underlying AnkiConnect service to work.<br><br>Currently supported on macOS only. | `false`              |
 
 ### Bundling for the browser
 
@@ -319,7 +319,7 @@ console.log(decks) // ["Your", "Deck", "Names", "Here"]
 
 ### Similar projects
 
-Chen Lijun's [autoanki](https://github.com/chenlijun99/autoanki) also implements a nicely typed Anki-Connect wrapper.
+Chen Lijun's [autoanki](https://github.com/chenlijun99/autoanki) also implements a nicely typed AnkiConnect wrapper.
 
 ## Maintainers
 
@@ -327,9 +327,9 @@ Chen Lijun's [autoanki](https://github.com/chenlijun99/autoanki) also implements
 
 ## Acknowledgments
 
-Thanks to [Alex Yatskov](https://foosoft.net/) for creating [Anki-Connect](https://ankiweb.net/shared/info/2055492159).
+Thanks to [Alex Yatskov](https://foosoft.net/) for creating [AnkiConnect](https://ankiweb.net/shared/info/2055492159).
 
-All of the embedded action descriptions in Yanki Connect are taken directly from the [Anki-Connect project readme](https://git.sr.ht/~foosoft/anki-connect/tree/25.11.9.0/item/README.md).
+All of the embedded action descriptions in Yanki Connect are taken directly from the [AnkiConnect project readme](https://git.sr.ht/~foosoft/anki-connect/tree/25.11.9.0/item/README.md).
 
 <!-- contributing -->
 

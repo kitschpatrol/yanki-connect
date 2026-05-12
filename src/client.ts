@@ -58,7 +58,7 @@ export type YankiConnectOptions = {
 	 *   instantiated.
 	 *
 	 * The Anki desktop app must be running for the client and the underlying
-	 * Anki-Connect service to work.
+	 * AnkiConnect service to work.
 	 *
 	 * Currently supported on macOS only.
 	 *
@@ -69,7 +69,7 @@ export type YankiConnectOptions = {
 	autoLaunch: 'immediately' | boolean
 	/**
 	 * Advanced option to customize the resource fetch implementation used to make
-	 * requests to Anki-Connect.
+	 * requests to AnkiConnect.
 	 *
 	 * Note that the signature reflects the subset of the built-in Fetch interface
 	 * that's actually used by yanki-connect.
@@ -80,25 +80,25 @@ export type YankiConnectOptions = {
 	 */
 	fetchAdapter: undefined | YankiFetchAdapter
 	/**
-	 * Host where the Anki-Connect service is running.
+	 * Host where the AnkiConnect service is running.
 	 *
 	 * @default 'http://127.0.0.1'
 	 */
 	host: string
 	/**
-	 * Anki-Connect security key (optional)
+	 * AnkiConnect security key (optional)
 	 *
 	 * @default undefined
 	 */
 	key: string | undefined
 	/**
-	 * Port where the Anki-Connect service is running.
+	 * Port where the AnkiConnect service is running.
 	 *
 	 * @default 8765
 	 */
 	port: number
 	/**
-	 * Anki-Connect API version.
+	 * AnkiConnect API version.
 	 *
 	 * Only API version 6 is supported for now.
 	 *
@@ -118,13 +118,13 @@ export const defaultYankiConnectOptions: YankiConnectOptions = {
 }
 
 /**
- * **YankiConnect is a client for the [Anki-Connect
+ * **YankiConnect is a client for the [AnkiConnect
  * API](https://git.sr.ht/~foosoft/anki-connect/tree/25.11.9.0/item/README.md)**.
  *
- * It implements every endpoint from Anki-Connect version 25.11.9.0, released
+ * It implements every endpoint from AnkiConnect version 25.11.9.0, released
  * 2025-11-09.
  *
- * Inline documentation is by the Anki-Connect authors, generated from [the
+ * Inline documentation is by the AnkiConnect authors, generated from [the
  * readme.md](https://git.sr.ht/~foosoft/anki-connect/tree/25.11.9.0/item/README.md)
  */
 export class YankiConnect {
@@ -552,9 +552,9 @@ export class YankiConnect {
 		 * (true if required) and `version` will also be returned.
 		 *
 		 * This should be the first call you make to make sure that your application
-		 * and Anki-Connect are able to communicate properly with each other. New
-		 * versions of Anki-Connect are backwards compatible; as long as you are
-		 * using actions which are available in the reported Anki-Connect version or
+		 * and AnkiConnect are able to communicate properly with each other. New
+		 * versions of AnkiConnect are backwards compatible; as long as you are
+		 * using actions which are available in the reported AnkiConnect version or
 		 * earlier, everything should work fine.
 		 */
 		requestPermission: this.build('requestPermission'),
@@ -720,7 +720,7 @@ export class YankiConnect {
 		 * values and tags. Returns the identifier of the created note created on
 		 * success, and `null` on failure.
 		 *
-		 * Anki-Connect can download audio, video, and picture files and embed them
+		 * AnkiConnect can download audio, video, and picture files and embed them
 		 * in newly created notes. The corresponding `audio`, `video`, and `picture`
 		 * note members are optional and can be omitted. If you choose to include
 		 * any of them, they should contain a single object or an array of objects
@@ -972,7 +972,7 @@ export class YankiConnect {
 
 		// eslint-disable-next-line ts/no-unnecessary-condition
 		if (this.version !== 6) {
-			throw new Error('YankiConnect currently only supports Anki-Connect API version 6')
+			throw new Error('YankiConnect currently only supports AnkiConnect API version 6')
 		}
 
 		if (this.autoLaunch === 'immediately') {
@@ -1030,11 +1030,11 @@ export class YankiConnect {
 			})
 
 			if (response === undefined) {
-				throw new Error('Anki-Connect response is undefined')
+				throw new Error('AnkiConnect response is undefined')
 			}
 
 			if (response.status !== 200) {
-				throw new Error(`Anki-Connect response status is ${response.status}`)
+				throw new Error(`AnkiConnect response status is ${response.status}`)
 			}
 
 			// eslint-disable-next-line ts/no-unsafe-type-assertion
@@ -1047,7 +1047,7 @@ export class YankiConnect {
 			// Attempt restart, but if it's a permissions issue then throw and stop trying
 			if (
 				this.autoLaunch !== false
-				// TODO what about permission denial, or missing Anki-Connect plugin?
+				// TODO what about permission denial, or missing AnkiConnect plugin?
 				// &&
 				// !(error instanceof TypeError && (error.cause as TypeErrorCause)?.code === 'ECONNREFUSED')
 			) {
