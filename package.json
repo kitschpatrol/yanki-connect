@@ -55,32 +55,32 @@
 		"test": "vitest run"
 	},
 	"dependencies": {
-		"@types/node": "~20.11.30",
+		"@types/node": "~20.19.43",
 		"open": "^11.0.0"
 	},
 	"devDependencies": {
-		"@arethetypeswrong/cli": "^0.18.2",
-		"@kitschpatrol/shared-config": "^7.6.0",
-		"@vitest/browser-playwright": "^4.1.6",
-		"@vitest/coverage-v8": "^4.1.6",
+		"@arethetypeswrong/cli": "^0.18.4",
+		"@kitschpatrol/shared-config": "^8.0.0",
+		"@vitest/browser-playwright": "^4.1.9",
+		"@vitest/coverage-v8": "^4.1.9",
 		"bumpp": "^11.1.0",
 		"execa": "^9.6.1",
-		"playwright": "^1.60.0",
+		"playwright": "^1.61.1",
 		"publint": "^0.3.21",
 		"shx": "^0.4.0",
 		"ts-morph": "^28.0.0",
-		"tsdown": "^0.22.0",
-		"typescript": "~5.9.3",
-		"vitest": "^4.1.6"
+		"tsdown": "^0.22.3",
+		"typescript": "~6.0.3",
+		"vitest": "^4.1.9"
 	},
-	"packageManager": "pnpm@11.1.2",
+	"packageManager": "pnpm@11.10.0",
 	"engines": {
-		"node": ">=20.11"
+		"node": "^20.19.0 || >=22.12.0"
 	},
 	"devEngines": {
 		"runtime": {
 			"name": "node",
-			"version": ">=22.18.0"
+			"version": ">=24.16.0"
 		}
 	}
 }

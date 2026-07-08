@@ -12,6 +12,18 @@ const platform =
 	process.platform === 'win32' ? 'windows' : process.platform === 'darwin' ? 'mac' : 'linux'
 
 /**
+ * Runs a best-effort command, ignoring any failure. Used for cleanup commands
+ * where the target process may already be gone.
+ */
+async function tryExeca(file: string, arguments_: readonly string[]): Promise<void> {
+	try {
+		await execa(file, arguments_)
+	} catch {
+		// Ignore: best-effort cleanup
+	}
+}
+
+/**
  * Finds the Anki executable on Windows.
  */
 function findAnkiWindows(): string {
@@ -70,8 +82,10 @@ export async function openAnki(basePath: string): Promise<void> {
 				stdio: 'ignore',
 			})
 
+			// Detached process, swallow the eventual rejection when it's killed
+			// eslint-disable-next-line unicorn/prefer-await
 			child.catch(() => {
-				// Expected: process is killed during closeAnki
+				// Expected: killed during cleanup
 			})
 			ankiPid = child.pid
 			child.unref()
@@ -95,8 +109,10 @@ export async function openAnki(basePath: string): Promise<void> {
 					stdio: 'ignore',
 				})
 
+				// Detached process, swallow the eventual rejection when it's killed
+				// eslint-disable-next-line unicorn/prefer-await
 				child.catch(() => {
-					// Expected: process is killed during closeAnki
+					// Expected: killed during cleanup
 				})
 				ankiPid = child.pid
 				child.unref()
@@ -113,8 +129,10 @@ export async function openAnki(basePath: string): Promise<void> {
 				windowsHide: true,
 			})
 
+			// Detached process, swallow the eventual rejection when it's killed
+			// eslint-disable-next-line unicorn/prefer-await
 			child.catch(() => {
-				// Expected: process is killed via taskkill during closeAnki
+				// Expected: killed during cleanup
 			})
 			ankiPid = child.pid
 			child.unref()
@@ -124,7 +142,8 @@ export async function openAnki(basePath: string): Promise<void> {
 
 	// Poll until AnkiConnect is reachable
 	const client = new YankiConnect({ autoLaunch: false })
-	const maxWait = Number(process.env.ANKI_CONNECT_TIMEOUT) || 30_000
+	const timeoutEnvironment = Number(process.env.ANKI_CONNECT_TIMEOUT)
+	const maxWait = timeoutEnvironment > 0 ? timeoutEnvironment : 30_000
 	const start = Date.now()
 	while (Date.now() - start < maxWait) {
 		try {
@@ -167,22 +186,20 @@ export async function closeAnki(): Promise<void> {
 					ankiPid = undefined
 				}
 
-				await execa('pkill', ['-x', 'anki']).catch(() => {
-					// Ignore
-				})
+				await tryExeca('pkill', ['-x', 'anki'])
 				break
 			}
 
 			case 'mac': {
 				if (ankiPid === undefined) {
-					await execa('osascript', ['-e', 'tell application "Anki" to quit']).catch(async () => {
-						await execa('sh', [
+					try {
+						await execa('osascript', ['-e', 'tell application "Anki" to quit'])
+					} catch {
+						await tryExeca('sh', [
 							'-c',
 							"launchctl stop $(launchctl list | grep ankiweb | awk '{print $3}')",
-						]).catch(() => {
-							// Ignore
-						})
-					})
+						])
+					}
 				} else {
 					try {
 						process.kill(-ankiPid, 'SIGKILL')
@@ -194,23 +211,17 @@ export async function closeAnki(): Promise<void> {
 				}
 
 				// Fallback for pip-installed Anki in worker processes where ankiPid is lost
-				await execa('pkill', ['-9', '-f', 'bin/anki']).catch(() => {
-					// Ignore
-				})
+				await tryExeca('pkill', ['-9', '-f', 'bin/anki'])
 				break
 			}
 
 			case 'windows': {
 				if (ankiPid !== undefined) {
-					await execa('taskkill', ['/PID', String(ankiPid), '/T', '/F']).catch(() => {
-						// Ignore
-					})
+					await tryExeca('taskkill', ['/PID', String(ankiPid), '/T', '/F'])
 					ankiPid = undefined
 				}
 
-				await execa('taskkill', ['/IM', 'anki.exe', '/T', '/F']).catch(() => {
-					// Ignore
-				})
+				await tryExeca('taskkill', ['/IM', 'anki.exe', '/T', '/F'])
 				break
 			}
 		}

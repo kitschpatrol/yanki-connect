@@ -3,11 +3,7 @@
 import type { Request } from './shared'
 
 type NoteModel =
-	| 'Basic'
-	| 'Basic (and reversed card)'
-	| 'Basic (type in the answer)'
-	| 'Cloze'
-	| (string & {}) // Allow arbitrary strings too
+	'Basic' | 'Basic (and reversed card)' | 'Basic (type in the answer)' | 'Cloze' | (string & {}) // Allow arbitrary strings too
 
 type NoteMedia = {
 	data?: string // First priority, must have one of these three

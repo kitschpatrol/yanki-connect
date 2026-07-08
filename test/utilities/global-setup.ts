@@ -33,7 +33,7 @@ export async function setup() {
 export async function teardown() {
 	await closeAnki()
 
-	if (ankiBasePath) {
+	if (ankiBasePath !== undefined) {
 		await fs.rm(ankiBasePath, { force: true, recursive: true })
 	}
 }

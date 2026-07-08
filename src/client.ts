@@ -1009,25 +1009,28 @@ export class YankiConnect {
 		action: T,
 		params?: T extends ActionsWithParams ? ParamsForAction<T> : undefined,
 	): Promise<ResponseForAction<T>> {
-		let response: Awaited<ReturnType<YankiFetchAdapter>> // Fetch Response
 		let responseJson: ResponseForAction<T>
 		try {
-			response = await this.fetchAdapter(`${this.host}:${this.port}`, {
-				body: JSON.stringify({
-					action,
-					...(this.key === undefined ? {} : { key: this.key }),
-					params,
-					version: this.version,
-				}),
-				headers: {
-					'Access-Control-Allow-Origin': '*', // Not all servers honor this
-					'Content-Type': 'application/json',
+			// Fetch Response
+			const response: Awaited<ReturnType<YankiFetchAdapter>> = await this.fetchAdapter(
+				`${this.host}:${this.port}`,
+				{
+					body: JSON.stringify({
+						action,
+						...(this.key !== undefined && { key: this.key }),
+						params,
+						version: this.version,
+					}),
+					headers: {
+						'Access-Control-Allow-Origin': '*', // Not all servers honor this
+						'Content-Type': 'application/json',
+					},
+					method: 'POST',
+					// TODO how necessary is this?
+					// Ensure CORS mode is enabled
+					mode: 'cors',
 				},
-				method: 'POST',
-				// TODO how necessary is this?
-				// Ensure CORS mode is enabled
-				mode: 'cors',
-			})
+			)
 
 			if (response === undefined) {
 				throw new Error('AnkiConnect response is undefined')
@@ -1037,7 +1040,6 @@ export class YankiConnect {
 				throw new Error(`AnkiConnect response status is ${response.status}`)
 			}
 
-			// eslint-disable-next-line ts/no-unsafe-type-assertion
 			responseJson = (await response.json()) as ResponseForAction<T>
 
 			if (this.autoLaunch !== false && responseJson.error === 'collection is not available') {
@@ -1061,11 +1063,9 @@ export class YankiConnect {
 				})
 
 				if (params === undefined) {
-					// eslint-disable-next-line ts/no-unsafe-type-assertion
 					return this.invoke(action as ActionsWithoutParams) as Promise<ResponseForAction<T>>
 				}
 
-				// eslint-disable-next-line ts/no-unsafe-type-assertion
 				return this.invoke(action as ActionsWithParams, params) as Promise<ResponseForAction<T>>
 			}
 
@@ -1111,7 +1111,6 @@ export class YankiConnect {
 				throw new Error(response.error)
 			}
 
-			// eslint-disable-next-line ts/no-unsafe-type-assertion
 			return response.result as ResultForAction<T>
 		}
 	}

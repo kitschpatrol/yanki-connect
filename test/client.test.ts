@@ -18,7 +18,7 @@ describe('deck actions', () => {
 	})
 })
 
-const NOTE_ID_REGEX = /^\d{13}$/
+const NOTE_ID_REGEX = /^\d{13}$/v
 
 describe('note actions', () => {
 	it('addNote', async () => {
