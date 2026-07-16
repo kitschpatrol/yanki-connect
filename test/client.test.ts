@@ -43,7 +43,7 @@ describe('note actions', () => {
 
 		// Check that it was deleted
 		const note = await client.note.notesInfo({ notes: [newNoteId!] })
-		expect(note[0].fields).toBeUndefined()
+		expect(note[0]!.fields).toBeUndefined()
 	})
 })
 

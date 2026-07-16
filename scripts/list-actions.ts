@@ -84,7 +84,7 @@ function extractMethodsFromType(type: Type): string[] {
 			// Check if this property is a method (has call signatures)
 			const propertyType = property.getDeclarations()[0]?.getType()
 
-			if (propertyType.getCallSignatures().length > 0) {
+			if (propertyType !== undefined && propertyType.getCallSignatures().length > 0) {
 				methods.push(propertyName)
 			}
 		}
