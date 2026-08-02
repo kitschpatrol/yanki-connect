@@ -1,5 +1,8 @@
 {
 	"extends": "@kitschpatrol/typescript-config",
+	"compilerOptions": {
+		"types": ["node"]
+	},
 	"include": ["**/**.*"],
-	"exclude": ["**/dist/"]
+	"exclude": ["dist/"]
 }

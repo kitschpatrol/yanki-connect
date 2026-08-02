@@ -88,7 +88,7 @@ export async function openAnki(basePath: string): Promise<void> {
 				// Expected: killed during cleanup
 			})
 			ankiPid = child.pid
-			child.unref()
+			child.nodeChildProcess.unref()
 			break
 		}
 
@@ -115,7 +115,7 @@ export async function openAnki(basePath: string): Promise<void> {
 					// Expected: killed during cleanup
 				})
 				ankiPid = child.pid
-				child.unref()
+				child.nodeChildProcess.unref()
 			}
 
 			break
@@ -135,7 +135,7 @@ export async function openAnki(basePath: string): Promise<void> {
 				// Expected: killed during cleanup
 			})
 			ankiPid = child.pid
-			child.unref()
+			child.nodeChildProcess.unref()
 			break
 		}
 	}

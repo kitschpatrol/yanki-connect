@@ -2,7 +2,6 @@ import { eslintConfig } from '@kitschpatrol/eslint-config'
 
 export default eslintConfig(
 	{
-		ignores: ['test/fixtures/anki-data-folder/**/*'],
 		ts: {
 			overrides: {
 				'depend/ban-dependencies': [
@@ -25,11 +24,12 @@ export default eslintConfig(
 				'unicorn/no-array-sort': 'off',
 			},
 		},
+		type: 'lib',
 	},
 	{
 		files: ['readme.md/**/*.ts'],
 		rules: {
-			'import/no-unresolved': ['error', { ignore: ['vite', '^https?://.+'] }],
+			'import/no-unresolved': ['error', { ignore: ['^https?://.+'] }],
 		},
 	},
 )
