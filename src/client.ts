@@ -1,5 +1,3 @@
-/* eslint-disable ts/unified-signatures */
-
 import type {
 	Actions,
 	ActionsWithoutParams,

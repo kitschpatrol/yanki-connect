@@ -8,6 +8,11 @@ const isSlow = isCI || isWindows
 
 export default defineConfig({
 	test: {
+		// Let project servers and concurrent editor/CLI sessions use available ports.
+		api: {
+			port: 5180,
+			strictPort: false,
+		},
 		coverage: {
 			include: ['src/**/*.ts'],
 			provider: 'v8',
@@ -21,11 +26,6 @@ export default defineConfig({
 			{
 				test: {
 					browser: {
-						// Conflicts between VS Code extension and vitest CLI command...
-						api: {
-							port: 5180,
-							strictPort: true,
-						},
 						enabled: true,
 						headless: true,
 						instances: [{ browser: 'chromium' as const }],
