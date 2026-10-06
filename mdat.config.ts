@@ -1,5 +1,6 @@
 import { mdatConfig } from '@kitschpatrol/mdat-config'
 import { getYankiConnectMethodTree } from './scripts/list-actions'
+import { getYankiConnectOptionsTable } from './scripts/list-options'
 
 const actionTree = getYankiConnectMethodTree()
 
@@ -19,5 +20,8 @@ export default mdatConfig({
 		}
 
 		return `\`\`\`ts\n${actionList.join('\n')}\`\`\`\n`
+	},
+	optionsTable() {
+		return getYankiConnectOptionsTable()
 	},
 })

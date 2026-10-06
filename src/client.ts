@@ -1060,11 +1060,9 @@ export class YankiConnect {
 					setTimeout(resolve, 500)
 				})
 
-				if (params === undefined) {
-					return this.invoke(action as ActionsWithoutParams) as Promise<ResponseForAction<T>>
-				}
-
-				return this.invoke(action as ActionsWithParams, params) as Promise<ResponseForAction<T>>
+				return params === undefined
+					? (this.invoke(action as ActionsWithoutParams) as Promise<ResponseForAction<T>>)
+					: (this.invoke(action as ActionsWithParams, params) as Promise<ResponseForAction<T>>)
 			}
 
 			throw error

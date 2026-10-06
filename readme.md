@@ -4,17 +4,18 @@
 
 <!-- /title -->
 
-<!-- badges -->
+<!-- badges({ npmDownloads: true }) -->
 
 [![NPM Package yanki-connect](https://img.shields.io/npm/v/yanki-connect.svg)](https://www.npmjs.com/package/yanki-connect)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/license/mit)
 [![CI](https://github.com/kitschpatrol/yanki-connect/actions/workflows/ci.yml/badge.svg)](https://github.com/kitschpatrol/yanki-connect/actions/workflows/ci.yml)
+[![NPM Downloads yanki-connect](https://img.shields.io/npm/dm/yanki-connect)](https://www.npmjs.com/package/yanki-connect)
 
 <!-- /badges -->
 
 <!-- short-description -->
 
-**A fully-typed AnkiConnect API client.**
+**Fully-typed AnkiConnect API client.**
 
 <!-- /short-description -->
 
@@ -57,11 +58,17 @@ This library is used in the [`yanki`](https://github.com/kitschpatrol/yanki) CLI
 
 ### Dependencies
 
-Yanki Connect is universal / isomorphic: it runs in the browser and Node 20.19+ compatible environments. The exported APIs are ESM-only. It's implemented in TypeScript and bundles extensive type definitions.
+Yanki Connect is universal / isomorphic: it runs in the browser and in Node.js. The exported APIs are ESM-only. It's implemented in TypeScript and bundles extensive type definitions.
+
+<!-- dependencies({ heading: false }) -->
+
+- [Node.js](https://nodejs.org/) 20.19.0 or newer (specifically `^20.19.0 || ^22.12.0 || ^24.0.0 || >=26.0.0`)
+
+<!-- /dependencies -->
 
 The Anki desktop app (>=2.1.45, released 2021-07-30) with the AnkiConnect add-on installed and configured is also required to do anything useful with the library.
 
-The API calls are written against version [25.11.9.0](https://git.sr.ht/~foosoft/anki-connect/tree/25.11.9.0/item/README.md) of the AnkiConnect add-on, released 2025-11-02. You must use either this or a newer version of the AnkiConnect add-on for compatibility with all available calls. A majority of the calls are compatible with older version of the AnkiConnect add-on, but this is at your own risk.
+The API calls are written against version [25.11.9.0](https://git.sr.ht/~foosoft/anki-connect/tree/25.11.9.0/item/README.md) of the AnkiConnect add-on, released 2025-11-09. You must use either this or a newer version of the AnkiConnect add-on for compatibility with all available calls. A majority of the calls are compatible with older version of the AnkiConnect add-on, but this is at your own risk.
 
 ### Installation
 
@@ -241,13 +248,18 @@ Note that at the moment, only the latest AnkiConnect API version 6 is supported,
 
 The `YankiConnect` class features sensible defaults that should work fine for most configurations of AnkiConnect, but if you'd like to customize the client, you can pass an argument of type `YankiConnectOptions` with any of the following:
 
-| Key          | Type                       | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       | Default              |
-| ------------ | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------- |
-| `host`       | `string`                   | Host where the AnkiConnect service is running.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | `'http://127.0.0.1'` |
-| `port`       | `number`                   | Port where the AnkiConnect service is running.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | `8765`               |
-| `version`    | `AnkiConnectVersion`       | AnkiConnect API version. Only API version 6 is supported.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         | `6`                  |
-| `key`        | `string`                   | AnkiConnect security key. Usually not required.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   | `undefined`          |
-| `autoLaunch` | `boolean \| 'immediately'` | Attempt to launch the Anki desktop application if it's not already running.<br><ul><li>`true` will always attempt to open Anki _when a request is made_. This might introduce significant latency on the first launch.</li><li>`false` will never attempt to open Anki. Requests will fail until something or someone opens the Anki app.</li><li>`'immediately'` is a special option that will open Anki when the client is instantiated.</li></ul>The Anki desktop app must be running for the client and the underlying AnkiConnect service to work.<br><br>Currently supported on macOS only. | `false`              |
+<!-- optionsTable -->
+
+| Key            | Type                             | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 | Default              |
+| -------------- | -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------- |
+| `autoLaunch`   | `'immediately' \| boolean`       | Attempt to open the desktop Anki.app if it's not already running.<ul><li>`true` will always attempt to open Anki _when a request is made_. This might introduce significant latency on the first launch.</li><li>`false` will never attempt to open Anki. Requests will fail until something or someone else opens the Anki app.</li><li>`immediately` is a special option that will open Anki when the client is instantiated.</li></ul>The Anki desktop app must be running for the client and the underlying AnkiConnect service to work.<br><br>Currently supported on macOS only.<br><br>The client does not attempt to close the app. | `false`              |
+| `fetchAdapter` | `undefined \| YankiFetchAdapter` | Advanced option to customize the resource fetch implementation used to make requests to AnkiConnect.<br><br>Note that the signature reflects the subset of the built-in Fetch interface that's actually used by yanki-connect.<br><br>The exact signature of this option is subject to change in the future.                                                                                                                                                                                                                                                                                                                                | `fetch`              |
+| `host`         | `string`                         | Host where the AnkiConnect service is running.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              | `'http://127.0.0.1'` |
+| `key`          | `string \| undefined`            | AnkiConnect security key (optional)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         | `undefined`          |
+| `port`         | `number`                         | Port where the AnkiConnect service is running.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              | `8765`               |
+| `version`      | `AnkiConnectVersion`             | AnkiConnect API version.<br><br>Only API version 6 is supported for now.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | `6`                  |
+
+<!-- /optionsTable -->
 
 ### Bundling for the browser
 

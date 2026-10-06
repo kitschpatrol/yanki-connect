@@ -1,7 +1,7 @@
 {
 	"name": "yanki-connect",
 	"version": "4.0.11",
-	"description": "A fully-typed AnkiConnect API client.",
+	"description": "Fully-typed AnkiConnect API client.",
 	"keywords": [
 		"anki",
 		"flashcards",
@@ -51,31 +51,33 @@
 		"coverage": "vitest run --coverage",
 		"fix": "ksc fix",
 		"lint": "ksc lint",
+		"prepare": "skills experimental_sync -y -f",
 		"release": "bumpp --commit 'Release: %s' && pnpm build && pnpm publish --otp $(op item get npm --otp)",
 		"test": "vitest run"
 	},
 	"dependencies": {
 		"@types/node": "~20.19.43",
-		"open": "^11.0.2"
+		"open": "^11.0.4"
 	},
 	"devDependencies": {
 		"@arethetypeswrong/cli": "^0.18.5",
-		"@kitschpatrol/shared-config": "^8.8.0",
-		"@vitest/browser-playwright": "^5.0.0",
-		"@vitest/coverage-v8": "^5.0.0",
+		"@kitschpatrol/shared-config": "^8.12.1",
+		"@vitest/browser-playwright": "^5.0.3",
+		"@vitest/coverage-v8": "^5.0.3",
 		"bumpp": "^12.3.0",
 		"execa": "^10.0.1",
 		"playwright": "^1.63.0",
-		"publint": "^0.3.24",
+		"publint": "^0.3.25",
 		"shx": "^0.4.0",
+		"skills": "^1.7.0",
 		"ts-morph": "^28.0.0",
 		"tsdown": "^0.23.0",
 		"typescript": "~6.0.3",
-		"vitest": "^5.0.0"
+		"vitest": "^5.0.3"
 	},
-	"packageManager": "pnpm@12.4.1",
+	"packageManager": "pnpm@12.9.1",
 	"engines": {
-		"node": "^20.19.0 || >=22.12.0"
+		"node": "^20.19.0 || ^22.12.0 || ^24.0.0 || >=26.0.0"
 	},
 	"devEngines": {
 		"runtime": {
