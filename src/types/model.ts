@@ -51,7 +51,7 @@ type Model = {
 
 type ModelToCreate = {
 	cardTemplates: Array<{
-		[key: string]: string
+		[key: string]: string // Optionally includes Name, which defaults to 'Card 1', 'Card 2', and so on
 		Back: string
 		Front: string
 	}>
@@ -67,26 +67,19 @@ export type ModelRequests =
 			'findAndReplaceInModels',
 			6,
 			{
-				model: {
-					back: boolean
-					css: boolean
-					fieldText: string
-					front: boolean
-					modelName: string
-					replaceText: string
-				}
+				back?: boolean // Defaults to true
+				css?: boolean // Defaults to true
+				findText: string
+				front?: boolean // Defaults to true
+				modelName: string // Empty string searches all models
+				replaceText: string
 			},
 			number
 	  >
 	| Request<'findModelsById', 6, { modelIds: number[] }, Model[]>
 	| Request<'findModelsByName', 6, { modelNames: string[] }, Model[]>
-	| Request<'modelFieldAdd', 6, { fieldName: string; index: number; modelName: string }>
-	| Request<
-			'modelFieldDescriptions',
-			6,
-			{ description: string; fieldName: string; modelName: string },
-			boolean
-	  > // Only ancient versions return false
+	| Request<'modelFieldAdd', 6, { fieldName: string; index?: number; modelName: string }>
+	| Request<'modelFieldDescriptions', 6, { modelName: string }, string[]>
 	| Request<
 			'modelFieldFonts',
 			6,
@@ -107,7 +100,12 @@ export type ModelRequests =
 			{ modelName: string; newFieldName: string; oldFieldName: string }
 	  >
 	| Request<'modelFieldReposition', 6, { fieldName: string; index: number; modelName: string }>
-	| Request<'modelFieldSetDescription', 6, { fieldName: string; index: number; modelName: string }>
+	| Request<
+			'modelFieldSetDescription',
+			6,
+			{ description: string; fieldName: string; modelName: string },
+			boolean
+	  > // Only ancient versions return false
 	| Request<'modelFieldSetFont', 6, { fieldName: string; font: string; modelName: string }>
 	| Request<'modelFieldSetFontSize', 6, { fieldName: string; fontSize: number; modelName: string }>
 	| Request<
@@ -116,6 +114,7 @@ export type ModelRequests =
 			{ modelName: string },
 			Record<string, [string[], string[]]>
 	  > // Note tuple
+	| Request<'modelNameFromId', 6, { modelId: number }, string>
 	| Request<'modelNames', 6, never, string[]>
 	| Request<'modelNamesAndIds', 6, never, Record<string, number>>
 	| Request<'modelStyling', 6, { modelName: string }, { css: string }>

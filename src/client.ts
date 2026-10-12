@@ -117,19 +117,21 @@ export const defaultYankiConnectOptions: YankiConnectOptions = {
 
 /**
  * **YankiConnect is a client for the [AnkiConnect
- * API](https://git.sr.ht/~foosoft/anki-connect/tree/25.11.9.0/item/README.md)**.
+ * API](https://git.sr.ht/~foosoft/anki-connect/tree/26.10.11.4/item/API_LEGACY.md)**.
  *
- * It implements every endpoint from AnkiConnect version 25.11.9.0, released
- * 2025-11-09.
+ * It implements every legacy (version 6) API endpoint from AnkiConnect version
+ * 26.10.11.4, released 2026-10-11. The JSON-RPC API v1 introduced in
+ * AnkiConnect 26.10.11.0 is not yet supported.
  *
  * Inline documentation is by the AnkiConnect authors, generated from [the
- * readme.md](https://git.sr.ht/~foosoft/anki-connect/tree/25.11.9.0/item/README.md)
+ * legacy API
+ * guide](https://git.sr.ht/~foosoft/anki-connect/tree/26.10.11.4/item/API_LEGACY.md)
  */
 export class YankiConnect {
 	/**
 	 * **Card Actions**
 	 *
-	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/25.11.9.0/item/README.md#card-actions)
+	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.10.11.4/item/API_LEGACY.md#card-actions)
 	 */
 	public readonly card = {
 		/**
@@ -190,6 +192,10 @@ export class YankiConnect {
 		getIntervals: this.build('getIntervals'),
 		/**
 		 * Make cards be “relearning”.
+		 *
+		 * As of AnkiConnect 26.10.11.0 this performs a real failed review on each
+		 * card, which changes lapse counts and review history, and requires each
+		 * card to be an active review card.
 		 */
 		relearnCards: this.build('relearnCards'),
 		/**
@@ -207,13 +213,18 @@ export class YankiConnect {
 		 */
 		setEaseFactors: this.build('setEaseFactors'),
 		/**
-		 * Sets specific value of a single card. Given the risk of wreaking havoc in
-		 * the database when changing some of the values of a card, some of the keys
-		 * require the argument “warning_check” set to True. This can be used to set
-		 * a card’s flag, change it’s ease factor, change the review order in a
-		 * filtered deck and change the column “data” (not currently used by anki
-		 * apparently), and many other values. A list of values and explanation of
-		 * their respective utility can be found at [AnkiDroid’s
+		 * Update supported card properties. `card` is a scalar ID; `keys` and
+		 * `newValues` must be equal-length arrays with no duplicate keys. Supported
+		 * keys are `flags`, `did`, `factor`, `ivl`, `reps`, `lapses`, and
+		 * `custom_data`. `did`, `ivl`, `reps`, and `lapses` require
+		 * `warning_check=true`. Flags and deck moves cannot be combined with each
+		 * other or metadata patches. Raw ownership, queue, type, due, and sync
+		 * metadata writes are rejected.
+		 *
+		 * Returns `false` for an invalid request shape or protected writes without
+		 * `warning_check`, `[true]` on success, and `[[false, message]]` on native
+		 * failure. A list of values and explanation of their respective utility can
+		 * be found at [AnkiDroid’s
 		 * wiki](https://github.com/ankidroid/Anki-Android/wiki/Database-Structure).
 		 */
 		setSpecificValueOfCard: this.build('setSpecificValueOfCard'),
@@ -236,7 +247,7 @@ export class YankiConnect {
 	/**
 	 * **Deck Actions**
 	 *
-	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/25.11.9.0/item/README.md#deck-actions)
+	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.10.11.4/item/API_LEGACY.md#deck-actions)
 	 */
 	public readonly deck = {
 		/**
@@ -257,6 +268,11 @@ export class YankiConnect {
 		 */
 		createDeck: this.build('createDeck'),
 		/**
+		 * Returns the name of an existing deck by its numeric ID. Throws if the
+		 * deck does not exist.
+		 */
+		deckNameFromId: this.build('deckNameFromId'),
+		/**
 		 * Gets the complete list of deck names for the current user.
 		 */
 		deckNames: this.build('deckNames'),
@@ -271,7 +287,8 @@ export class YankiConnect {
 		 */
 		deleteDecks: this.build('deleteDecks'),
 		/**
-		 * Gets the configuration group object for the given deck.
+		 * Gets the configuration group object for the given deck, or `false` if the
+		 * deck does not exist.
 		 */
 		getDeckConfig: this.build('getDeckConfig'),
 		/**
@@ -308,7 +325,7 @@ export class YankiConnect {
 	/**
 	 * **Graphical Actions**
 	 *
-	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/25.11.9.0/item/README.md#graphical-actions)
+	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.10.11.4/item/API_LEGACY.md#graphical-actions)
 	 */
 	public readonly graphical = {
 		/**
@@ -322,10 +339,23 @@ export class YankiConnect {
 		 * documentation of `addNote` and `storeMediaFile` for an explanation of
 		 * these fields.
 		 *
-		 * The result is the ID of the note which would be added, if the user chose
-		 * to confirm the _Add Cards_ dialogue.
+		 * As of AnkiConnect 26.10.11.0 the result is always `0`, since the draft
+		 * has not been saved yet, and replacing a draft with unsaved content is
+		 * rejected. Older versions returned the ID the note would receive if the
+		 * user confirmed the dialog.
 		 */
 		guiAddCards: this.build('guiAddCards'),
+		/**
+		 * Updates the note draft in the open _Add Cards_ dialog. Fields and tags
+		 * replace the current values by default; when `append` is `true`, field
+		 * text is concatenated and tags are merged. Deck and note type always
+		 * replace the current values. Inline media is handled as in `addNote`.
+		 *
+		 * Returns `true` once the draft is updated. If the _Add Cards_ dialog is
+		 * not open, the result is an object with `error` and `code` properties
+		 * rather than a thrown error.
+		 */
+		guiAddNoteSetData: this.build('guiAddNoteSetData'),
 		/**
 		 * Answers the current card; returns `true` if succeeded or `false`
 		 * otherwise. Note that the answer for the current card must be displayed
@@ -401,6 +431,10 @@ export class YankiConnect {
 		 */
 		guiPlayAudio: this.build('guiPlayAudio'),
 		/**
+		 * Returns `true` if the reviewer is currently active, `false` otherwise.
+		 */
+		guiReviewActive: this.build('guiReviewActive'),
+		/**
 		 * Finds the open instance of the Card Browser dialog and selects a card
 		 * given a card identifier. Returns true if the Card Browser is open, false
 		 * otherwise.
@@ -430,7 +464,7 @@ export class YankiConnect {
 		 * Starts or resets the `timerStarted` value for the current card. This is
 		 * useful for deferring the start time to when it is displayed via the API,
 		 * allowing the recorded time taken to answer the card to be more accurate
-		 * when calling `guiAnswerCard`.
+		 * when calling `guiAnswerCard`. Returns `false` if not in review mode.
 		 */
 		guiStartCardTimer: this.build('guiStartCardTimer'),
 		/**
@@ -442,7 +476,7 @@ export class YankiConnect {
 	/**
 	 * **Media Actions**
 	 *
-	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/25.11.9.0/item/README.md#media-actions)
+	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.10.11.4/item/API_LEGACY.md#media-actions)
 	 */
 	public readonly media = {
 		/**
@@ -476,13 +510,17 @@ export class YankiConnect {
 		 * `false` to prevent that by [letting Anki give the new file a
 		 * non-conflicting
 		 * name](https://github.com/ankitects/anki/blob/aeba725d3ea9628c73300648f748140db3fdd5ed/rslib/src/media/files.rs#L194).
+		 *
+		 * The result is the actual filename, which may be normalized or renamed.
+		 * `skipHash` may be set to the MD5 digest of the incoming bytes; when it
+		 * matches, nothing is stored and `null` is returned.
 		 */
 		storeMediaFile: this.build('storeMediaFile'),
 	}
 	/**
 	 * **Miscellaneous Actions**
 	 *
-	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/25.11.9.0/item/README.md#miscellaneous-actions)
+	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.10.11.4/item/API_LEGACY.md#miscellaneous-actions)
 	 */
 	public readonly miscellaneous = {
 		/**
@@ -504,7 +542,8 @@ export class YankiConnect {
 		 */
 		exportPackage: this.build('exportPackage'),
 		/**
-		 * Retrieve the active profile.
+		 * Retrieve the name of the active profile, or `null` if no profile is
+		 * loaded.
 		 */
 		getActiveProfile: this.build('getActiveProfile'),
 		/**
@@ -518,7 +557,8 @@ export class YankiConnect {
 		 */
 		importPackage: this.build('importPackage'),
 		/**
-		 * Selects the profile specified in request.
+		 * Selects the profile specified in request. Returns `true` when accepted,
+		 * or `false` if the profile does not exist.
 		 */
 		loadProfile: this.build('loadProfile'),
 		/**
@@ -546,7 +586,7 @@ export class YankiConnect {
 		 *
 		 * The result always contains the `permission` field, which in turn contains
 		 * either the string `granted` or `denied`, corresponding to whether your
-		 * origin is trusted. If your origin is trusted, the fields `requireApiKey`
+		 * origin is trusted. If your origin is trusted, the fields `requireApikey`
 		 * (true if required) and `version` will also be returned.
 		 *
 		 * This should be the first call you make to make sure that your application
@@ -569,7 +609,7 @@ export class YankiConnect {
 	/**
 	 * **Model Actions**
 	 *
-	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/25.11.9.0/item/README.md#model-actions)
+	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.10.11.4/item/API_LEGACY.md#model-actions)
 	 */
 	public readonly model = {
 		/**
@@ -586,7 +626,8 @@ export class YankiConnect {
 		createModel: this.build('createModel'),
 		/**
 		 * Find and replace string in existing model by model name. Customize to
-		 * replace in front, back or css by setting to `true`/`false`.
+		 * replace in front, back or css by setting to `true`/`false`. Pass an empty
+		 * `modelName` to search every model. Returns the number of models changed.
 		 */
 		findAndReplaceInModels: this.build('findAndReplaceInModels'),
 		/**
@@ -657,6 +698,11 @@ export class YankiConnect {
 		 */
 		modelFieldsOnTemplates: this.build('modelFieldsOnTemplates'),
 		/**
+		 * Returns the name of an existing model by its numeric ID. Throws if the
+		 * model does not exist.
+		 */
+		modelNameFromId: this.build('modelNameFromId'),
+		/**
 		 * Gets the complete list of model names for the current user.
 		 */
 		modelNames: this.build('modelNames'),
@@ -710,13 +756,13 @@ export class YankiConnect {
 	/**
 	 * **Note Actions**
 	 *
-	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/25.11.9.0/item/README.md#note-actions)
+	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.10.11.4/item/API_LEGACY.md#note-actions)
 	 */
 	public readonly note = {
 		/**
 		 * Creates a note using the given deck and model, with the provided field
-		 * values and tags. Returns the identifier of the created note created on
-		 * success, and `null` on failure.
+		 * values and tags. Returns the identifier of the created note. Duplicates,
+		 * empty first fields, and missing decks or models throw.
 		 *
 		 * AnkiConnect can download audio, video, and picture files and embed them
 		 * in newly created notes. The corresponding `audio`, `video`, and `picture`
@@ -735,8 +781,8 @@ export class YankiConnect {
 		 *
 		 * The `duplicateScope` member inside `options` can be used to specify the
 		 * scope for which duplicates are checked. A value of `"deck"` will only
-		 * check for duplicates in the target deck; any other value will check the
-		 * entire collection.
+		 * check for duplicates in the target deck; `"collection"` (the default)
+		 * will check the entire collection. Other values are rejected.
 		 *
 		 * The `duplicateScopeOptions` object can be used to specify some additional
 		 * settings:
@@ -753,17 +799,26 @@ export class YankiConnect {
 		addNote: this.build('addNote'),
 		/**
 		 * Creates multiple notes using the given deck and model, with the provided
-		 * field values and tags. Returns an array of identifiers of the created
-		 * notes. In the event of any errors, all errors are gathered and returned.
+		 * field values and tags, in one atomic batch. Returns an array of
+		 * identifiers of the created notes in input order. If any note fails
+		 * validation, the whole batch is rejected and an error is thrown.
 		 *
 		 * Please see the documentation for `addNote` for an explanation of objects
 		 * in the `notes` array.
 		 */
 		addNotes: this.build('addNotes'),
 		/**
-		 * Adds tags to notes by note ID.
+		 * Adds tags to notes by note ID. Tags may be given as a space-separated
+		 * string or an array.
 		 */
 		addTags: this.build('addTags'),
+		/**
+		 * Accepts an object which defines parameters for a candidate note (see
+		 * `addNote`) and returns a boolean indicating whether or not the parameters
+		 * could be used to create a new note. Does not download media or change the
+		 * collection.
+		 */
+		canAddNote: this.build('canAddNote'),
 		/**
 		 * Accepts an array of objects which define parameters for candidate notes
 		 * (see `addNote`) and returns an array of booleans indicating whether or
@@ -781,6 +836,15 @@ export class YankiConnect {
 		 * - `error` contains an explanation of why a note cannot be added.
 		 */
 		canAddNotesWithErrorDetail: this.build('canAddNotesWithErrorDetail'),
+		/**
+		 * Accepts an object which defines parameters for a candidate note (see
+		 * `addNote`) and returns an object with fields `canAdd` and `error`.
+		 *
+		 * - `canAdd` indicates whether or not the parameters could be used to create
+		 *   a new note.
+		 * - `error` contains an explanation of why the note cannot be added.
+		 */
+		canAddNoteWithErrorDetail: this.build('canAddNoteWithErrorDetail'),
 		/**
 		 * Clears all the unused tags in the notes for the current user.
 		 */
@@ -806,16 +870,21 @@ export class YankiConnect {
 		/**
 		 * Returns a list of objects containing for each note ID the note fields,
 		 * tags, note type, modification time, the cards belonging to the note and
-		 * the profile where the note was created.
+		 * the profile where the note was created. Accepts either a list of note IDs
+		 * or a search query.
 		 */
 		notesInfo: this.build('notesInfo'),
 		/**
 		 * Returns a list of objects containing for each note ID the modification
 		 * time.
 		 */
-		notesModTime: this.build('notesInfo'),
+		notesModTime: this.build('notesModTime'),
 		/**
 		 * Removes all the empty notes for the current user.
+		 *
+		 * > [!WARNING] As of AnkiConnect 26.10.11.0 this action always throws a
+		 * > compatibility error and leaves the collection intact. AnkiConnect
+		 * > recommends the API v1 `notes.findEmpty` method instead.
 		 */
 		removeEmptyNotes: this.build('removeEmptyNotes'),
 		/**
@@ -878,7 +947,7 @@ export class YankiConnect {
 	/**
 	 * **Statistic Actions**
 	 *
-	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/25.11.9.0/item/README.md#statistic-actions)
+	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.10.11.4/item/API_LEGACY.md#statistic-actions)
 	 */
 	public readonly statistic = {
 		/**
@@ -981,7 +1050,7 @@ export class YankiConnect {
 	/**
 	 * Directly invoke the Anki Connect API.
 	 *
-	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/25.11.9.0/item/README.md)
+	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.10.11.4/item/API_LEGACY.md)
 	 *
 	 * Primarily for internal use, since the client provides a more convenient
 	 * methods on its class, e.g. instead of:

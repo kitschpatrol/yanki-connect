@@ -22,7 +22,7 @@ export type StatisticRequests =
 			},
 			ReviewStatisticTuple[]
 	  >
-	| Request<'getCollectionStatsHTML', 6, { wholeCollection: boolean }, string>
+	| Request<'getCollectionStatsHTML', 6, { wholeCollection?: boolean }, string> // Defaults to true
 	| Request<'getLatestReviewID', 6, { deck: string }, number>
 	| Request<'getNumCardsReviewedByDay', 6, never, Array<[string, number]>>
 	| Request<'getNumCardsReviewedToday', 6, never, number>

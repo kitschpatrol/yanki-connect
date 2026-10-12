@@ -30,7 +30,7 @@ This library is used in the [`yanki`](https://github.com/kitschpatrol/yanki) CLI
 ## Features
 
 - **Action method organization + convenience methods**\
-  Instead of putting all <!-- actionCount -->116<!-- /actionCount --> methods in a single namespace, action convenience methods are organized into the same groups used in the [AnkiConnect documentation](https://git.sr.ht/~foosoft/anki-connect/tree/25.11.9.0/item/README.md#supported-actions), to simplify auto-complete discoverability.
+  Instead of putting all <!-- actionCount -->122<!-- /actionCount --> methods in a single namespace, action convenience methods are organized into the same groups used in the [AnkiConnect documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.10.11.4/item/API_LEGACY.md#action-reference), to simplify auto-complete discoverability.
 
 - **Low-level access through the provided `invoke` method**\
   If you don't want to use the convenience methods, an `invoke(action, params)` method is also exposed on the YankiConnect class for direct interaction with the AnkiConnect API.
@@ -66,9 +66,9 @@ Yanki Connect is universal / isomorphic: it runs in the browser and in Node.js. 
 
 <!-- /dependencies -->
 
-The Anki desktop app (>=2.1.45, released 2021-07-30) with the AnkiConnect add-on installed and configured is also required to do anything useful with the library.
+The Anki desktop app with the AnkiConnect add-on installed and configured is also required to do anything useful with the library. AnkiConnect 26.10.11.4 requires Anki 26.08 or newer.
 
-The API calls are written against version [25.11.9.0](https://git.sr.ht/~foosoft/anki-connect/tree/25.11.9.0/item/README.md) of the AnkiConnect add-on, released 2025-11-09. You must use either this or a newer version of the AnkiConnect add-on for compatibility with all available calls. A majority of the calls are compatible with older version of the AnkiConnect add-on, but this is at your own risk.
+The API calls are written against version [26.10.11.4](https://git.sr.ht/~foosoft/anki-connect/tree/26.10.11.4/item/API_LEGACY.md) of the AnkiConnect add-on, released 2026-10-11. You must use either this or a newer version of the AnkiConnect add-on for compatibility with all available calls. A majority of the calls are compatible with older version of the AnkiConnect add-on, but this is at your own risk.
 
 ### Installation
 
@@ -94,7 +94,7 @@ import { YankiConnect } from 'https://unpkg.com/yanki-connect'
 
 Yanki Connect aims to be discoverable and self-documenting when used in an environment with a robust autocompletion / language service implementation. (VS Code, for example.)
 
-The library exports the `YankiConnect` class, which groups methods into the same structure of "supported actions" used in the official [AnkiConnect documentation](https://git.sr.ht/~foosoft/anki-connect/tree/25.11.9.0/item/README.md#supported-actions).
+The library exports the `YankiConnect` class, which groups methods into the same structure of "supported actions" used in the official [AnkiConnect documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.10.11.4/item/API_LEGACY.md#action-reference).
 
 Here's a simple example:
 
@@ -108,7 +108,7 @@ const decks = await client.deck.deckNames()
 console.log(decks) // ["Your", "Deck", "Names", "Here"]
 ```
 
-All <!-- actionCount -->116<!-- /actionCount --> AnkiConnect actions are exposed under their respective groups, with type data for both parameters and return types:
+All <!-- actionCount -->122<!-- /actionCount --> AnkiConnect actions are exposed under their respective groups, with type data for both parameters and return types:
 
 <!-- actionList -->
 
@@ -134,6 +134,7 @@ client.card.unsuspend
 client.deck.changeDeck
 client.deck.cloneDeckConfigId
 client.deck.createDeck
+client.deck.deckNameFromId
 client.deck.deckNames
 client.deck.deckNamesAndIds
 client.deck.deleteDecks
@@ -145,6 +146,7 @@ client.deck.saveDeckConfig
 client.deck.setDeckConfigId
 
 client.graphical.guiAddCards
+client.graphical.guiAddNoteSetData
 client.graphical.guiAnswerCard
 client.graphical.guiBrowse
 client.graphical.guiCheckDatabase
@@ -156,6 +158,7 @@ client.graphical.guiEditNote
 client.graphical.guiExitAnki
 client.graphical.guiImportFile
 client.graphical.guiPlayAudio
+client.graphical.guiReviewActive
 client.graphical.guiSelectCard
 client.graphical.guiSelectNote
 client.graphical.guiSelectedNotes
@@ -197,6 +200,7 @@ client.model.modelFieldSetDescription
 client.model.modelFieldSetFont
 client.model.modelFieldSetFontSize
 client.model.modelFieldsOnTemplates
+client.model.modelNameFromId
 client.model.modelNames
 client.model.modelNamesAndIds
 client.model.modelStyling
@@ -211,6 +215,8 @@ client.model.updateModelTemplates
 client.note.addNote
 client.note.addNotes
 client.note.addTags
+client.note.canAddNote
+client.note.canAddNoteWithErrorDetail
 client.note.canAddNotes
 client.note.canAddNotesWithErrorDetail
 client.note.clearUnusedTags
@@ -240,7 +246,7 @@ client.statistic.insertReviews
 
 <!-- /actionList -->
 
-Note that at the moment, only the latest AnkiConnect API version 6 is supported, and AnkiConnect release >=25.11.9.0 is required for compatibility with all features.
+Note that at the moment, only the legacy AnkiConnect API (version 6) is supported, and AnkiConnect release >=26.10.11.4 is required for compatibility with all features. The JSON-RPC [API v1](https://git.sr.ht/~foosoft/anki-connect/tree/26.10.11.4/item/API_V1.md) introduced in AnkiConnect 26.10.11.0 is not yet supported.
 
 ### API
 
@@ -341,7 +347,7 @@ Chen Lijun's [autoanki](https://github.com/chenlijun99/autoanki) also implements
 
 Thanks to [Alex Yatskov](https://foosoft.net/) for creating [AnkiConnect](https://ankiweb.net/shared/info/2055492159).
 
-All of the embedded action descriptions in Yanki Connect are taken directly from the [AnkiConnect project readme](https://git.sr.ht/~foosoft/anki-connect/tree/25.11.9.0/item/README.md).
+All of the embedded action descriptions in Yanki Connect are taken directly from the [AnkiConnect legacy API guide](https://git.sr.ht/~foosoft/anki-connect/tree/26.10.11.4/item/API_LEGACY.md).
 
 <!-- contributing -->
 

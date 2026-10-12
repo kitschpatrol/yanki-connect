@@ -6,11 +6,8 @@ export type MiscellaneousRequests =
 	| Request<
 			'apiReflect',
 			6,
-			{ actions: null | string[]; scopes: Array<'actions'> },
-			{
-				actions: string[]
-				scopes: string[] // More than just 'actions?'
-			}
+			{ actions?: null | string[]; scopes: Array<'actions'> },
+			{ actions: string[]; scopes: ['actions'] } | { scopes: [] }
 	  >
 	| Request<
 			'exportPackage',
@@ -22,7 +19,7 @@ export type MiscellaneousRequests =
 			},
 			boolean
 	  >
-	| Request<'getActiveProfile', 6, never, string>
+	| Request<'getActiveProfile', 6, never, null | string>
 	| Request<'getProfiles', 6, never, string[]>
 	| Request<
 			'importPackage',
@@ -32,7 +29,7 @@ export type MiscellaneousRequests =
 			},
 			boolean
 	  >
-	| Request<'loadProfile', 6, { name: string }, true> // Also false?
+	| Request<'loadProfile', 6, { name: string }, boolean> // False if the profile does not exist
 	| Request<
 			'multi',
 			6, // Crazy, have to call this experimental
@@ -55,8 +52,8 @@ export type MiscellaneousRequests =
 			  }
 			| {
 					permission: 'granted'
-					requireApiKey: boolean
-					version: boolean
+					requireApikey: boolean
+					version: number
 			  }
 	  >
 	| Request<'sync', 6>

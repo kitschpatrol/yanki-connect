@@ -23,37 +23,28 @@ export type CardBrowserColumns =
 	| 'template'
 	| (string & {}) // Allow arbitrary strings too
 
-// See https://github.com/ankidroid/Anki-Android/wiki/Database-Structure#cards
+// Keys accepted by setSpecificValueOfCard as of AnkiConnect 26.10.11.4. Writes
+// to other card columns (ownership, queue, type, due, and sync metadata) are
+// rejected. See https://github.com/ankidroid/Anki-Android/wiki/Database-Structure#cards
 type CardValueKeys =
-	| 'data' // Text not null
-	| 'did' // Integer not null,
-	| 'due' // Integer not null,
-	| 'factor' // Integer not null,
-	| 'flags' // Integer not null,
-	| 'id' //  Integer primary key,
-	| 'ivl' // Integer not null,
-	| 'lapses' // Integer not null,
-	| 'left' // Integer not null,
-	| 'mod' // Integer not null,
-	| 'odid' // Integer not null,
-	| 'odue' // Integer not null,
-	| 'ord' // Integer not null,
-	| 'queue' // Integer not null,
-	| 'reps' // Integer not null,
-	| 'type' // Integer not null,
-	| 'usn' // Integer not null,
+	| 'custom_data' // Custom scheduling data, JSON string
+	| 'did' // Deck ID, requires warning_check, can't be combined with other keys
+	| 'factor' // Ease factor in permille, e.g. 2500 for 250%
+	| 'flags' // Can't be combined with other keys
+	| 'ivl' // Interval in days, requires warning_check
+	| 'lapses' // Requires warning_check
+	| 'reps' // Requires warning_check
 
-// TODO more keys for custom models?
-// TODO what's optional?
-export type CardInfo = {
+type CardInfo = {
 	answer: string // Back
-	buttons?: number[]
 	cardId: number
 	css: string
 	deckName: string
 	due: number
+	factor: number // Ease factor in permille, e.g. 2500 for 250%
 	fieldOrder: number
 	fields: Record<string, { order: number; value: string }>
+	flags: number
 	interval: number
 	lapses: number
 	left: number
@@ -65,8 +56,24 @@ export type CardInfo = {
 	question: string // Front
 	queue: number
 	reps: number
-	template: string
 	type: number
+}
+
+/** Subset of card information returned by `guiCurrentCard`. */
+export type CurrentCardInfo = Pick<
+	CardInfo,
+	| 'answer'
+	| 'cardId'
+	| 'css'
+	| 'deckName'
+	| 'fieldOrder'
+	| 'fields'
+	| 'modelName'
+	| 'nextReviews'
+	| 'question'
+> & {
+	buttons: number[]
+	template: string
 }
 
 export type CardRequests =
@@ -74,15 +81,7 @@ export type CardRequests =
 	| Request<'areDue', 6, { cards: number[] }, boolean[]>
 	| Request<'areSuspended', 6, { cards: number[] }, Array<boolean | null>>
 	| Request<'cardsInfo', 6, { cards: number[] }, CardInfo[]>
-	| Request<
-			'cardsModTime',
-			6,
-			{ cards: number[] },
-			{
-				cardId: number
-				mod: number
-			}
-	  >
+	| Request<'cardsModTime', 6, { cards: number[] }, Array<{ cardId: number; mod: number }>>
 	| Request<'cardsToNotes', 6, { cards: number[] }, number[]>
 	| Request<'findCards', 6, { query: string }, number[]> // Query syntax: https://docs.ankiweb.net/searching.html
 	| Request<'forgetCards', 6, { cards: number[] }>
@@ -90,13 +89,18 @@ export type CardRequests =
 	| Request<'getIntervals', 6, { cards: number[]; complete?: boolean }, number[] | number[][]>
 	| Request<'relearnCards', 6, { cards: number[] }>
 	| Request<'setDueDate', 6, { cards: number[]; days: string }, boolean>
-	| Request<'setEaseFactors', 6, { cards: number[]; easeFactors: number[] }, boolean[]> // TODO confirm return quantity
+	| Request<'setEaseFactors', 6, { cards: number[]; easeFactors: number[] }, boolean[]>
 	| Request<
 			'setSpecificValueOfCard',
 			6,
-			{ card: number; keys: CardValueKeys[]; newValues: string[] },
-			boolean[]
+			{
+				card: number
+				keys: CardValueKeys[]
+				newValues: Array<number | string>
+				warning_check?: boolean
+			},
+			[[false, string]] | [true] | false
 	  >
-	| Request<'suspend', 6, { cards: number[] }, boolean>
+	| Request<'suspend', 6, { cards: number[]; suspend?: boolean }, boolean>
 	| Request<'suspended', 6, { card: number }, boolean>
 	| Request<'unsuspend', 6, { cards: number[] }, boolean>

@@ -14,8 +14,9 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  # PyPI version (no leading zero): aqt==25.9.2 corresponds to Anki 25.09.2
-  ANKI_VERSION: '25.9.2'
+  # PyPI version (no leading zero): aqt==26.9.3 corresponds to Anki 26.09.3
+  # AnkiConnect 26.10.11.4 requires Anki 26.08 or newer
+  ANKI_VERSION: '26.9.3'
   # Extra startup time for pip-installed Anki in CI
   ANKI_CONNECT_TIMEOUT: '60000'
 

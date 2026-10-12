@@ -48,12 +48,13 @@ type DeckConfig = {
 
 export type DeckRequests =
 	| Request<'changeDeck', 6, { cards: number[]; deck: string }>
-	| Request<'cloneDeckConfigId', 6, { cloneFrom: number; name: string }, false | number>
+	| Request<'cloneDeckConfigId', 6, { cloneFrom?: number; name: string }, false | number>
 	| Request<'createDeck', 6, { deck: string }, number>
+	| Request<'deckNameFromId', 6, { deckId: number }, string>
 	| Request<'deckNames', 6, never, string[]>
 	| Request<'deckNamesAndIds', 6, never, Record<string, number>>
 	| Request<'deleteDecks', 6, { cardsToo: true; decks: string[] }>
-	| Request<'getDeckConfig', 6, { deck: string }, DeckConfig>
+	| Request<'getDeckConfig', 6, { deck: string }, DeckConfig | false>
 	| Request<'getDecks', 6, Record<'cards', number[]>, Record<string, number[]>>
 	| Request<'getDeckStats', 6, { decks: string[] }, Record<string, DeckStats>>
 	| Request<'removeDeckConfigId', 6, { configId: number }, boolean>

@@ -27,7 +27,7 @@ export type Note = {
 type NoteWithCreationOptions = Note & {
 	options?: {
 		allowDuplicate?: boolean
-		duplicateScope?: 'deck' | (string & {}) // Only deck is official, any other value represents the entire collection
+		duplicateScope?: 'collection' | 'deck' // Defaults to collection, other values are rejected
 		duplicateScopeOptions?: {
 			checkAllModels?: boolean
 			checkChildren?: boolean
@@ -36,31 +36,35 @@ type NoteWithCreationOptions = Note & {
 	}
 }
 
+type NoteEligibility =
+	| {
+			canAdd: false
+			error: string
+	  }
+	| { canAdd: true }
+
 export type NoteRequests =
-	| Request<'addNote', 6, { note: NoteWithCreationOptions }, null | number>
-	| Request<'addNotes', 6, { notes: NoteWithCreationOptions[] }, Array<null | string> | null>
+	| Request<'addNote', 6, { note: NoteWithCreationOptions }, number>
+	| Request<'addNotes', 6, { notes: NoteWithCreationOptions[] }, number[]>
 	| Request<
 			'addTags',
 			6,
 			{
+				add?: boolean // Defaults to true, false removes the tags instead
 				notes: number[]
-				tags: string // Array allowed?
+				tags: string | string[] // Space-separated string or array
 			}
 	  >
+	| Request<'canAddNote', 6, { note: NoteWithCreationOptions }, boolean>
 	| Request<'canAddNotes', 6, { notes: NoteWithCreationOptions[] }, boolean[]>
 	| Request<
 			'canAddNotesWithErrorDetail',
 			6,
 			{ notes: NoteWithCreationOptions[] },
-			Array<
-				| {
-						canAdd: false
-						error: string
-				  }
-				| { canAdd: true }
-			>
+			NoteEligibility[]
 	  >
-	| Request<'clearUnusedTags', 6, never, string[]>
+	| Request<'canAddNoteWithErrorDetail', 6, { note: NoteWithCreationOptions }, NoteEligibility>
+	| Request<'clearUnusedTags', 6>
 	| Request<'deleteNotes', 6, { notes: number[] }>
 	| Request<
 			'findNotes',
@@ -83,9 +87,14 @@ export type NoteRequests =
 	| Request<
 			'notesInfo',
 			6,
-			{
-				notes: number[]
-			},
+			// Either a list of note IDs or a search query
+			// https://docs.ankiweb.net/searching.html
+			| {
+					notes: number[]
+			  }
+			| {
+					query: string
+			  },
 			Array<{
 				cards: number[]
 				fields: Record<
@@ -113,13 +122,13 @@ export type NoteRequests =
 				noteId: number
 			}>
 	  >
-	| Request<'removeEmptyNotes', 6>
+	| Request<'removeEmptyNotes', 6> // Always fails with a compatibility error as of AnkiConnect 26.10.11.0
 	| Request<
 			'removeTags',
 			6,
 			{
 				notes: number[]
-				tags: string // Array allowed?
+				tags: string | string[] // Space-separated string or array
 			}
 	  >
 	| Request<

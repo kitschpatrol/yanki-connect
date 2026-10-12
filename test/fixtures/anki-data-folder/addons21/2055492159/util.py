@@ -1,4 +1,4 @@
-# Copyright 2016-2021 Alex Yatskov
+# Copyright 2016-2026 Alex Yatskov
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -14,33 +14,8 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 import os
-import sys
 
-import anki
-import anki.sync
 import aqt
-import enum
-import itertools
-
-#
-# Utilities
-#
-
-class MediaType(enum.Enum):
-    Audio = 1
-    Video = 2
-    Picture = 3
-
-
-def download(url):
-    client = anki.sync.AnkiRequestsClient()
-    client.timeout = setting('webTimeout') / 1000
-
-    resp = client.get(url)
-    if resp.status_code != 200:
-        raise Exception('{} download failed with return code {}'.format(url, resp.status_code))
-
-    return client.streamContent(resp)
 
 
 def api(*versions):
@@ -50,20 +25,6 @@ def api(*versions):
         return func
 
     return decorator
-
-
-def cardQuestion(card):
-    if getattr(card, 'question', None) is None:
-        return card._getQA()['q']
-
-    return card.question()
-
-
-def cardAnswer(card):
-    if getattr(card, 'answer', None) is None:
-        return card._getQA()['a']
-
-    return card.answer()
 
 
 DEFAULT_CONFIG = {
@@ -81,27 +42,7 @@ DEFAULT_CONFIG = {
 }
 
 def setting(key):
-    try:
-        return aqt.mw.addonManager.getConfig(__name__).get(key, DEFAULT_CONFIG[key])
-    except:
+    if key not in DEFAULT_CONFIG:
         raise Exception('setting {} not found'.format(key))
-
-
-# see https://github.com/FooSoft/anki-connect/issues/308
-# fixed in https://github.com/ankitects/anki/commit/0b2a226d
-def patch_anki_2_1_50_having_null_stdout_on_windows():
-    if sys.stdout is None:
-        sys.stdout = open(os.devnull, "w", encoding="utf8")
-
-
-# ref https://docs.python.org/3.12/library/itertools.html#itertools.batched
-if sys.version_info >= (3, 12):
-    batched = itertools.batched
-else:
-    def batched(iterable, n):
-        iterator = iter(iterable)
-        while True:
-            batch = tuple(itertools.islice(iterator, n))
-            if not batch:
-                break
-            yield batch
+    config = aqt.mw.addonManager.getConfig(__name__) or {}
+    return config.get(key, DEFAULT_CONFIG[key])

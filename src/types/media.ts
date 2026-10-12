@@ -1,9 +1,11 @@
+/* eslint-disable ts/no-restricted-types */
+
 import type { Request } from './shared'
 
 export type MediaRequests =
 	| Request<'deleteMediaFile', 6, { filename: string }>
 	| Request<'getMediaDirPath', 6, never, string>
-	| Request<'getMediaFilesNames', 6, { pattern: string }, string[]>
+	| Request<'getMediaFilesNames', 6, { pattern?: string }, string[]> // Pattern defaults to '*'
 	| Request<
 			'retrieveMediaFile',
 			6,
@@ -20,7 +22,8 @@ export type MediaRequests =
 				deleteExisting?: boolean // Defaults to true
 				filename: string
 				path?: string // Second priority, must have one of these three
+				skipHash?: string // MD5 digest of the incoming bytes, nothing is stored if it matches
 				url?: string // Third priority, must have one of these three
 			},
-			string
+			null | string // Actual filename, or null if the incoming bytes matched skipHash
 	  >
