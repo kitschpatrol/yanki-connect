@@ -30,7 +30,7 @@ export type StatisticRequests =
 			'getReviewsOfCards',
 			6,
 			{
-				cards: string[]
+				cards: number[]
 			},
 			Record<
 				string,

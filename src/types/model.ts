@@ -67,26 +67,19 @@ export type ModelRequests =
 			'findAndReplaceInModels',
 			6,
 			{
-				model: {
-					back: boolean
-					css: boolean
-					fieldText: string
-					front: boolean
-					modelName: string
-					replaceText: string
-				}
+				back?: boolean
+				css?: boolean
+				findText: string
+				front?: boolean
+				modelName: string
+				replaceText: string
 			},
 			number
 	  >
 	| Request<'findModelsById', 6, { modelIds: number[] }, Model[]>
 	| Request<'findModelsByName', 6, { modelNames: string[] }, Model[]>
 	| Request<'modelFieldAdd', 6, { fieldName: string; index: number; modelName: string }>
-	| Request<
-			'modelFieldDescriptions',
-			6,
-			{ description: string; fieldName: string; modelName: string },
-			boolean
-	  > // Only ancient versions return false
+	| Request<'modelFieldDescriptions', 6, { modelName: string }, string[]>
 	| Request<
 			'modelFieldFonts',
 			6,
@@ -107,7 +100,12 @@ export type ModelRequests =
 			{ modelName: string; newFieldName: string; oldFieldName: string }
 	  >
 	| Request<'modelFieldReposition', 6, { fieldName: string; index: number; modelName: string }>
-	| Request<'modelFieldSetDescription', 6, { fieldName: string; index: number; modelName: string }>
+	| Request<
+			'modelFieldSetDescription',
+			6,
+			{ description: string; fieldName: string; modelName: string },
+			boolean
+	  >
 	| Request<'modelFieldSetFont', 6, { fieldName: string; font: string; modelName: string }>
 	| Request<'modelFieldSetFontSize', 6, { fieldName: string; fontSize: number; modelName: string }>
 	| Request<

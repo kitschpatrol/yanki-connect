@@ -78,10 +78,10 @@ export type CardRequests =
 			'cardsModTime',
 			6,
 			{ cards: number[] },
-			{
+			Array<{
 				cardId: number
 				mod: number
-			}
+			}>
 	  >
 	| Request<'cardsToNotes', 6, { cards: number[] }, number[]>
 	| Request<'findCards', 6, { query: string }, number[]> // Query syntax: https://docs.ankiweb.net/searching.html
@@ -94,8 +94,13 @@ export type CardRequests =
 	| Request<
 			'setSpecificValueOfCard',
 			6,
-			{ card: number; keys: CardValueKeys[]; newValues: string[] },
-			boolean[]
+			{
+				card: number
+				keys: CardValueKeys[]
+				newValues: Array<number | string>
+				warning_check?: boolean
+			},
+			[[false, string]] | [true] | false
 	  >
 	| Request<'suspend', 6, { cards: number[] }, boolean>
 	| Request<'suspended', 6, { card: number }, boolean>

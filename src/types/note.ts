@@ -38,7 +38,7 @@ type NoteWithCreationOptions = Note & {
 
 export type NoteRequests =
 	| Request<'addNote', 6, { note: NoteWithCreationOptions }, null | number>
-	| Request<'addNotes', 6, { notes: NoteWithCreationOptions[] }, Array<null | string> | null>
+	| Request<'addNotes', 6, { notes: NoteWithCreationOptions[] }, number[]>
 	| Request<
 			'addTags',
 			6,

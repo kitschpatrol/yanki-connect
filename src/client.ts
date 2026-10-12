@@ -215,6 +215,10 @@ export class YankiConnect {
 		 * apparently), and many other values. A list of values and explanation of
 		 * their respective utility can be found at [AnkiDroid’s
 		 * wiki](https://github.com/ankidroid/Anki-Android/wiki/Database-Structure).
+		 *
+		 * Returns `false` if the arguments are malformed or a protected key is used
+		 * without `warning_check`, `[true]` on success, or `[[false, message]]` if
+		 * Anki rejected the update.
 		 */
 		setSpecificValueOfCard: this.build('setSpecificValueOfCard'),
 		/**
@@ -813,7 +817,7 @@ export class YankiConnect {
 		 * Returns a list of objects containing for each note ID the modification
 		 * time.
 		 */
-		notesModTime: this.build('notesInfo'),
+		notesModTime: this.build('notesModTime'),
 		/**
 		 * Removes all the empty notes for the current user.
 		 */
