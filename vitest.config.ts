@@ -16,6 +16,10 @@ export default defineConfig({
 		coverage: {
 			include: ['src/**/*.ts'],
 			provider: 'v8',
+			reportsDirectory:
+				process.env.ANKI_CONNECT_VERSION === undefined
+					? 'coverage'
+					: `coverage/${process.env.ANKI_CONNECT_VERSION}`,
 		},
 		globalSetup: './test/utilities/global-setup.ts',
 		isolate: false,

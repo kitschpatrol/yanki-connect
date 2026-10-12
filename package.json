@@ -48,12 +48,12 @@
 	"scripts": {
 		"build": "tsdown && attw -P --profile esm-only && publint",
 		"clean-deep": "shx rm -f pnpm-lock.yaml && git clean -fdX -e !.claude/",
-		"coverage": "vitest run --coverage",
+		"coverage": "node scripts/test.ts --coverage",
 		"fix": "ksc fix",
 		"lint": "ksc lint",
 		"prepare": "skills experimental_sync -y -f",
 		"release": "bumpp --commit 'Release: %s' && pnpm build && pnpm publish --otp $(op item get npm --otp)",
-		"test": "vitest run"
+		"test": "node scripts/test.ts"
 	},
 	"dependencies": {
 		"@types/node": "~20.19.43",

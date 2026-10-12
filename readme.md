@@ -355,6 +355,12 @@ This repository uses [@kitschpatrol/shared-config](https://github.com/kitschpatr
 
 <!-- /contributing -->
 
+### Testing
+
+With Anki installed, `pnpm test` runs the Node and Chromium tests against both bundled AnkiConnect fixtures, one version at a time. Set `ANKI_CONNECT_VERSION` to `25.11.9.0` or `26.10.12.0` to test a single version, for example `ANKI_CONNECT_VERSION=26.10.12.0 pnpm test`. Vitest arguments can be passed through, such as `pnpm test --project node`.
+
+`pnpm coverage` also tests both versions and writes separate reports to `coverage/<version>/`. CI tests each fixture on Linux, macOS, and Windows.
+
 <!-- license -->
 
 ## License

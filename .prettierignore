@@ -9,4 +9,4 @@ pnpm-lock.yaml
 skills-lock.json
 
 # Customizations
-test/fixtures/anki-data-folder/
+test/fixtures/anki-data-folder-*/
