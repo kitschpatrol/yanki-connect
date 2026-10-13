@@ -2,6 +2,11 @@ import type { PropertyAssignment, Type } from 'ts-morph'
 import { Node, Project, SyntaxKind } from 'ts-morph'
 
 type YankiConnectAction = {
+	/**
+	 * Last AnkiConnect release that supports the action, when a later release
+	 * removed it.
+	 */
+	maximumAnkiConnect?: string
 	minimumAnki: string
 	minimumAnkiConnect: string
 	name: string
@@ -66,6 +71,16 @@ function generateMethodTree() {
 	return methodTree
 }
 
+type VersionTag = 'maximumAnkiConnect' | 'minimumAnki' | 'minimumAnkiConnect'
+
+function getVersionTags(declaration: PropertyAssignment, tagName: VersionTag): string[] {
+	return declaration
+		.getChildrenOfKind(SyntaxKind.JSDoc)
+		.flatMap((documentation) => documentation.getTags())
+		.filter((tag) => tag.getTagName() === tagName)
+		.map((tag) => tag.getCommentText()?.trim() ?? '')
+}
+
 /**
  * Read a required minimum-version tag from an action's JSDoc.
  */
@@ -74,13 +89,32 @@ function getMinimumVersion(
 	tagName: 'minimumAnki' | 'minimumAnkiConnect',
 	actionName: string,
 ): string {
-	const tags = declaration
-		.getChildrenOfKind(SyntaxKind.JSDoc)
-		.flatMap((documentation) => documentation.getTags())
-		.filter((tag) => tag.getTagName() === tagName)
-	const version = tags.at(0)?.getCommentText()?.trim()
-	if (version === undefined || tags.length !== 1 || !VERSION.test(version)) {
+	const versions = getVersionTags(declaration, tagName)
+	const version = versions.at(0)
+	if (version === undefined || versions.length !== 1 || !VERSION.test(version)) {
 		throw new Error(`${actionName} must have exactly one @${tagName} tag with a numeric version`)
+	}
+
+	return version
+}
+
+/**
+ * Read the optional maximum-version tag from an action's JSDoc.
+ */
+function getMaximumVersion(
+	declaration: PropertyAssignment,
+	actionName: string,
+): string | undefined {
+	const versions = getVersionTags(declaration, 'maximumAnkiConnect')
+	if (versions.length === 0) {
+		return undefined
+	}
+
+	const version = versions[0]
+	if (version === undefined || versions.length !== 1 || !VERSION.test(version)) {
+		throw new Error(
+			`${actionName} must have at most one @maximumAnkiConnect tag with a numeric version`,
+		)
 	}
 
 	return version
@@ -121,7 +155,9 @@ function extractMethodsFromType(type: Type, group: string): YankiConnectAction[]
 			throw new Error(`${actionName} must be declared as a documented property assignment`)
 		}
 
+		const maximumAnkiConnect = getMaximumVersion(declaration, actionName)
 		methods.push({
+			...(maximumAnkiConnect !== undefined && { maximumAnkiConnect }),
 			minimumAnki: getMinimumVersion(declaration, 'minimumAnki', actionName),
 			minimumAnkiConnect: getMinimumVersion(declaration, 'minimumAnkiConnect', actionName),
 			name: propertyName,
