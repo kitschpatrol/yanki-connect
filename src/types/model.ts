@@ -7,7 +7,7 @@ type ModelField = {
 	description: string
 	excludeFromSearch: boolean
 	font: string
-	id: number
+	id: null | number
 	name: string
 	ord: number
 	plainText: boolean
@@ -15,7 +15,7 @@ type ModelField = {
 	rtl: boolean
 	size: number
 	sticky: boolean
-	tag: null // Always?
+	tag: null | number
 }
 
 type ModelTemplate = {
@@ -24,8 +24,8 @@ type ModelTemplate = {
 	bfont: string
 	bqfmt: string
 	bsize: number
-	did: null // Always?
-	id: number
+	did: null | number
+	id: null | number
 	name: string
 	ord: number
 	qfmt: string
@@ -33,7 +33,7 @@ type ModelTemplate = {
 
 type Model = {
 	css: string
-	did: null // Always?
+	did: null | number
 	flds: ModelField[]
 	id: number
 	latexPost: string
@@ -41,8 +41,8 @@ type Model = {
 	latexsvg: boolean
 	mod: number
 	name: string
-	originalStockKind: number
-	req: Array<[number, string, number[]]> // Hmm?
+	originalStockKind?: number
+	req: Array<[number, 'all' | 'any' | 'none', number[]]>
 	sortf: number
 	tmpls: ModelTemplate[]
 	type: number
@@ -126,6 +126,7 @@ export type ModelRequests =
 					[key: string]: string
 					Back: string
 					Front: string
+					Name: string
 				}
 			}
 	  >

@@ -47,7 +47,6 @@ type CardValueKeys =
 // TODO what's optional?
 export type CardInfo = {
 	answer: string // Back
-	buttons?: number[]
 	cardId: number
 	css: string
 	deckName: string
@@ -65,7 +64,6 @@ export type CardInfo = {
 	question: string // Front
 	queue: number
 	reps: number
-	template: string
 	type: number
 }
 
@@ -73,15 +71,18 @@ export type CardRequests =
 	| Request<'answerCards', 6, { answers: Array<{ cardId: number; ease: number }> }, boolean[]>
 	| Request<'areDue', 6, { cards: number[] }, boolean[]>
 	| Request<'areSuspended', 6, { cards: number[] }, Array<boolean | null>>
-	| Request<'cardsInfo', 6, { cards: number[] }, CardInfo[]>
+	| Request<'cardsInfo', 6, { cards: number[] }, Array<CardInfo | Record<string, never>>>
 	| Request<
 			'cardsModTime',
 			6,
 			{ cards: number[] },
-			Array<{
-				cardId: number
-				mod: number
-			}>
+			Array<
+				| Record<string, never>
+				| {
+						cardId: number
+						mod: number
+				  }
+			>
 	  >
 	| Request<'cardsToNotes', 6, { cards: number[] }, number[]>
 	| Request<'findCards', 6, { query: string }, number[]> // Query syntax: https://docs.ankiweb.net/searching.html

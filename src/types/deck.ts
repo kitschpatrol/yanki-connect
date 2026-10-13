@@ -11,7 +11,7 @@ type DeckStats = {
 
 type DeckConfig = {
 	autoplay: boolean
-	dyn: 1 | false
+	dyn: false
 	id: number
 	lapse: {
 		delays: number[]
@@ -30,19 +30,32 @@ type DeckConfig = {
 		ints: number[]
 		order: number
 		perDay: number
-		separate: boolean
+		separate?: boolean
 	}
 	replayq: boolean
 	rev: {
 		bury: boolean
 		ease4: number
-		fuzz: number
+		fuzz?: number
 		ivlFct: number
 		maxIvl: number
-		minSpace: number
+		minSpace?: number
 		perDay: number
 	}
 	timer: number
+	usn: number
+}
+
+type FilteredDeckConfig = {
+	// eslint-disable-next-line ts/no-restricted-types -- Unused filtered-deck delays are JSON null.
+	delays?: null | number[]
+	dyn: 1
+	id: number
+	mod: number
+	name: string
+	previewDelay: number
+	resched: boolean
+	terms: Array<[string, number, number]>
 	usn: number
 }
 
@@ -53,7 +66,7 @@ export type DeckRequests =
 	| Request<'deckNames', 6, never, string[]>
 	| Request<'deckNamesAndIds', 6, never, Record<string, number>>
 	| Request<'deleteDecks', 6, { cardsToo: true; decks: string[] }>
-	| Request<'getDeckConfig', 6, { deck: string }, DeckConfig>
+	| Request<'getDeckConfig', 6, { deck: string }, DeckConfig | false | FilteredDeckConfig>
 	| Request<'getDecks', 6, Record<'cards', number[]>, Record<string, number[]>>
 	| Request<'getDeckStats', 6, { decks: string[] }, Record<string, DeckStats>>
 	| Request<'removeDeckConfigId', 6, { configId: number }, boolean>
