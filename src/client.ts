@@ -136,6 +136,10 @@ export class YankiConnect {
 		 * Answer cards. Ease is between 1 (Again) and 4 (Easy). Will start the
 		 * timer immediately before answering. Returns true if card exists, `false`
 		 * otherwise.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 23.10.29.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/23.10.29.0/item/plugin/__init__.py#L1534}
 		 */
 		answerCards: this.build('answerCards'),
 		/**
@@ -143,11 +147,19 @@ export class YankiConnect {
 		 * the same order). Note: cards in the learning queue with a large interval
 		 * (over 20 minutes) are treated as not due until the time of their interval
 		 * has passed, to match the way Anki treats them when reviewing.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 22.2.19.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L896}
 		 */
 		areDue: this.build('areDue'),
 		/**
 		 * Returns an array indicating whether each of the given cards is suspended
 		 * (in the same order). If card doesn’t exist returns `null`.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 22.2.19.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L884}
 		 */
 		areSuspended: this.build('areSuspended'),
 		/**
@@ -155,30 +167,54 @@ export class YankiConnect {
 		 * front and back sides including CSS, note type, the note that the card
 		 * belongs to, and deck name, last modification timestamp as well as ease
 		 * and interval.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 22.2.19.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L1145}
 		 */
 		cardsInfo: this.build('cardsInfo'),
 		/**
 		 * Returns a list of objects containing for each card ID the modification
 		 * time. This function is about 15 times faster than executing `cardsInfo`.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 22.2.19.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L1191}
 		 */
 		cardsModTime: this.build('cardsModTime'),
 		/**
 		 * Returns an unordered array of note IDs for the given card IDs. For cards
 		 * with the same note, the ID is only given once in the array.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 22.2.19.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L1344}
 		 */
 		cardsToNotes: this.build('cardsToNotes'),
 		/**
 		 * Returns an array of card IDs for a given query. Functionally identical to
 		 * `guiBrowse` but doesn’t use the GUI for better performance.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 22.2.19.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L1137}
 		 */
 		findCards: this.build('findCards'),
 		/**
 		 * Forget cards, making the cards new again.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 22.2.19.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L1210}
 		 */
 		forgetCards: this.build('forgetCards'),
 		/**
 		 * Returns an array with the ease factor for each of the given cards (in the
 		 * same order).
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 22.2.19.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L838}
 		 */
 		getEaseFactors: this.build('getEaseFactors'),
 		/**
@@ -186,10 +222,18 @@ export class YankiConnect {
 		 * a 2-dimensional array of all the intervals for each given card ID when
 		 * complete is `true`. Negative intervals are in seconds and positive
 		 * intervals in days.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 22.2.19.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L912}
 		 */
 		getIntervals: this.build('getIntervals'),
 		/**
 		 * Make cards be “relearning”.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 22.2.19.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L1218}
 		 */
 		relearnCards: this.build('relearnCards'),
 		/**
@@ -199,11 +243,19 @@ export class YankiConnect {
 		 * - 0 = today
 		 * - 1! = tomorrow + change interval to 1
 		 * - 3-7 = random choice of 3-7 days
+		 *
+		 * @minimumAnki 23.10.0
+		 * @minimumAnkiConnect 25.2.24.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/25.2.24.0/item/plugin/__init__.py#L1662}
 		 */
 		setDueDate: this.build('setDueDate'),
 		/**
 		 * Sets ease factor of cards by card ID; returns `true` if successful (all
 		 * cards existed) or `false` otherwise.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 22.2.19.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L821}
 		 */
 		setEaseFactors: this.build('setEaseFactors'),
 		/**
@@ -219,21 +271,37 @@ export class YankiConnect {
 		 * Returns `false` if the arguments are malformed or a protected key is used
 		 * without `warning_check`, `[true]` on success, or `[[false, message]]` if
 		 * Anki rejected the update.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 22.4.26.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.4.26.0/item/plugin/__init__.py#L846}
 		 */
 		setSpecificValueOfCard: this.build('setSpecificValueOfCard'),
 		/**
 		 * Suspend cards by card ID; returns `true` if successful (at least one card
 		 * wasn’t already suspended) or `false` otherwise.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 22.2.19.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L853}
 		 */
 		suspend: this.build('suspend'),
 		/**
 		 * Check if card is suspended by its ID. Returns `true` if suspended,
 		 * `false` otherwise.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 22.2.19.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L878}
 		 */
 		suspended: this.build('suspended'),
 		/**
 		 * Unsuspend cards by card ID; returns `true` if successful (at least one
 		 * card was previously suspended) or `false` otherwise.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 22.2.19.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L873}
 		 */
 		unsuspend: this.build('unsuspend'),
 	}
@@ -246,6 +314,10 @@ export class YankiConnect {
 		/**
 		 * Moves cards with the given IDs to a different deck, creating the deck if
 		 * it doesn’t exist yet.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 22.2.19.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L515}
 		 */
 		changeDeck: this.build('changeDeck'),
 		/**
@@ -253,40 +325,72 @@ export class YankiConnect {
 		 * group with the given ID, or from the default group if this is
 		 * unspecified. Returns the ID of the new configuration group, or `false` if
 		 * the specified group to clone from does not exist.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 22.2.19.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L593}
 		 */
 		cloneDeckConfigId: this.build('cloneDeckConfigId'),
 		/**
 		 * Create a new empty deck. Will not overwrite a deck that exists with the
 		 * same name.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 22.2.19.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L504}
 		 */
 		createDeck: this.build('createDeck'),
 		/**
 		 * Gets the complete list of deck names for the current user.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 22.2.19.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L476}
 		 */
 		deckNames: this.build('deckNames'),
 		/**
 		 * Gets the complete list of deck names and their respective IDs for the
 		 * current user.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 22.2.19.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L481}
 		 */
 		deckNamesAndIds: this.build('deckNamesAndIds'),
 		/**
 		 * Deletes decks with the given names. The argument `cardsToo` must be
 		 * specified and set to `true`.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 22.4.26.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.4.26.0/item/plugin/__init__.py#L532}
 		 */
 		deleteDecks: this.build('deleteDecks'),
 		/**
 		 * Gets the configuration group object for the given deck.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 22.2.19.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L545}
 		 */
 		getDeckConfig: this.build('getDeckConfig'),
 		/**
 		 * Accepts an array of card IDs and returns an object with each deck name as
 		 * a key, and its value an array of the given cards which belong to it.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 22.2.19.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L490}
 		 */
 		getDecks: this.build('getDecks'),
 		/**
 		 * ```
 		 * 	  Gets statistics such as total cards and cards due for the given decks.
 		 * ```
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 22.7.14.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.7.14.0/item/plugin/__init__.py#L637}
 		 */
 		getDeckStats: this.build('getDeckStats'),
 		/**
@@ -294,18 +398,30 @@ export class YankiConnect {
 		 * successful, or `false` if attempting to remove either the default
 		 * configuration group (ID = 1) or a configuration group that does not
 		 * exist.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 22.2.19.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L604}
 		 */
 		removeDeckConfigId: this.build('removeDeckConfigId'),
 		/**
 		 * Saves the given configuration group, returning `true` on success or
 		 * `false` if the ID of the configuration group is invalid (such as when it
 		 * does not exist).
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 22.2.19.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L555}
 		 */
 		saveDeckConfig: this.build('saveDeckConfig'),
 		/**
 		 * Changes the configuration group for the given decks to the one with the
 		 * given ID. Returns `true` on success or `false` if the given configuration
 		 * group or any of the given decks do not exist.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 22.2.19.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L572}
 		 */
 		setDeckConfigId: this.build('setDeckConfigId'),
 	}
@@ -328,12 +444,20 @@ export class YankiConnect {
 		 *
 		 * The result is the ID of the note which would be added, if the user chose
 		 * to confirm the _Add Cards_ dialogue.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 22.2.19.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L1370}
 		 */
 		guiAddCards: this.build('guiAddCards'),
 		/**
 		 * Answers the current card; returns `true` if succeeded or `false`
 		 * otherwise. Note that the answer for the current card must be displayed
 		 * before before any answer can be accepted by Anki.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 22.2.19.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L1588}
 		 */
 		guiAnswerCard: this.build('guiAnswerCard'),
 		/**
@@ -348,31 +472,55 @@ export class YankiConnect {
 		 * in the [Anki source
 		 * code](https://github.com/ankitects/anki/blob/main/rslib/src/browser_table.rs)).
 		 * The specified column needs to be visible in the _Card Browser_.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 22.2.19.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L1349}
 		 */
 		guiBrowse: this.build('guiBrowse'),
 		/**
 		 * Requests a database check, but returns immediately without waiting for
 		 * the check to complete. Therefore, the action will always return `true`
 		 * even if errors are detected during the database check.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 22.2.19.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L1637}
 		 */
 		guiCheckDatabase: this.build('guiCheckDatabase'),
 		/**
 		 * Returns information about the current card or `null` if not in review
 		 * mode.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 22.2.19.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L1525}
 		 */
 		guiCurrentCard: this.build('guiCurrentCard'),
 		/**
 		 * Opens the _Deck Browser_ dialog.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 22.2.19.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L1616}
 		 */
 		guiDeckBrowser: this.build('guiDeckBrowser'),
 		/**
 		 * Opens the _Deck Overview_ dialog for the deck with the given name;
 		 * returns `true` if succeeded or `false` otherwise.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 22.2.19.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L1603}
 		 */
 		guiDeckOverview: this.build('guiDeckOverview'),
 		/**
 		 * Starts review for the deck with the given name; returns `true` if
 		 * succeeded or `false` otherwise.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 22.2.19.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L1621}
 		 */
 		guiDeckReview: this.build('guiDeckReview'),
 		/**
@@ -383,12 +531,20 @@ export class YankiConnect {
 		 * - Has a Browse button to open the browser with these cards
 		 * - Has Previous/Back buttons to navigate the history of the dialog
 		 * - Has no bar with the Close button
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 22.4.26.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.4.26.0/item/plugin/__init__.py#L1366}
 		 */
 		guiEditNote: this.build('guiEditNote'),
 		/**
 		 * Schedules a request to gracefully close Anki. This operation is
 		 * asynchronous, so it will return immediately and won’t wait until the Anki
 		 * process actually terminates.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 22.2.19.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L1630}
 		 */
 		guiExitAnki: this.build('guiExitAnki'),
 		/**
@@ -397,37 +553,64 @@ export class YankiConnect {
 		 * types that Anki supports. Brings open file dialog if no path is provided.
 		 * Forward slashes must be used in the path on Windows. Only supported for
 		 * Anki 2.1.52+.
+		 *
+		 * @minimumAnki 2.1.52
+		 * @minimumAnkiConnect 23.10.29.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/23.10.29.0/item/plugin/__init__.py#L1856}
 		 */
 		guiImportFile: this.build('guiImportFile'),
 		/**
 		 * Plays any Audio for the current side of the current card; returns true if
 		 * succeeded or false otherwise.
+		 *
+		 * @minimumAnki 23.10.0
+		 * @minimumAnkiConnect 25.11.9.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/25.11.9.0/item/plugin/__init__.py#L1986}
 		 */
 		guiPlayAudio: this.build('guiPlayAudio'),
 		/**
 		 * Finds the open instance of the Card Browser dialog and selects a card
 		 * given a card identifier. Returns true if the Card Browser is open, false
 		 * otherwise.
+		 *
+		 * @minimumAnki 23.10.0
+		 * @minimumAnkiConnect 25.2.24.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/25.2.24.0/item/plugin/__init__.py#L1817}
 		 */
 		guiSelectCard: this.build('guiSelectCard'),
 		/**
 		 * Finds the open instance of the _Card Browser_ dialog and returns an array
 		 * of identifiers of the notes that are selected. Returns an empty list if
 		 * the browser is not open.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 22.2.19.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L1363}
 		 */
 		guiSelectedNotes: this.build('guiSelectedNotes'),
 		/**
 		 * @deprecated Actually selects card IDs. Use `guiSelectCard` instead.'
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 24.1.21.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/24.1.21.0/item/plugin/__init__.py#L1682}
 		 */
 		guiSelectNote: this.build('guiSelectNote'),
 		/**
 		 * Shows answer text for the current card; returns `true` if in review mode
 		 * or `false` otherwise.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 22.2.19.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L1579}
 		 */
 		guiShowAnswer: this.build('guiShowAnswer'),
 		/**
 		 * Shows question text for the current card; returns `true` if in review
 		 * mode or `false` otherwise.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 22.2.19.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L1570}
 		 */
 		guiShowQuestion: this.build('guiShowQuestion'),
 		/**
@@ -435,11 +618,19 @@ export class YankiConnect {
 		 * useful for deferring the start time to when it is displayed via the API,
 		 * allowing the recorded time taken to answer the card to be more accurate
 		 * when calling `guiAnswerCard`.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 22.2.19.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L1557}
 		 */
 		guiStartCardTimer: this.build('guiStartCardTimer'),
 		/**
 		 * Undo the last action / card; returns `true` if succeeded or `false`
 		 * otherwise.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 23.10.29.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/23.10.29.0/item/plugin/__init__.py#L1823}
 		 */
 		guiUndo: this.build('guiUndo'),
 	}
@@ -451,21 +642,37 @@ export class YankiConnect {
 	public readonly media = {
 		/**
 		 * Deletes the specified file inside the media folder.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 22.2.19.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L660}
 		 */
 		deleteMediaFile: this.build('deleteMediaFile'),
 		/**
 		 * Gets the full path to the `collection.media` folder of the currently
 		 * opened profile.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 23.4.11.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/23.4.11.0/item/plugin/__init__.py#L726}
 		 */
 		getMediaDirPath: this.build('getMediaDirPath'),
 		/**
 		 * Gets the names of media files matched the pattern. Returning all names by
 		 * default.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 22.2.19.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L654}
 		 */
 		getMediaFilesNames: this.build('getMediaFilesNames'),
 		/**
 		 * Retrieves the base64-encoded contents of the specified file, returning
 		 * `false` if the file does not exist.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 22.2.19.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L640}
 		 */
 		retrieveMediaFile: this.build('retrieveMediaFile'),
 		/**
@@ -480,6 +687,10 @@ export class YankiConnect {
 		 * `false` to prevent that by [letting Anki give the new file a
 		 * non-conflicting
 		 * name](https://github.com/ankitects/anki/blob/aeba725d3ea9628c73300648f748140db3fdd5ed/rslib/src/media/files.rs#L194).
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 22.2.19.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L614}
 		 */
 		storeMediaFile: this.build('storeMediaFile'),
 	}
@@ -499,39 +710,71 @@ export class YankiConnect {
 		 *   If the value is `null`, the result will list all of the available API
 		 *   actions. If the value is an array of strings, the result will only
 		 *   contain actions which were in this array.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 22.7.14.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.7.14.0/item/plugin/__init__.py#L1646}
 		 */
 		apiReflect: this.build('apiReflect'),
 		/**
 		 * Exports a given deck in `.apkg` format. Returns `true` if successful or
 		 * `false` otherwise. The optional property `includeSched` (default is
 		 * `false`) can be specified to include the cards’ scheduling data.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 22.2.19.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L1664}
 		 */
 		exportPackage: this.build('exportPackage'),
 		/**
 		 * Retrieve the active profile.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 24.7.25.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/24.7.25.0/item/plugin/__init__.py#L461}
 		 */
 		getActiveProfile: this.build('getActiveProfile'),
 		/**
 		 * Retrieve the list of profiles.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 22.2.19.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L412}
 		 */
 		getProfiles: this.build('getProfiles'),
 		/**
 		 * Imports a file in `.apkg` format into the collection. Returns `true` if
 		 * successful or `false` otherwise. Note that the file path is relative to
 		 * Anki’s collection.media folder, not to the client.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 22.2.19.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L1679}
 		 */
 		importPackage: this.build('importPackage'),
 		/**
 		 * Selects the profile specified in request.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 22.2.19.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L417}
 		 */
 		loadProfile: this.build('loadProfile'),
 		/**
 		 * Performs multiple actions in one request, returning an array with the
 		 * response of each action (in the given order).
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 22.2.19.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L450}
 		 */
 		multi: this.build('multi'),
 		/**
 		 * Tells `anki` to reload all data from the database.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 22.2.19.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L1235}
 		 */
 		reloadCollection: this.build('reloadCollection'),
 		/**
@@ -558,15 +801,27 @@ export class YankiConnect {
 		 * versions of AnkiConnect are backwards compatible; as long as you are
 		 * using actions which are available in the reported AnkiConnect version or
 		 * earlier, everything should work fine.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 22.2.19.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L362}
 		 */
 		requestPermission: this.build('requestPermission'),
 		/**
 		 * Synchronizes the local Anki collections with AnkiWeb.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 22.2.19.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L445}
 		 */
 		sync: this.build('sync'),
 		/**
 		 * Gets the version of the API exposed by this plugin. Currently versions
 		 * `1` through `6` are defined.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 22.2.19.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L358}
 		 */
 		version: this.build('version'),
 	}
@@ -586,19 +841,35 @@ export class YankiConnect {
 		 * Optionally the `Name` field can be provided for each entry of
 		 * `cardTemplates`. By default the card names will be `Card 1`, `Card 2`,
 		 * and so on.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 22.2.19.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L933}
 		 */
 		createModel: this.build('createModel'),
 		/**
 		 * Find and replace string in existing model by model name. Customize to
 		 * replace in front, back or css by setting to `true`/`false`.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 22.4.26.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.4.26.0/item/plugin/__init__.py#L1132}
 		 */
 		findAndReplaceInModels: this.build('findAndReplaceInModels'),
 		/**
 		 * Gets a list of models for the provided model IDs from the current user.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 24.1.21.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/24.1.21.0/item/plugin/__init__.py#L1094}
 		 */
 		findModelsById: this.build('findModelsById'),
 		/**
 		 * Gets a list of models for the provided model names from the current user.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 24.1.21.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/24.1.21.0/item/plugin/__init__.py#L1105}
 		 */
 		findModelsByName: this.build('findModelsByName'),
 		/**
@@ -607,27 +878,51 @@ export class YankiConnect {
 		 * Optionally, the `index` value can be provided, which works exactly the
 		 * same as the index in `modelFieldReposition`. By default, the field is
 		 * added to the end of the field list.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 22.9.18.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.9.18.0/item/plugin/__init__.py#L1223}
 		 */
 		modelFieldAdd: this.build('modelFieldAdd'),
 		/**
 		 * Gets the complete list of field descriptions (the text seen in the gui
 		 * editor when a field is empty) for the provided model name.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 23.2.5.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/23.2.5.0/item/plugin/__init__.py#L1094}
 		 */
 		modelFieldDescriptions: this.build('modelFieldDescriptions'),
 		/**
 		 * Gets the complete list of fonts along with their font sizes.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 23.2.5.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/23.2.5.0/item/plugin/__init__.py#L1107}
 		 */
 		modelFieldFonts: this.build('modelFieldFonts'),
 		/**
 		 * Gets the complete list of field names for the provided model name.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 22.2.19.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L995}
 		 */
 		modelFieldNames: this.build('modelFieldNames'),
 		/**
 		 * Deletes a field within a given model.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 22.9.18.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.9.18.0/item/plugin/__init__.py#L1245}
 		 */
 		modelFieldRemove: this.build('modelFieldRemove'),
 		/**
 		 * Rename the field name of a given model.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 22.9.18.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.9.18.0/item/plugin/__init__.py#L1189}
 		 */
 		modelFieldRename: this.build('modelFieldRename'),
 		/**
@@ -636,6 +931,10 @@ export class YankiConnect {
 		 * The value of `index` starts at 0. For example, an `index` of `0` puts the
 		 * field in the first position, and an `index` of `2` puts the field in the
 		 * third position.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 22.9.18.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.9.18.0/item/plugin/__init__.py#L1206}
 		 */
 		modelFieldReposition: this.build('modelFieldReposition'),
 		/**
@@ -644,50 +943,94 @@ export class YankiConnect {
 		 *
 		 * Older versions of Anki (2.1.49 and below) do not have field descriptions.
 		 * In that case, this will return with `false`.
+		 *
+		 * @minimumAnki 2.1.50
+		 * @minimumAnkiConnect 23.2.5.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/23.2.5.0/item/plugin/__init__.py#L1319}
 		 */
 		modelFieldSetDescription: this.build('modelFieldSetDescription'),
 		/**
 		 * Sets the font for a field within a given model.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 23.2.5.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/23.2.5.0/item/plugin/__init__.py#L1291}
 		 */
 		modelFieldSetFont: this.build('modelFieldSetFont'),
 		/**
 		 * Sets the font size for a field within a given model.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 23.2.5.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/23.2.5.0/item/plugin/__init__.py#L1305}
 		 */
 		modelFieldSetFontSize: this.build('modelFieldSetFontSize'),
 		/**
 		 * Returns an object indicating the fields on the question and answer side
 		 * of each card template for the given model name. The question side is
 		 * given first in each array.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 22.2.19.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L1004}
 		 */
 		modelFieldsOnTemplates: this.build('modelFieldsOnTemplates'),
 		/**
 		 * Gets the complete list of model names for the current user.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 22.2.19.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L928}
 		 */
 		modelNames: this.build('modelNames'),
 		/**
 		 * Gets the complete list of model names and their corresponding IDs for the
 		 * current user.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 22.2.19.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L977}
 		 */
 		modelNamesAndIds: this.build('modelNamesAndIds'),
 		/**
 		 * Gets the CSS styling for the provided model by name.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 22.2.19.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L1048}
 		 */
 		modelStyling: this.build('modelStyling'),
 		/**
 		 * Adds a template to an existing model by name. If you want to update an
 		 * existing template, use `updateModelTemplates`.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 23.10.29.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/23.10.29.0/item/plugin/__init__.py#L1297}
 		 */
 		modelTemplateAdd: this.build('modelTemplateAdd'),
 		/**
 		 * Removes a template from an existing model.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 23.10.29.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/23.10.29.0/item/plugin/__init__.py#L1321}
 		 */
 		modelTemplateRemove: this.build('modelTemplateRemove'),
 		/**
 		 * Renames a template in an existing model.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 23.10.29.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/23.10.29.0/item/plugin/__init__.py#L1277}
 		 */
 		modelTemplateRename: this.build('modelTemplateRename'),
 		/**
 		 * Repositions a template in an existing model.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 23.10.29.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/23.10.29.0/item/plugin/__init__.py#L1287}
 		 */
 		modelTemplateReposition: this.build('modelTemplateReposition'),
 		/**
@@ -697,16 +1040,28 @@ export class YankiConnect {
 		 * The value of `index` starts at 0. For example, an `index` of `0` puts the
 		 * template in the first position, and an `index` of `2` puts the template
 		 * in the third position.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 22.2.19.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L1035}
 		 */
 		modelTemplates: this.build('modelTemplates'),
 		/**
 		 * Modify the CSS styling of an existing model by name.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 22.2.19.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L1079}
 		 */
 		updateModelStyling: this.build('updateModelStyling'),
 		/**
 		 * Modify the templates of an existing model by name. Only specifies cards
 		 * and specified sides will be modified. If an existing card or side is not
 		 * included in the request, it will be left unchanged.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 22.2.19.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L1057}
 		 */
 		updateModelTemplates: this.build('updateModelTemplates'),
 	}
@@ -753,6 +1108,10 @@ export class YankiConnect {
 		 *   `false`.
 		 * - `duplicateScopeOptions.checkAllModels` specifies whether duplicate checks
 		 *   are performed across all note types. The default value is `false`.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 22.2.19.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L668}
 		 */
 		addNote: this.build('addNote'),
 		/**
@@ -762,10 +1121,18 @@ export class YankiConnect {
 		 *
 		 * Please see the documentation for `addNote` for an explanation of objects
 		 * in the `notes` array.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 22.2.19.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L1643}
 		 */
 		addNotes: this.build('addNotes'),
 		/**
 		 * Adds tags to notes by note ID.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 22.2.19.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L762}
 		 */
 		addTags: this.build('addTags'),
 		/**
@@ -773,6 +1140,10 @@ export class YankiConnect {
 		 * (see `addNote`) and returns an array of booleans indicating whether or
 		 * not the parameters at the corresponding index could be used to create a
 		 * new note.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 22.2.19.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L1655}
 		 */
 		canAddNotes: this.build('canAddNotes'),
 		/**
@@ -783,55 +1154,103 @@ export class YankiConnect {
 		 * - `canAdd` indicates whether or not the parameters at the corresponding
 		 *   index could be used to create a new note.
 		 * - `error` contains an explanation of why a note cannot be added.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 24.2.26.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/24.2.26.0/item/plugin/__init__.py#L1974}
 		 */
 		canAddNotesWithErrorDetail: this.build('canAddNotesWithErrorDetail'),
 		/**
 		 * Clears all the unused tags in the notes for the current user.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 22.2.19.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L779}
 		 */
 		clearUnusedTags: this.build('clearUnusedTags'),
 		/**
 		 * Deletes notes with the given ids. If a note has several cards associated
 		 * with it, all associated cards will be deleted.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 22.2.19.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L1328}
 		 */
 		deleteNotes: this.build('deleteNotes'),
 		/**
 		 * Returns an array of note IDs for a given query. Query syntax is
 		 * [documented here](https://docs.ankiweb.net/searching.html).
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 22.2.19.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L1129}
 		 */
 		findNotes: this.build('findNotes'),
 		/**
 		 * Get a note's tags by note ID.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 23.4.11.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/23.4.11.0/item/plugin/__init__.py#L849}
 		 */
 		getNoteTags: this.build('getNoteTags'),
 		/**
 		 * Gets the complete list of tags for the current user.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 22.2.19.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L774}
 		 */
 		getTags: this.build('getTags'),
 		/**
 		 * Returns a list of objects containing for each note ID the note fields,
 		 * tags, note type, modification time, the cards belonging to the note and
 		 * the profile where the note was created.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 22.2.19.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L1297}
 		 */
 		notesInfo: this.build('notesInfo'),
 		/**
 		 * Returns a list of objects containing for each note ID the modification
 		 * time.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 24.7.25.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/24.7.25.0/item/plugin/__init__.py#L1719}
 		 */
 		notesModTime: this.build('notesModTime'),
 		/**
 		 * Removes all the empty notes for the current user.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 22.2.19.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L1336}
 		 */
 		removeEmptyNotes: this.build('removeEmptyNotes'),
 		/**
 		 * Remove tags from notes by note ID.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 22.2.19.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L769}
 		 */
 		removeTags: this.build('removeTags'),
 		/**
 		 * Replace tags in notes by note ID.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 22.2.19.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L784}
 		 */
 		replaceTags: this.build('replaceTags'),
 		/**
 		 * Replace tags in all the notes for the current user.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 22.2.19.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L804}
 		 */
 		replaceTagsInAllNotes: this.build('replaceTagsInAllNotes'),
 		/**
@@ -852,6 +1271,10 @@ export class YankiConnect {
 		 * > Anki browser, otherwise the fields will not update. See [this
 		 * > issue](https://github.com/FooSoft/anki-connect/issues/82) for further
 		 * > details.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 23.4.11.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/23.4.11.0/item/plugin/__init__.py#L823}
 		 */
 		updateNote: this.build('updateNote'),
 		/**
@@ -865,16 +1288,28 @@ export class YankiConnect {
 		 * > Anki browser, otherwise the fields will not update. See [this
 		 * > issue](https://github.com/FooSoft/anki-connect/issues/82) for further
 		 * > details.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 22.2.19.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L738}
 		 */
 		updateNoteFields: this.build('updateNoteFields'),
 		/**
 		 * Update the model, fields, and tags of an existing note. This allows you
 		 * to change the note's model, update its fields with new content, and set
 		 * new tags.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 24.6.17.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/24.6.17.0/item/plugin/__init__.py#L839}
 		 */
 		updateNoteModel: this.build('updateNoteModel'),
 		/**
 		 * Set a note's tags by note ID. Old tags will be removed.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 23.4.11.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/23.4.11.0/item/plugin/__init__.py#L836}
 		 */
 		updateNoteTags: this.build('updateNoteTags'),
 	}
@@ -890,25 +1325,45 @@ export class YankiConnect {
 		 * `startID` is the latest unix time not included in the result. Returns a
 		 * list of 9-tuples `(reviewTime, cardID, usn, buttonPressed, newInterval,
 		 * previousInterval, newFactor, reviewDuration, reviewType)`.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 22.2.19.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L1226}
 		 */
 		cardReviews: this.build('cardReviews'),
 		/**
 		 * Gets the collection statistics report.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 22.2.19.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L465}
 		 */
 		getCollectionStatsHTML: this.build('getCollectionStatsHTML'),
 		/**
 		 * Returns the unix time of the latest review for the given deck. 0 if no
 		 * review has ever been made for the deck.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 22.2.19.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L1240}
 		 */
 		getLatestReviewID: this.build('getLatestReviewID'),
 		/**
 		 * Gets the number of cards reviewed as a list of pairs of (`dateString`,
 		 * `number`).
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 22.2.19.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L459}
 		 */
 		getNumCardsReviewedByDay: this.build('getNumCardsReviewedByDay'),
 		/**
 		 * Gets the count of cards that have been reviewed in the current day. (With
 		 * day start time as configured by user in Anki).
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 22.2.19.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L455}
 		 */
 		getNumCardsReviewedToday: this.build('getNumCardsReviewedToday'),
 		/**
@@ -931,12 +1386,20 @@ export class YankiConnect {
 		 * The reason why these key values are used instead of the more descriptive
 		 * counterparts is because these are the exact key values used in Anki's
 		 * database.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 23.2.5.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/23.2.5.0/item/plugin/__init__.py#L1450}
 		 */
 		getReviewsOfCards: this.build('getReviewsOfCards'),
 		/**
 		 * Inserts the given reviews into the database. Required format: list of
 		 * 9-tuples `(reviewTime, cardID, usn, buttonPressed, newInterval,
 		 * previousInterval, newFactor, reviewDuration, reviewType)`.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 22.2.19.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L1287}
 		 */
 		insertReviews: this.build('insertReviews'),
 	}
