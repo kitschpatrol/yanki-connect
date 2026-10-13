@@ -27,6 +27,15 @@ export default eslintConfig(
 		type: 'lib',
 	},
 	{
+		files: ['src/client.ts'],
+		rules: {
+			'jsdoc/check-tag-names': [
+				'error',
+				{ definedTags: ['public', 'minimumAnki', 'minimumAnkiConnect'] },
+			],
+		},
+	},
+	{
 		files: ['readme.md/**/*.ts'],
 		rules: {
 			'import/no-unresolved': ['error', { ignore: ['^https?://.+'] }],

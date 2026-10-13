@@ -9,17 +9,17 @@ export default mdatConfig({
 		return String(Object.values(actionTree).flat().length)
 	},
 	actionList() {
-		const actionList: string[] = []
+		const actionList = ['| Action | Minimum Anki | Minimum Anki-Connect |', '| --- | --- | --- |']
 
 		for (const [group, actions] of Object.entries(actionTree)) {
 			for (const action of actions) {
-				actionList.push(`client.${group}.${action}`)
+				actionList.push(
+					`| \`client.${group}.${action.name}\` | ${action.minimumAnki} | ${action.minimumAnkiConnect} |`,
+				)
 			}
-
-			actionList.push('')
 		}
 
-		return `\`\`\`ts\n${actionList.join('\n')}\`\`\`\n`
+		return actionList.join('\n')
 	},
 	optionsTable() {
 		return getYankiConnectOptionsTable()

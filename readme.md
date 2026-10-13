@@ -20,7 +20,7 @@
 <!-- /short-description -->
 
 > [!IMPORTANT]
-> The latest 26.x versions of Anki-Connect introduce a new [APIv1](https://git.sr.ht/~foosoft/anki-connect/tree/master/API_V1.md) which includes a nicely typed JSON-RPC 2.0 API and other improvements.
+> The latest 26.x versions of Anki-Connect introduce a new [APIv1](https://git.sr.ht/~foosoft/anki-connect/tree/master/API_V1.md) which includes a typed JSON-RPC 2.0 API and other improvements.
 >
 > A future major version bump to Yanki Connect will introduce support for this new API, but for now Yanki Connect only exposes the "Legacy" (formerly "version 6") API.
 
@@ -65,15 +65,15 @@ This library is used in the [`yanki`](https://github.com/kitschpatrol/yanki) CLI
 
 Yanki Connect is universal / isomorphic: it runs in the browser and in Node.js. The exported APIs are ESM-only. It's implemented in TypeScript and bundles extensive type definitions.
 
-<!-- dependencies({ heading: false }) -->
+- [Node.js](https://nodejs.org/) 20.19.0+
+- [Anki desktop app](https://apps.ankiweb.net/) 23.10.0+ (many methods will with 2.1.45+)
+- [AnkiConnect add-on](https://ankiweb.net/shared/info/2055492159) 25.11.9.0+ (many methods work with 22.2.19.0+)
 
-- [Node.js](https://nodejs.org/) 20.19.0 or newer (specifically `^20.19.0 || ^22.12.0 || ^24.0.0 || >=26.0.0`)
+The action table below lists the minimum versions for individual actions.
 
-<!-- /dependencies -->
+The API calls and types are written against AnkiConnect version [25.11.9.0](https://git.sr.ht/~foosoft/anki-connect/tree/25.11.9.0/item/README.md), released 2025-11-09.
 
-The Anki desktop app (>=2.1.45, released 2021-07-30) with the AnkiConnect add-on installed and configured is also required to do anything useful with the library.
-
-The API calls are written against version [25.11.9.0](https://git.sr.ht/~foosoft/anki-connect/tree/25.11.9.0/item/README.md) of the AnkiConnect add-on, released 2025-11-09. You must use either this or a newer version of the AnkiConnect add-on for compatibility with all available calls. A majority of the calls are compatible with older version of the AnkiConnect add-on, but this is at your own risk.
+This release requires Anki >=23.10.0. Older AnkiConnect releases can be used with the actions they provide, though optional parameters and returned fields may differ from the latest types.
 
 ### Installation
 
@@ -113,139 +113,136 @@ const decks = await client.deck.deckNames()
 console.log(decks) // ["Your", "Deck", "Names", "Here"]
 ```
 
-All <!-- actionCount -->116<!-- /actionCount --> AnkiConnect actions are exposed under their respective groups, with type data for both parameters and return types:
+All <!-- actionCount -->116<!-- /actionCount --> AnkiConnect actions are exposed under their respective groups, with type data for both parameters and return types.
+
+AnkiConnect has accumulated additional methods over the years, some of which require specific minimum versions of Anki for compatibility.
+
+The table below shows all AnkiConnect methods exposed in a YankiConnect client, with the minimum Anki and AnkiConnect versions required for compatibility.
 
 <!-- actionList -->
 
-```ts
-client.card.answerCards
-client.card.areDue
-client.card.areSuspended
-client.card.cardsInfo
-client.card.cardsModTime
-client.card.cardsToNotes
-client.card.findCards
-client.card.forgetCards
-client.card.getEaseFactors
-client.card.getIntervals
-client.card.relearnCards
-client.card.setDueDate
-client.card.setEaseFactors
-client.card.setSpecificValueOfCard
-client.card.suspend
-client.card.suspended
-client.card.unsuspend
-
-client.deck.changeDeck
-client.deck.cloneDeckConfigId
-client.deck.createDeck
-client.deck.deckNames
-client.deck.deckNamesAndIds
-client.deck.deleteDecks
-client.deck.getDeckConfig
-client.deck.getDeckStats
-client.deck.getDecks
-client.deck.removeDeckConfigId
-client.deck.saveDeckConfig
-client.deck.setDeckConfigId
-
-client.graphical.guiAddCards
-client.graphical.guiAnswerCard
-client.graphical.guiBrowse
-client.graphical.guiCheckDatabase
-client.graphical.guiCurrentCard
-client.graphical.guiDeckBrowser
-client.graphical.guiDeckOverview
-client.graphical.guiDeckReview
-client.graphical.guiEditNote
-client.graphical.guiExitAnki
-client.graphical.guiImportFile
-client.graphical.guiPlayAudio
-client.graphical.guiSelectCard
-client.graphical.guiSelectNote
-client.graphical.guiSelectedNotes
-client.graphical.guiShowAnswer
-client.graphical.guiShowQuestion
-client.graphical.guiStartCardTimer
-client.graphical.guiUndo
-
-client.media.deleteMediaFile
-client.media.getMediaDirPath
-client.media.getMediaFilesNames
-client.media.retrieveMediaFile
-client.media.storeMediaFile
-
-client.miscellaneous.apiReflect
-client.miscellaneous.exportPackage
-client.miscellaneous.getActiveProfile
-client.miscellaneous.getProfiles
-client.miscellaneous.importPackage
-client.miscellaneous.loadProfile
-client.miscellaneous.multi
-client.miscellaneous.reloadCollection
-client.miscellaneous.requestPermission
-client.miscellaneous.sync
-client.miscellaneous.version
-
-client.model.createModel
-client.model.findAndReplaceInModels
-client.model.findModelsById
-client.model.findModelsByName
-client.model.modelFieldAdd
-client.model.modelFieldDescriptions
-client.model.modelFieldFonts
-client.model.modelFieldNames
-client.model.modelFieldRemove
-client.model.modelFieldRename
-client.model.modelFieldReposition
-client.model.modelFieldSetDescription
-client.model.modelFieldSetFont
-client.model.modelFieldSetFontSize
-client.model.modelFieldsOnTemplates
-client.model.modelNames
-client.model.modelNamesAndIds
-client.model.modelStyling
-client.model.modelTemplateAdd
-client.model.modelTemplateRemove
-client.model.modelTemplateRename
-client.model.modelTemplateReposition
-client.model.modelTemplates
-client.model.updateModelStyling
-client.model.updateModelTemplates
-
-client.note.addNote
-client.note.addNotes
-client.note.addTags
-client.note.canAddNotes
-client.note.canAddNotesWithErrorDetail
-client.note.clearUnusedTags
-client.note.deleteNotes
-client.note.findNotes
-client.note.getNoteTags
-client.note.getTags
-client.note.notesInfo
-client.note.notesModTime
-client.note.removeEmptyNotes
-client.note.removeTags
-client.note.replaceTags
-client.note.replaceTagsInAllNotes
-client.note.updateNote
-client.note.updateNoteFields
-client.note.updateNoteModel
-client.note.updateNoteTags
-
-client.statistic.cardReviews
-client.statistic.getCollectionStatsHTML
-client.statistic.getLatestReviewID
-client.statistic.getNumCardsReviewedByDay
-client.statistic.getNumCardsReviewedToday
-client.statistic.getReviewsOfCards
-client.statistic.insertReviews
-```
+| Action                                      | Minimum Anki | Minimum Anki-Connect |
+| ------------------------------------------- | ------------ | -------------------- |
+| `client.card.answerCards`                   | 2.1.45       | 23.10.29.0           |
+| `client.card.areDue`                        | 2.1.45       | 22.2.19.0            |
+| `client.card.areSuspended`                  | 2.1.45       | 22.2.19.0            |
+| `client.card.cardsInfo`                     | 2.1.45       | 22.2.19.0            |
+| `client.card.cardsModTime`                  | 2.1.45       | 22.2.19.0            |
+| `client.card.cardsToNotes`                  | 2.1.45       | 22.2.19.0            |
+| `client.card.findCards`                     | 2.1.45       | 22.2.19.0            |
+| `client.card.forgetCards`                   | 2.1.45       | 22.2.19.0            |
+| `client.card.getEaseFactors`                | 2.1.45       | 22.2.19.0            |
+| `client.card.getIntervals`                  | 2.1.45       | 22.2.19.0            |
+| `client.card.relearnCards`                  | 2.1.45       | 22.2.19.0            |
+| `client.card.setDueDate`                    | 23.10.0      | 25.2.24.0            |
+| `client.card.setEaseFactors`                | 2.1.45       | 22.2.19.0            |
+| `client.card.setSpecificValueOfCard`        | 2.1.45       | 22.4.26.0            |
+| `client.card.suspend`                       | 2.1.45       | 22.2.19.0            |
+| `client.card.suspended`                     | 2.1.45       | 22.2.19.0            |
+| `client.card.unsuspend`                     | 2.1.45       | 22.2.19.0            |
+| `client.deck.changeDeck`                    | 2.1.45       | 22.2.19.0            |
+| `client.deck.cloneDeckConfigId`             | 2.1.45       | 22.2.19.0            |
+| `client.deck.createDeck`                    | 2.1.45       | 22.2.19.0            |
+| `client.deck.deckNames`                     | 2.1.45       | 22.2.19.0            |
+| `client.deck.deckNamesAndIds`               | 2.1.45       | 22.2.19.0            |
+| `client.deck.deleteDecks`                   | 2.1.45       | 22.4.26.0            |
+| `client.deck.getDeckConfig`                 | 2.1.45       | 22.2.19.0            |
+| `client.deck.getDecks`                      | 2.1.45       | 22.2.19.0            |
+| `client.deck.getDeckStats`                  | 2.1.45       | 22.7.14.0            |
+| `client.deck.removeDeckConfigId`            | 2.1.45       | 22.2.19.0            |
+| `client.deck.saveDeckConfig`                | 2.1.45       | 22.2.19.0            |
+| `client.deck.setDeckConfigId`               | 2.1.45       | 22.2.19.0            |
+| `client.graphical.guiAddCards`              | 2.1.45       | 22.2.19.0            |
+| `client.graphical.guiAnswerCard`            | 2.1.45       | 22.2.19.0            |
+| `client.graphical.guiBrowse`                | 2.1.45       | 22.2.19.0            |
+| `client.graphical.guiCheckDatabase`         | 2.1.45       | 22.2.19.0            |
+| `client.graphical.guiCurrentCard`           | 2.1.45       | 22.2.19.0            |
+| `client.graphical.guiDeckBrowser`           | 2.1.45       | 22.2.19.0            |
+| `client.graphical.guiDeckOverview`          | 2.1.45       | 22.2.19.0            |
+| `client.graphical.guiDeckReview`            | 2.1.45       | 22.2.19.0            |
+| `client.graphical.guiEditNote`              | 2.1.45       | 22.4.26.0            |
+| `client.graphical.guiExitAnki`              | 2.1.45       | 22.2.19.0            |
+| `client.graphical.guiImportFile`            | 2.1.52       | 23.10.29.0           |
+| `client.graphical.guiPlayAudio`             | 23.10.0      | 25.11.9.0            |
+| `client.graphical.guiSelectCard`            | 23.10.0      | 25.2.24.0            |
+| `client.graphical.guiSelectedNotes`         | 2.1.45       | 22.2.19.0            |
+| `client.graphical.guiSelectNote`            | 2.1.45       | 24.1.21.0            |
+| `client.graphical.guiShowAnswer`            | 2.1.45       | 22.2.19.0            |
+| `client.graphical.guiShowQuestion`          | 2.1.45       | 22.2.19.0            |
+| `client.graphical.guiStartCardTimer`        | 2.1.45       | 22.2.19.0            |
+| `client.graphical.guiUndo`                  | 2.1.45       | 23.10.29.0           |
+| `client.media.deleteMediaFile`              | 2.1.45       | 22.2.19.0            |
+| `client.media.getMediaDirPath`              | 2.1.45       | 23.4.11.0            |
+| `client.media.getMediaFilesNames`           | 2.1.45       | 22.2.19.0            |
+| `client.media.retrieveMediaFile`            | 2.1.45       | 22.2.19.0            |
+| `client.media.storeMediaFile`               | 2.1.45       | 22.2.19.0            |
+| `client.miscellaneous.apiReflect`           | 2.1.45       | 22.7.14.0            |
+| `client.miscellaneous.exportPackage`        | 2.1.45       | 22.2.19.0            |
+| `client.miscellaneous.getActiveProfile`     | 2.1.45       | 24.7.25.0            |
+| `client.miscellaneous.getProfiles`          | 2.1.45       | 22.2.19.0            |
+| `client.miscellaneous.importPackage`        | 2.1.45       | 22.2.19.0            |
+| `client.miscellaneous.loadProfile`          | 2.1.45       | 22.2.19.0            |
+| `client.miscellaneous.multi`                | 2.1.45       | 22.2.19.0            |
+| `client.miscellaneous.reloadCollection`     | 2.1.45       | 22.2.19.0            |
+| `client.miscellaneous.requestPermission`    | 2.1.45       | 22.2.19.0            |
+| `client.miscellaneous.sync`                 | 2.1.45       | 22.2.19.0            |
+| `client.miscellaneous.version`              | 2.1.45       | 22.2.19.0            |
+| `client.model.createModel`                  | 2.1.45       | 22.2.19.0            |
+| `client.model.findAndReplaceInModels`       | 2.1.45       | 22.4.26.0            |
+| `client.model.findModelsById`               | 2.1.45       | 24.1.21.0            |
+| `client.model.findModelsByName`             | 2.1.45       | 24.1.21.0            |
+| `client.model.modelFieldAdd`                | 2.1.45       | 22.9.18.0            |
+| `client.model.modelFieldDescriptions`       | 2.1.45       | 23.2.5.0             |
+| `client.model.modelFieldFonts`              | 2.1.45       | 23.2.5.0             |
+| `client.model.modelFieldNames`              | 2.1.45       | 22.2.19.0            |
+| `client.model.modelFieldRemove`             | 2.1.45       | 22.9.18.0            |
+| `client.model.modelFieldRename`             | 2.1.45       | 22.9.18.0            |
+| `client.model.modelFieldReposition`         | 2.1.45       | 22.9.18.0            |
+| `client.model.modelFieldSetDescription`     | 2.1.50       | 23.2.5.0             |
+| `client.model.modelFieldSetFont`            | 2.1.45       | 23.2.5.0             |
+| `client.model.modelFieldSetFontSize`        | 2.1.45       | 23.2.5.0             |
+| `client.model.modelFieldsOnTemplates`       | 2.1.45       | 22.2.19.0            |
+| `client.model.modelNames`                   | 2.1.45       | 22.2.19.0            |
+| `client.model.modelNamesAndIds`             | 2.1.45       | 22.2.19.0            |
+| `client.model.modelStyling`                 | 2.1.45       | 22.2.19.0            |
+| `client.model.modelTemplateAdd`             | 2.1.45       | 23.10.29.0           |
+| `client.model.modelTemplateRemove`          | 2.1.45       | 23.10.29.0           |
+| `client.model.modelTemplateRename`          | 2.1.45       | 23.10.29.0           |
+| `client.model.modelTemplateReposition`      | 2.1.45       | 23.10.29.0           |
+| `client.model.modelTemplates`               | 2.1.45       | 22.2.19.0            |
+| `client.model.updateModelStyling`           | 2.1.45       | 22.2.19.0            |
+| `client.model.updateModelTemplates`         | 2.1.45       | 22.2.19.0            |
+| `client.note.addNote`                       | 2.1.45       | 22.2.19.0            |
+| `client.note.addNotes`                      | 2.1.45       | 22.2.19.0            |
+| `client.note.addTags`                       | 2.1.45       | 22.2.19.0            |
+| `client.note.canAddNotes`                   | 2.1.45       | 22.2.19.0            |
+| `client.note.canAddNotesWithErrorDetail`    | 2.1.45       | 24.2.26.0            |
+| `client.note.clearUnusedTags`               | 2.1.45       | 22.2.19.0            |
+| `client.note.deleteNotes`                   | 2.1.45       | 22.2.19.0            |
+| `client.note.findNotes`                     | 2.1.45       | 22.2.19.0            |
+| `client.note.getNoteTags`                   | 2.1.45       | 23.4.11.0            |
+| `client.note.getTags`                       | 2.1.45       | 22.2.19.0            |
+| `client.note.notesInfo`                     | 2.1.45       | 22.2.19.0            |
+| `client.note.notesModTime`                  | 2.1.45       | 24.7.25.0            |
+| `client.note.removeEmptyNotes`              | 2.1.45       | 22.2.19.0            |
+| `client.note.removeTags`                    | 2.1.45       | 22.2.19.0            |
+| `client.note.replaceTags`                   | 2.1.45       | 22.2.19.0            |
+| `client.note.replaceTagsInAllNotes`         | 2.1.45       | 22.2.19.0            |
+| `client.note.updateNote`                    | 2.1.45       | 23.4.11.0            |
+| `client.note.updateNoteFields`              | 2.1.45       | 22.2.19.0            |
+| `client.note.updateNoteModel`               | 2.1.45       | 24.6.17.0            |
+| `client.note.updateNoteTags`                | 2.1.45       | 23.4.11.0            |
+| `client.statistic.cardReviews`              | 2.1.45       | 22.2.19.0            |
+| `client.statistic.getCollectionStatsHTML`   | 2.1.45       | 22.2.19.0            |
+| `client.statistic.getLatestReviewID`        | 2.1.45       | 22.2.19.0            |
+| `client.statistic.getNumCardsReviewedByDay` | 2.1.45       | 22.2.19.0            |
+| `client.statistic.getNumCardsReviewedToday` | 2.1.45       | 22.2.19.0            |
+| `client.statistic.getReviewsOfCards`        | 2.1.45       | 23.2.5.0             |
+| `client.statistic.insertReviews`            | 2.1.45       | 22.2.19.0            |
 
 <!-- /actionList -->
 
-Note that at the moment, only the "legacy" AnkiConnect API version 6 is supported, and AnkiConnect release >=25.11.9.0 is required for compatibility with all features.
+Only the "legacy" AnkiConnect API version 6 is supported. The table describes action availability; some options and response fields require newer versions. For example, `guiBrowse.reorderCards` requires AnkiConnect >=24.1.21.0, and omitting `fields` from note media requires AnkiConnect >=25.11.5.0. `modelFieldDescriptions` returns empty descriptions on Anki <2.1.50, and `getDeckStats.total_in_deck` is absent on Anki <2.1.47. AnkiConnect 25.11.9.0 with Anki >=23.10.0 provides all documented actions and options; newer AnkiConnect releases may require a newer Anki version. These historical minimums are based on upstream source and documentation; the integration tests currently cover AnkiConnect 25.11.9.0 and 26.10.12.0.
 
 ### API
 
@@ -363,6 +360,8 @@ This repository uses [@kitschpatrol/shared-config](https://github.com/kitschpatr
 ### Testing
 
 With Anki installed, `pnpm test` runs the Node and Chromium tests against both bundled AnkiConnect fixtures, one version at a time. Set `ANKI_CONNECT_VERSION` to `25.11.9.0` or `26.10.12.0` to test a single version, for example `ANKI_CONNECT_VERSION=26.10.12.0 pnpm test`. Vitest arguments can be passed through, such as `pnpm test --project node`.
+
+Each convenience action in `src/client.ts` documents its requirements with `@minimumAnki` and `@minimumAnkiConnect` JSDoc tags, plus an `@see` link to the upstream release source. The `actionList` mdat rule reads these tags to generate the table above. When adding an action, verify its requirements against upstream history and add both tags; missing, duplicate, or malformed minimum-version tags fail generation.
 
 `pnpm coverage` also tests both versions and writes separate reports to `coverage/<version>/`. CI tests each fixture on Linux, macOS, and Windows.
 
