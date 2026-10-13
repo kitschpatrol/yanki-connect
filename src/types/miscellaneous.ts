@@ -2,13 +2,21 @@
 
 import type { Request, Requests } from './shared'
 
+type SingleRequest = Exclude<Requests, { action: 'multi' }>
+
+type MultiResult =
+	| MultiResult[]
+	| SingleRequest['response']
+	| SingleRequest['response']['result']
+	| { error: null | string; result: MultiResult[] }
+
 export type MiscellaneousRequests =
 	| Request<
 			'apiReflect',
 			6,
 			{ actions: null | string[]; scopes: Array<'actions'> },
 			{
-				actions: string[]
+				actions?: string[]
 				scopes: string[] // More than just 'actions?'
 			}
 	  >
@@ -32,7 +40,7 @@ export type MiscellaneousRequests =
 			},
 			boolean
 	  >
-	| Request<'loadProfile', 6, { name: string }, true> // Also false?
+	| Request<'loadProfile', 6, { name: string }, boolean>
 	| Request<
 			'multi',
 			6, // Crazy, have to call this experimental
@@ -43,7 +51,7 @@ export type MiscellaneousRequests =
 					version?: number
 				}>
 			},
-			Array<Requests['response'] | { error: null | string; result: Requests['response'] }>
+			MultiResult[]
 	  >
 	| Request<'reloadCollection', 6>
 	| Request<
@@ -55,8 +63,8 @@ export type MiscellaneousRequests =
 			  }
 			| {
 					permission: 'granted'
-					requireApiKey: boolean
-					version: boolean
+					requireApikey: boolean
+					version: number
 			  }
 	  >
 	| Request<'sync', 6>

@@ -7,7 +7,7 @@ type NoteModel =
 
 type NoteMedia = {
 	data?: string // First priority, must have one of these three
-	fields?: string[] // Optional as of AnkiConnect 25.11.9.0
+	fields?: string[] // Optional as of AnkiConnect 25.11.5.0
 	filename: string
 	path?: string // Second priority, must have one of these three
 	skipHash?: string
@@ -60,7 +60,7 @@ export type NoteRequests =
 				| { canAdd: true }
 			>
 	  >
-	| Request<'clearUnusedTags', 6, never, string[]>
+	| Request<'clearUnusedTags', 6>
 	| Request<'deleteNotes', 6, { notes: number[] }>
 	| Request<
 			'findNotes',
@@ -86,21 +86,24 @@ export type NoteRequests =
 			{
 				notes: number[]
 			},
-			Array<{
-				cards: number[]
-				fields: Record<
-					string,
-					{
-						order: number
-						value: string
-					}
-				>
-				mod: number
-				modelName: string
-				noteId: number
-				profile: string
-				tags: string[]
-			}>
+			Array<
+				| Record<string, never>
+				| {
+						cards: number[]
+						fields: Record<
+							string,
+							{
+								order: number
+								value: string
+							}
+						>
+						mod: number
+						modelName: string
+						noteId: number
+						profile: string
+						tags: string[]
+				  }
+			>
 	  >
 	| Request<
 			'notesModTime',
@@ -108,10 +111,13 @@ export type NoteRequests =
 			{
 				notes: number[]
 			},
-			Array<{
-				mod: number
-				noteId: number
-			}>
+			Array<
+				| Record<string, never>
+				| {
+						mod: number
+						noteId: number
+				  }
+			>
 	  >
 	| Request<'removeEmptyNotes', 6>
 	| Request<
