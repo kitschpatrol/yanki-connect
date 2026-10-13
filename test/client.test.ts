@@ -65,6 +65,12 @@ describe('real AnkiConnect endpoints', { concurrent: false }, () => {
 		expect(new Set(reflected.actions)).toEqual(new Set(endpoints))
 		await expect(client.miscellaneous.requestPermission()).resolves.toMatchObject({
 			permission: 'granted',
+			requireApikey: false,
+			version: 6,
+		})
+		// eslint-disable-next-line unicorn/no-null -- The API uses JSON null to select all actions.
+		await expect(client.miscellaneous.apiReflect({ actions: null, scopes: [] })).resolves.toEqual({
+			scopes: [],
 		})
 		const profile = await client.miscellaneous.getActiveProfile()
 		expect(profile).toBe('yanki-tests')
@@ -98,6 +104,10 @@ describe('real AnkiConnect endpoints', { concurrent: false }, () => {
 
 		expect(await client.deck.setDeckConfigId({ configId, decks: [deck] })).toBe(true)
 		const config = await client.deck.getDeckConfig({ deck })
+		if (config === false || config.dyn === 1) {
+			throw new Error('Could not get a regular deck config')
+		}
+
 		expect(config.id).toBe(configId)
 		expect(await client.deck.saveDeckConfig({ config: { ...config, maxTaken: 42 } })).toBe(true)
 		await expect(client.deck.getDeckConfig({ deck })).resolves.toMatchObject({ maxTaken: 42 })
@@ -109,6 +119,7 @@ describe('real AnkiConnect endpoints', { concurrent: false }, () => {
 		await client.deck.changeDeck({ cards: [cardId], deck })
 		await client.deck.deleteDecks({ cardsToo: true, decks: [movedDeck] })
 		expect(await client.deck.deckNames()).not.toContain(movedDeck)
+		await expect(client.deck.getDeckConfig({ deck: movedDeck })).resolves.toBe(false)
 	})
 
 	it('model actions', async () => {
@@ -221,7 +232,11 @@ describe('real AnkiConnect endpoints', { concurrent: false }, () => {
 		expect(await client.note.getNoteTags({ note: noteId })).toContain('updated')
 		await client.note.updateNoteFields({ note: { fields: { Back: 'Updated answer' }, id: noteId } })
 		await expect(client.note.notesInfo({ notes: [noteId] })).resolves.toMatchObject([
-			{ fields: { Back: { value: 'Updated answer' } } },
+			{
+				fields: { Back: { value: 'Updated answer' } },
+				mod: expect.any(Number) as number,
+				profile: 'yanki-tests',
+			},
 		])
 		await client.note.updateNote({
 			note: { fields: { Back: 'Combined update' }, id: noteId, tags: [deck] },
@@ -243,7 +258,7 @@ describe('real AnkiConnect endpoints', { concurrent: false }, () => {
 		])
 		await client.note.deleteNotes({ notes: added })
 		expect(await client.note.notesInfo({ notes: added })).toEqual([{}])
-		await client.note.clearUnusedTags()
+		await expect(client.note.clearUnusedTags()).resolves.toBeNull()
 		expect(await client.note.getTags()).not.toContain('replaced')
 		if (isLegacy) {
 			await client.note.removeEmptyNotes()
@@ -263,6 +278,7 @@ describe('real AnkiConnect endpoints', { concurrent: false }, () => {
 			{
 				cardId,
 				deckName: deck,
+				nextReviews: expect.any(Array) as string[],
 				note: noteId,
 			},
 		])
@@ -347,13 +363,23 @@ describe('real AnkiConnect endpoints', { concurrent: false }, () => {
 	})
 
 	it('graphical actions', async () => {
+		await client.graphical.guiDeckBrowser()
+		await expect(client.graphical.guiStartCardTimer()).resolves.toBe(false)
+		await expect(client.graphical.guiPlayAudio()).resolves.toBe(false)
 		expect(await client.graphical.guiCheckDatabase()).toBe(true)
 		// Database checks acknowledge immediately; wait until Anki accepts GUI navigation.
 		await expect
 			.poll(async () => client.graphical.guiDeckOverview({ name: deck }), { timeout: 10_000 })
 			.toBe(true)
 		expect(await client.graphical.guiDeckReview({ name: deck })).toBe(true)
-		await expect.poll(async () => client.graphical.guiCurrentCard()).toMatchObject({ cardId })
+		await expect
+			.poll(async () => client.graphical.guiCurrentCard())
+			.toMatchObject({
+				buttons: expect.any(Array) as number[],
+				cardId,
+				nextReviews: expect.any(Array) as string[],
+				template: 'Card 1',
+			})
 		expect(await client.graphical.guiStartCardTimer()).toBe(true)
 		expect(await client.graphical.guiShowQuestion()).toBe(true)
 		expect(await client.graphical.guiPlayAudio()).toBe(true)

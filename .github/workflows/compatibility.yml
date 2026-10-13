@@ -1,0 +1,221 @@
+name: Compatibility
+
+# Probes every client action against every Anki and AnkiConnect release
+# combination on Linux, type-checks the responses, and verifies the
+# @minimumAnki and @minimumAnkiConnect tags documented in src/client.ts.
+# Expensive (one job per Anki release), so it only runs on demand.
+
+on:
+  workflow_dispatch:
+    inputs:
+      anki-versions:
+        description: 'Comma-separated Anki releases to test (empty = every release with a Linux build)'
+        required: false
+        default: ''
+      anki-connect-versions:
+        description: 'Comma-separated AnkiConnect releases to test (empty = every release since 22.2.19.0)'
+        required: false
+        default: ''
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  versions:
+    name: Enumerate releases
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    outputs:
+      anki: ${{ steps.versions.outputs.anki }}
+      anki-connect: ${{ steps.versions.outputs.anki-connect }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '24'
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm ci
+
+      - name: Enumerate releases
+        id: versions
+        env:
+          ANKI_VERSIONS: ${{ inputs.anki-versions }}
+          ANKI_CONNECT_VERSIONS: ${{ inputs.anki-connect-versions }}
+          GITHUB_TOKEN: ${{ github.token }}
+        run: node scripts/compatibility/versions.ts >> "$GITHUB_OUTPUT"
+
+      - name: Export AnkiConnect releases
+        env:
+          ANKI_CONNECT_VERSIONS_JSON: ${{ steps.versions.outputs.anki-connect }}
+        run: |
+          git clone --quiet https://git.sr.ht/~foosoft/anki-connect "$RUNNER_TEMP/anki-connect"
+          for tag in $(jq -r '.[]' <<< "$ANKI_CONNECT_VERSIONS_JSON"); do
+            mkdir -p "plugins/$tag"
+            git -C "$RUNNER_TEMP/anki-connect" archive "$tag" plugin | tar -x -C "plugins/$tag" --strip-components=1
+          done
+
+      - name: Upload AnkiConnect releases
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: anki-connect-plugins
+          path: plugins
+          retention-days: 7
+
+  probe:
+    name: Probe Anki ${{ matrix.anki.version }}
+    needs: versions
+    runs-on: ubuntu-latest
+    timeout-minutes: 150
+    strategy:
+      fail-fast: false
+      matrix:
+        anki: ${{ fromJSON(needs.versions.outputs.anki) }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            bzip2 \
+            xvfb \
+            zstd \
+            libegl1 \
+            libgl1 \
+            libopengl0 \
+            libnss3 \
+            libxcomposite1 \
+            libxdamage1 \
+            libxrandr2 \
+            libxtst6 \
+            libxkbcommon0 \
+            libxkbcommon-x11-0 \
+            libxcb-cursor0 \
+            libxcb-icccm4 \
+            libxcb-image0 \
+            libxcb-keysyms1 \
+            libxcb-render-util0 \
+            libxcb-shape0 \
+            libxcb-xinerama0 \
+            libgbm1 \
+            libasound2t64 \
+            libatk1.0-0 \
+            libatk-bridge2.0-0 \
+            libcups2 \
+            libdrm2 \
+            libpango-1.0-0 \
+            libcairo2 \
+            libatspi2.0-0
+
+      - name: Setup Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.13'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '24'
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm ci
+
+      - name: Build
+        run: pnpm run build
+
+      - name: Download AnkiConnect releases
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: anki-connect-plugins
+          path: plugins
+
+      - name: Probe
+        env:
+          ANKI_RELEASE: ${{ toJSON(matrix.anki) }}
+          ANKI_CONNECT_VERSIONS: ${{ needs.versions.outputs.anki-connect }}
+        run: |
+          xvfb-run --auto-servernum node scripts/compatibility/run.ts \
+            --anki-release "$ANKI_RELEASE" \
+            --anki-connect-versions "$ANKI_CONNECT_VERSIONS" \
+            --install-directory "$RUNNER_TEMP/anki" \
+            --plugins plugins \
+            --output results/anki.json
+
+      - name: Upload results
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: compatibility-anki-${{ matrix.anki.version }}
+          path: results
+          retention-days: 90
+
+  report:
+    name: Report
+    needs: probe
+    if: ${{ !cancelled() }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '24'
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm ci
+
+      - name: Download results
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          pattern: compatibility-anki-*
+          path: results
+          merge-multiple: false
+
+      - name: Build report
+        run: |
+          mkdir -p merged
+          for file in results/*/anki.json; do
+            cp "$file" "merged/$(basename "$(dirname "$file")").json"
+          done
+          node scripts/compatibility/report.ts --results merged --output compatibility
+
+      - name: Upload report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: compatibility
+          path: compatibility
+          retention-days: 90
