@@ -19,6 +19,11 @@
 
 <!-- /short-description -->
 
+> [!IMPORTANT]
+> The latest 26.x versions of Anki-Connect introduce a new [APIv1](https://git.sr.ht/~foosoft/anki-connect/tree/master/API_V1.md) which includes a nicely typed JSON-RPC 2.0 API and other improvements.
+>
+> A future major version bump to Yanki Connect will introduce support for this new API, but for now Yanki Connect only exposes the "Legacy" (formerly "version 6") API.
+
 ## Overview
 
 Yanki Connect exists to streamline development of JavaScript and TypeScript applications that use Alex Yatskov's [AnkiConnect](https://ankiweb.net/shared/info/2055492159) add-on to interface with the [Anki](https://apps.ankiweb.net) spaced repetition flashcard software. The library provides extensive type annotations for the AnkiConnect API, and includes a turn-key client implementation.
@@ -240,7 +245,7 @@ client.statistic.insertReviews
 
 <!-- /actionList -->
 
-Note that at the moment, only the latest AnkiConnect API version 6 is supported, and AnkiConnect release >=25.11.9.0 is required for compatibility with all features.
+Note that at the moment, only the "legacy" AnkiConnect API version 6 is supported, and AnkiConnect release >=25.11.9.0 is required for compatibility with all features.
 
 ### API
 
