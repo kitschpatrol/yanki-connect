@@ -1,6 +1,6 @@
 {
 	"name": "yanki-connect",
-	"version": "4.0.12",
+	"version": "5.0.0",
 	"description": "Fully-typed AnkiConnect API client.",
 	"keywords": [
 		"anki",
