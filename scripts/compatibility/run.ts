@@ -60,7 +60,6 @@ async function portOpen(): Promise<boolean> {
 
 async function ankiConnectResponds(): Promise<boolean> {
 	try {
-		// eslint-disable-next-line node/no-unsupported-features/node-builtins -- Scripts run on the development Node version.
 		const response = await fetch(`http://127.0.0.1:${String(ANKI_CONNECT_PORT)}`, {
 			body: JSON.stringify({ action: 'version', version: 6 }),
 			// AnkiConnect closes every connection, so do not try to reuse sockets.
@@ -85,7 +84,6 @@ async function createBase(pluginDirectory?: string): Promise<string> {
 	await fs.promises.mkdir(dialogs, { recursive: true })
 	await fs.promises.copyFile(DIALOGS_ADDON, path.join(dialogs, '__init__.py'))
 	if (pluginDirectory !== undefined) {
-		// eslint-disable-next-line node/no-unsupported-features/node-builtins -- Scripts run on the development Node version.
 		await fs.promises.cp(pluginDirectory, path.join(base, ADDON_DIRECTORY, ANKI_CONNECT_ID), {
 			recursive: true,
 		})

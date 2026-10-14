@@ -20,22 +20,24 @@
 <!-- /short-description -->
 
 > [!IMPORTANT]
-> The latest 26.x versions of Anki-Connect introduce a new [APIv1](https://git.sr.ht/~foosoft/anki-connect/tree/master/API_V1.md) which includes a typed JSON-RPC 2.0 API and other improvements.
+> The latest 26.x versions of Anki-Connect introduce a new [APIv1](https://git.sr.ht/~foosoft/anki-connect/tree/26.10.12.2/item/API_V1.md), which is meant to supersede the "version 6" API Yanki Connect currently supports.
 >
-> A future major version bump to Yanki Connect will introduce support for this new API, but for now Yanki Connect only exposes the "Legacy" (formerly "version 6") API.
+> A future version of Yanki Connect might introduce support for this new API, but for now please note that Yanki Connect only exposes the now "Legacy" version 6 API.
 
 ## Overview
 
-Yanki Connect exists to streamline development of JavaScript and TypeScript applications that use Alex Yatskov's [AnkiConnect](https://ankiweb.net/shared/info/2055492159) add-on to interface with the [Anki](https://apps.ankiweb.net) spaced repetition flashcard software. The library provides extensive type annotations for the AnkiConnect API, and includes a turn-key client implementation.
+Yanki Connect exists to streamline development of JavaScript and TypeScript applications that use Alex Yatskov's [AnkiConnect](https://ankiweb.net/shared/info/2055492159) add-on to interface with the [Anki](https://apps.ankiweb.net) spaced repetition flashcard software.
+
+The library provides extensive type annotations for the AnkiConnect API, and includes a turn-key client implementation.
+
+This library is used in the [`yanki`](https://github.com/kitschpatrol/yanki) CLI tool, which in turn powers the [`yanki-obsidian`](https://github.com/kitschpatrol/yanki-obsidian) [Obsidian](https://obsidian.md/) plugin. It's also used by a number of Anki MCP server projects.
 
 The "Y" prefix in "Yanki" is in the "Yet another" naming tradition; a nod to Anki's robust and occasionally duplicative ecosystem of third-party tools. (Also, appropriately, Yankī are a variety of [truant youth](https://commons.wikimedia.org/wiki/File:ヤンキー.jpg).)
-
-This library is used in the [`yanki`](https://github.com/kitschpatrol/yanki) CLI tool, which in turn powers the [`yanki-obsidian`](https://github.com/kitschpatrol/yanki-obsidian) [Obsidian](https://obsidian.md/) plugin.
 
 ## Features
 
 - **Action method organization + convenience methods**\
-  Instead of putting all <!-- actionCount -->116<!-- /actionCount --> methods in a single namespace, action convenience methods are organized into the same groups used in the [AnkiConnect documentation](https://git.sr.ht/~foosoft/anki-connect/tree/25.11.9.0/item/README.md#supported-actions), to simplify auto-complete discoverability.
+  Instead of putting all <!-- actionCount -->122<!-- /actionCount --> methods in a single namespace, action convenience methods are organized into the same groups used in the [AnkiConnect documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.10.12.2/item/API_LEGACY.md#action-reference), to simplify auto-complete discoverability.
 
 - **Low-level access through the provided `invoke` method**\
   If you don't want to use the convenience methods, an `invoke(action, params)` method is also exposed on the YankiConnect class for direct interaction with the AnkiConnect API.
@@ -63,17 +65,18 @@ This library is used in the [`yanki`](https://github.com/kitschpatrol/yanki) CLI
 
 ### Dependencies
 
-Yanki Connect is universal / isomorphic: it runs in the browser and in Node.js. The exported APIs are ESM-only. It's implemented in TypeScript and bundles extensive type definitions.
+Yanki Connect runs in either Node.js or a browser and provides ESM exports with TypeScript definitions.
 
-- [Node.js](https://nodejs.org/) 20.19.0+
-- [Anki desktop app](https://apps.ankiweb.net/) 23.10.0+ (many methods work with 2.1.15+)
-- [AnkiConnect add-on](https://ankiweb.net/shared/info/2055492159) 25.11.9.0+ (many methods work with 22.2.19.0+)
+- [Anki desktop app](https://apps.ankiweb.net/) 2.1.15+\
+  _26.08.0+ recommended for full API support_
+- [AnkiConnect add-on](https://ankiweb.net/shared/info/2055492159) 22.2.19.0+\
+  _26.10.13.0+ recommended for full API support_
+- **Node.js:** [Node.js](https://nodejs.org/) 22.12.0+\
+  _Older versions may work but are not verified_
+- **Browsers:** builds target Chrome 100+, Firefox 110+, and Safari 18+\
+  _Older versions may work but are not verified_
 
-The action table below lists the minimum versions for individual actions.
-
-The API calls and types are written against AnkiConnect version [25.11.9.0](https://git.sr.ht/~foosoft/anki-connect/tree/25.11.9.0/item/README.md), released 2025-11-09.
-
-This release requires Anki >=23.10.0. Older AnkiConnect releases can be used when they meet an action's minimum versions in the table below. Each minimum covers the full documented type signature, including every optional parameter and required response field. The chosen AnkiConnect release's own Anki requirement also applies.
+The exact version / API compatibility story across different versions of the Anki desktop app and AnkiConnect is complex and honestly a bit of a mess. Test-driven derivations of version compatibility are shown in the action table below.
 
 ### Installation
 
@@ -83,23 +86,11 @@ Add the library to your project:
 npm install yanki-connect
 ```
 
-Or, a bundled and minified ES module is available on CDNs:
-
-```ts
-import { YankiConnect } from 'https://cdn.jsdelivr.net/npm/yanki-connect'
-```
-
-or
-
-```ts
-import { YankiConnect } from 'https://unpkg.com/yanki-connect'
-```
-
 ## Usage
 
 Yanki Connect aims to be discoverable and self-documenting when used in an environment with a robust autocompletion / language service implementation. (VS Code, for example.)
 
-The library exports the `YankiConnect` class, which groups methods into the same structure of "supported actions" used in the official [AnkiConnect documentation](https://git.sr.ht/~foosoft/anki-connect/tree/25.11.9.0/item/README.md#supported-actions).
+The library exports the `YankiConnect` class, which groups methods into the same structure of "supported actions" used in the official [AnkiConnect documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.10.12.2/item/API_LEGACY.md#action-reference).
 
 Here's a simple example:
 
@@ -113,11 +104,15 @@ const decks = await client.deck.deckNames()
 console.log(decks) // ["Your", "Deck", "Names", "Here"]
 ```
 
-All <!-- actionCount -->116<!-- /actionCount --> AnkiConnect actions are exposed under their respective groups, with type data for both parameters and return types.
+### Actions
+
+All <!-- actionCount -->122<!-- /actionCount --> AnkiConnect actions are exposed under their respective groups, with type data for both parameters and return types.
 
 AnkiConnect has accumulated additional methods over the years, some of which require specific minimum versions of Anki for compatibility.
 
-The table below shows all AnkiConnect methods exposed in a YankiConnect client, with the minimum Anki and AnkiConnect versions required to support their full documented type signatures. An action may have existed earlier; its minimum includes later additions to its parameters, response fields, and shared types. The Compatibility workflow verifies every row against every release combination. Anki 2.1.15 and AnkiConnect 22.2.19.0 are the oldest audited releases, so a minimum equal to one of them may be lower in practice. A range in the AnkiConnect column marks an action that a later release removed.
+The table below shows all AnkiConnect methods exposed in a YankiConnect client, with the minimum Anki and AnkiConnect versions that support each action. Parameters and response fields added in later releases are optional in the types and name their release in their documentation, so they do not raise an action's minimum, but check the JSDoc annotation for version-specific caveats.
+
+A range in the AnkiConnect column marks an action that a later release either broke or removed.
 
 <!-- actionList -->
 
@@ -126,7 +121,7 @@ The table below shows all AnkiConnect methods exposed in a YankiConnect client, 
 | `client.card.answerCards`                   | 2.1.45       | 23.10.29.0             |
 | `client.card.areDue`                        | 2.1.15       | 22.2.19.0              |
 | `client.card.areSuspended`                  | 2.1.15       | 22.2.19.0              |
-| `client.card.cardsInfo`                     | 2.1.55       | 24.6.17.0              |
+| `client.card.cardsInfo`                     | 2.1.55       | 23.2.5.0               |
 | `client.card.cardsModTime`                  | 2.1.45       | 23.2.5.0               |
 | `client.card.cardsToNotes`                  | 2.1.15       | 22.2.19.0              |
 | `client.card.findCards`                     | 2.1.15       | 22.2.19.0              |
@@ -143,6 +138,7 @@ The table below shows all AnkiConnect methods exposed in a YankiConnect client, 
 | `client.deck.changeDeck`                    | 2.1.15       | 22.2.19.0              |
 | `client.deck.cloneDeckConfigId`             | 2.1.24       | 22.2.19.0              |
 | `client.deck.createDeck`                    | 2.1.15       | 22.2.19.0              |
+| `client.deck.deckNameFromId`                | 2.1.15       | 22.2.19.0              |
 | `client.deck.deckNames`                     | 2.1.15       | 22.2.19.0              |
 | `client.deck.deckNamesAndIds`               | 2.1.15       | 22.2.19.0              |
 | `client.deck.deleteDecks`                   | 2.1.45       | 22.4.26.0              |
@@ -152,9 +148,10 @@ The table below shows all AnkiConnect methods exposed in a YankiConnect client, 
 | `client.deck.removeDeckConfigId`            | 2.1.24       | 22.2.19.0              |
 | `client.deck.saveDeckConfig`                | 2.1.24       | 22.2.19.0              |
 | `client.deck.setDeckConfigId`               | 2.1.24       | 22.2.19.0              |
-| `client.graphical.guiAddCards`              | 23.10.0      | 25.11.2.0              |
+| `client.graphical.guiAddCards`              | 2.1.15       | 22.2.19.0              |
+| `client.graphical.guiAddNoteSetData`        | 26.08.0      | 26.10.11.0             |
 | `client.graphical.guiAnswerCard`            | 2.1.15       | 22.2.19.0              |
-| `client.graphical.guiBrowse`                | 2.1.45       | 24.1.21.0              |
+| `client.graphical.guiBrowse`                | 2.1.15       | 22.2.19.0              |
 | `client.graphical.guiCheckDatabase`         | 2.1.15       | 22.2.19.0              |
 | `client.graphical.guiCurrentCard`           | 2.1.15       | 22.2.19.0              |
 | `client.graphical.guiDeckBrowser`           | 2.1.15       | 22.2.19.0              |
@@ -164,6 +161,7 @@ The table below shows all AnkiConnect methods exposed in a YankiConnect client, 
 | `client.graphical.guiExitAnki`              | 2.1.15       | 22.2.19.0              |
 | `client.graphical.guiImportFile`            | 2.1.52       | 23.10.29.0             |
 | `client.graphical.guiPlayAudio`             | 23.10.0      | 25.11.9.0              |
+| `client.graphical.guiReviewActive`          | 2.1.15       | 22.2.19.0              |
 | `client.graphical.guiSelectCard`            | 23.10.0      | 25.2.24.0              |
 | `client.graphical.guiSelectedNotes`         | 2.1.15       | 22.2.19.0              |
 | `client.graphical.guiSelectNote`            | 2.1.45       | 24.1.21.0              |
@@ -202,6 +200,7 @@ The table below shows all AnkiConnect methods exposed in a YankiConnect client, 
 | `client.model.modelFieldSetFont`            | 2.1.45       | 23.2.5.0               |
 | `client.model.modelFieldSetFontSize`        | 2.1.45       | 23.2.5.0               |
 | `client.model.modelFieldsOnTemplates`       | 2.1.15       | 22.2.19.0              |
+| `client.model.modelNameFromId`              | 2.1.15       | 22.2.19.0              |
 | `client.model.modelNames`                   | 2.1.15       | 22.2.19.0              |
 | `client.model.modelNamesAndIds`             | 2.1.28       | 22.2.19.0              |
 | `client.model.modelStyling`                 | 2.1.15       | 22.2.19.0              |
@@ -212,24 +211,26 @@ The table below shows all AnkiConnect methods exposed in a YankiConnect client, 
 | `client.model.modelTemplates`               | 2.1.15       | 22.2.19.0              |
 | `client.model.updateModelStyling`           | 2.1.15       | 22.2.19.0              |
 | `client.model.updateModelTemplates`         | 2.1.15       | 22.2.19.0              |
-| `client.note.addNote`                       | 23.10.0      | 25.11.2.0              |
-| `client.note.addNotes`                      | 23.10.0      | 25.11.2.0              |
+| `client.note.addNote`                       | 2.1.15       | 22.2.19.0              |
+| `client.note.addNotes`                      | 2.1.15       | 22.2.19.0              |
 | `client.note.addTags`                       | 2.1.15       | 22.2.19.0              |
-| `client.note.canAddNotes`                   | 23.10.0      | 25.11.2.0              |
-| `client.note.canAddNotesWithErrorDetail`    | 23.10.0      | 25.11.2.0              |
+| `client.note.canAddNote`                    | 2.1.15       | 22.2.19.0              |
+| `client.note.canAddNotes`                   | 2.1.15       | 22.2.19.0              |
+| `client.note.canAddNotesWithErrorDetail`    | 2.1.50       | 24.2.26.0              |
+| `client.note.canAddNoteWithErrorDetail`     | 2.1.50       | 24.2.26.0              |
 | `client.note.clearUnusedTags`               | 2.1.15       | 22.2.19.0              |
 | `client.note.deleteNotes`                   | 2.1.15       | 22.2.19.0              |
 | `client.note.findNotes`                     | 2.1.15       | 22.2.19.0              |
 | `client.note.getNoteTags`                   | 2.1.45       | 23.4.11.0              |
 | `client.note.getTags`                       | 2.1.15       | 22.2.19.0              |
-| `client.note.notesInfo`                     | 2.1.50       | 24.7.25.0              |
+| `client.note.notesInfo`                     | 2.1.45       | 23.2.5.0               |
 | `client.note.notesModTime`                  | 2.1.50       | 24.7.25.0              |
 | `client.note.removeEmptyNotes`              | 2.1.15       | 22.2.19.0 to 25.11.9.0 |
 | `client.note.removeTags`                    | 2.1.15       | 22.2.19.0              |
 | `client.note.replaceTags`                   | 2.1.15       | 22.2.19.0              |
 | `client.note.replaceTagsInAllNotes`         | 2.1.15       | 22.2.19.0              |
-| `client.note.updateNote`                    | 23.10.0      | 25.11.2.0              |
-| `client.note.updateNoteFields`              | 23.10.0      | 25.11.2.0              |
+| `client.note.updateNote`                    | 2.1.45       | 23.4.11.0              |
+| `client.note.updateNoteFields`              | 2.1.15       | 22.2.19.0              |
 | `client.note.updateNoteModel`               | 2.1.50       | 24.6.17.0              |
 | `client.note.updateNoteTags`                | 2.1.45       | 23.4.11.0              |
 | `client.statistic.cardReviews`              | 2.1.15       | 22.2.19.0              |
@@ -242,11 +243,9 @@ The table below shows all AnkiConnect methods exposed in a YankiConnect client, 
 
 <!-- /actionList -->
 
-Only the "legacy" AnkiConnect API version 6 is supported. The minimums include `guiBrowse.reorderCards`, optional note-media `fields`, the complete model schema, and all required card, note, and deck-statistics response fields. Each AnkiConnect release also has its own Anki requirement, which applies on top of the table: 22.2.19.0 needs a Qt5 build of Anki (2.1.66 or older), 22.4.26.0 needs Anki 2.1.45, 24.2.26.0 needs 2.1.50, 24.11.5.0 needs 24.06.3, 24.11.5.1 needs 23.10 (25.2.24.0 through 25.6.12.0 fail on 23.10 exactly and need 23.10.1), and 26.10.11.0 needs 26.08. `guiEditNote` is only fully compatible from Anki 26.08 with AnkiConnect 26.10.11.0, because every older AnkiConnect release's editor breaks on newer Anki. AnkiConnect 25.11.9.0 with Anki 23.10.0 or later provides every other documented signature. The integration tests cover AnkiConnect 25.11.9.0 and 26.10.12.0; the Compatibility workflow last verified the table on 2026-10-13.
+Only the "legacy" AnkiConnect API version 6 is currently supported.
 
-### API
-
-#### Configuration
+### Options
 
 The `YankiConnect` class features sensible defaults that should work fine for most configurations of AnkiConnect, but if you'd like to customize the client, you can pass an argument of type `YankiConnectOptions` with any of the following:
 
@@ -343,7 +342,7 @@ Chen Lijun's [autoanki](https://github.com/chenlijun99/autoanki) also implements
 
 Thanks to [Alex Yatskov](https://foosoft.net/) for creating [AnkiConnect](https://ankiweb.net/shared/info/2055492159).
 
-All of the embedded action descriptions in Yanki Connect are taken directly from the [AnkiConnect project readme](https://git.sr.ht/~foosoft/anki-connect/tree/25.11.9.0/item/README.md).
+All of the embedded action descriptions in Yanki Connect are taken directly from the [AnkiConnect legacy API reference](https://git.sr.ht/~foosoft/anki-connect/tree/26.10.12.2/item/API_LEGACY.md).
 
 <!-- contributing -->
 
@@ -356,16 +355,6 @@ Please open an issue to discuss changes before submitting a pull request. Unsoli
 This repository uses [@kitschpatrol/shared-config](https://github.com/kitschpatrol/shared-config) (via its `ksc` CLI) for linting and formatting, plus [MDAT](https://github.com/kitschpatrol/mdat) for readme placeholder expansion.
 
 <!-- /contributing -->
-
-### Testing
-
-With Anki installed, `pnpm test` runs the Node and Chromium tests against both bundled AnkiConnect fixtures, one version at a time. Set `ANKI_CONNECT_VERSION` to `25.11.9.0` or `26.10.12.0` to test a single version, for example `ANKI_CONNECT_VERSION=26.10.12.0 pnpm test`. Vitest arguments can be passed through, such as `pnpm test --project node`.
-
-Each convenience action in `src/client.ts` documents its requirements with `@minimumAnki` and `@minimumAnkiConnect` JSDoc tags, plus an `@see` link to the upstream release source. The `actionList` mdat rule reads these tags to generate the table above. When adding or changing an action's types, verify full support for every parameter, optional feature, required response field, and referenced shared type against upstream history, then update both tags. A shared type change can raise the minimums of multiple actions. Missing, duplicate, or malformed minimum-version tags fail generation.
-
-`pnpm coverage` also tests both versions and writes separate reports to `coverage/<version>/`. CI tests each fixture on Linux, macOS, and Windows.
-
-The [Compatibility workflow](https://github.com/kitschpatrol/yanki-connect/actions/workflows/compatibility.yml) verifies the minimum-version tags empirically. Run it manually from the Actions tab. It installs every Anki release with a Linux build (2.1.15 onward), launches each one with every AnkiConnect release since 22.2.19.0 in a fresh profile, and runs every action end-to-end with its full documented parameters, type-checking each response against the declared result type. An action counts as supported in a combination only when all of that succeeds. The `report` job uploads a `compatibility` artifact containing `compatibility.json` (the full per-action, per-combination table), `summary.md`, and `compatibility-prompt.md`, a prompt that describes each mismatch for an LLM or a person to reconcile the source with the results. The job fails when any documented minimum differs from the empirical one. The workflow inputs accept comma-separated Anki and AnkiConnect versions to test a subset. The scripts live in `scripts/compatibility/` and exercise the built package, so run `pnpm build` first; `node scripts/compatibility/probe.ts` then probes whatever AnkiConnect is listening locally.
 
 <!-- license -->
 

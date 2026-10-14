@@ -5,7 +5,6 @@ import path from 'node:path'
 import type { AnkiRelease } from './shared.ts'
 
 async function download(url: string, destination: string): Promise<void> {
-	// eslint-disable-next-line node/no-unsupported-features/node-builtins -- Scripts run on the development Node version.
 	const response = await fetch(url)
 	if (!response.ok || response.body === null) {
 		throw new Error(`Download of ${url} failed with status ${String(response.status)}`)

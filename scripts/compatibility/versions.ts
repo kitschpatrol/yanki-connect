@@ -27,7 +27,6 @@ type GitHubRelease = {
 }
 
 async function fetchJson<T>(url: string, headers: Record<string, string> = {}): Promise<T> {
-	// eslint-disable-next-line node/no-unsupported-features/node-builtins -- Scripts run on the development Node version.
 	const response = await fetch(url, { headers })
 	if (!response.ok) {
 		throw new Error(`${url} responded with status ${String(response.status)}`)

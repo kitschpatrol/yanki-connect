@@ -61,8 +61,18 @@ type FilteredDeckConfig = {
 
 export type DeckRequests =
 	| Request<'changeDeck', 6, { cards: number[]; deck: string }>
-	| Request<'cloneDeckConfigId', 6, { cloneFrom: number; name: string }, false | number>
+	| Request<
+			'cloneDeckConfigId',
+			6,
+			{
+				/** ID of the group to clone. Defaults to the default group. */
+				cloneFrom?: number
+				name: string
+			},
+			false | number
+	  >
 	| Request<'createDeck', 6, { deck: string }, number>
+	| Request<'deckNameFromId', 6, { deckId: number }, string>
 	| Request<'deckNames', 6, never, string[]>
 	| Request<'deckNamesAndIds', 6, never, Record<string, number>>
 	| Request<'deleteDecks', 6, { cardsToo: true; decks: string[] }>

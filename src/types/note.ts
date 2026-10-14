@@ -6,12 +6,20 @@ type NoteModel =
 	'Basic' | 'Basic (and reversed card)' | 'Basic (type in the answer)' | 'Cloze' | (string & {}) // Allow arbitrary strings too
 
 type NoteMedia = {
-	data?: string // First priority, must have one of these three
-	fields?: string[] // Optional as of AnkiConnect 25.11.2.0
+	/** Base64-encoded contents. Used first when more than one source is given. */
+	data?: string
+	/**
+	 * Fields to embed the file in. Optional from AnkiConnect 25.11.2.0 on Anki
+	 * 23.10 or later; earlier releases require it.
+	 */
+	fields?: string[]
 	filename: string
-	path?: string // Second priority, must have one of these three
+	/** Absolute path of a local file. Used when `data` is absent. */
+	path?: string
+	/** MD5 hex digest. The file is skipped when it matches the incoming data. */
 	skipHash?: string
-	url?: string // Third priority, must have one of these three
+	/** URL to download. Used when `data` and `path` are absent. */
+	url?: string
 }
 
 export type Note = {
@@ -47,6 +55,7 @@ export type NoteRequests =
 				tags: string // Array allowed?
 			}
 	  >
+	| Request<'canAddNote', 6, { note: NoteWithCreationOptions }, boolean>
 	| Request<'canAddNotes', 6, { notes: NoteWithCreationOptions[] }, boolean[]>
 	| Request<
 			'canAddNotesWithErrorDetail',
@@ -59,6 +68,16 @@ export type NoteRequests =
 				  }
 				| { canAdd: true }
 			>
+	  >
+	| Request<
+			'canAddNoteWithErrorDetail',
+			6,
+			{ note: NoteWithCreationOptions },
+			| {
+					canAdd: false
+					error: string
+			  }
+			| { canAdd: true }
 	  >
 	| Request<'clearUnusedTags', 6>
 	| Request<'deleteNotes', 6, { notes: number[] }>
@@ -83,9 +102,11 @@ export type NoteRequests =
 	| Request<
 			'notesInfo',
 			6,
-			{
-				notes: number[]
-			},
+			| {
+					/** Search query. Requires AnkiConnect 25.2.24.0. */
+					query: string
+			  }
+			| { notes: number[] },
 			Array<
 				| Record<string, never>
 				| {
@@ -97,10 +118,12 @@ export type NoteRequests =
 								value: string
 							}
 						>
-						mod: number
+						/** Present from AnkiConnect 24.7.25.0. */
+						mod?: number
 						modelName: string
 						noteId: number
-						profile: string
+						/** Present from AnkiConnect 24.7.25.0. */
+						profile?: string
 						tags: string[]
 				  }
 			>

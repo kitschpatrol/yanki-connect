@@ -31,7 +31,7 @@ export async function setup(project: TestProject) {
 
 	// Copy the fixture to a temp directory so Anki's writes don't mutate it
 	ankiBasePath = await fs.mkdtemp(path.join(os.tmpdir(), 'yanki-connect-test-'))
-	// eslint-disable-next-line node/no-unsupported-features/node-builtins
+
 	await fs.cp(fixturePath, ankiBasePath, { recursive: true })
 	const dialogsAddonPath = path.join(ankiBasePath, 'addons21', 'yanki_e2e_dialogs')
 	await fs.mkdir(dialogsAddonPath)

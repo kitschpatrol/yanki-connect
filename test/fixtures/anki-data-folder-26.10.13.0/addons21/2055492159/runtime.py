@@ -138,6 +138,7 @@ class Runtime:
                 raise ApiError('staleCursor', 'Cursor expired or collection changed.')
             if state['method'] != method or state['params'] != params:
                 raise ApiError('invalidParams', 'Cursor query parameters changed.')
+            self.cursors.pop(cursor)
         else:
             if len(self.cursors) >= 100 or len(ids) > 1000000:
                 raise ApiError('busy', 'Search snapshot capacity exceeded.')
@@ -147,8 +148,6 @@ class Runtime:
         next_offset = start + limit
         if next_offset < len(state['ids']):
             next_cursor = uuid.uuid4().hex
-            if len(self.cursors) >= 100:
-                self.cursors.pop(min(self.cursors, key=lambda key: self.cursors[key]['created']))
             self.cursors[next_cursor] = {**state, 'offset': next_offset}
         else:
             next_cursor = None

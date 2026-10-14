@@ -111,11 +111,17 @@ class Legacy:
             self.service = self.runtime.service()
         return self.resolve({'id': str(id)} if id is not None else self.ref(name), 'noteType')
 
+    @staticmethod
+    def without_empty_tags(tags):
+        # Older clients include empty tag entries; native Anki ignores them.
+        return [tag for tag in tags if tag != '']
+
     def created_note(self, source, pure=False):
         source = copy.deepcopy(source)
         model = self.model(source['modelName'])
         self.resolve(self.ref(source['deckName']), 'deck')
-        fields = {}
+        # Native notes have every model field, including omitted media targets.
+        fields = {field['name']: '' for field in model['flds']}
         for key, value in source['fields'].items():
             matches = [field['name'] for field in model['flds'] if field['name'].lower() == key.lower()]
             if len(matches) > 1:
@@ -137,7 +143,7 @@ class Legacy:
             deck_name = scoped.get('deckName')
             duplicates['deck'] = self.ref(source['deckName'] if deck_name is None else deck_name)
         data = {'noteType': self.ref(source['modelName']), 'deck': self.ref(source['deckName']),
-                'fields': fields, 'tags': list(source.get('tags', [])), 'duplicates': duplicates,
+                'fields': fields, 'tags': self.without_empty_tags(source.get('tags', [])), 'duplicates': duplicates,
                 # Legacy creation lets Anki generate its fallback card. Rendering
                 # a blank template is not the same as a native add returning 0.
                 'rejectEmptyQuestions': False}
@@ -298,23 +304,43 @@ class Legacy:
                 raise ApiError('ioError', 'Media restoration failed.', {'failures': failures, 'cause': str(error)}) from error
             raise
 
-    def record(self, kind, id):
+    def record(self, kind, id, fields=None):
+        if kind == 'cards':
+            return self.card_info(id, fields)
         value = self.s(kind + '.get', id=str(id))
-        model = self.model(id=value['noteType']['id']) if kind == 'notes' else self.model(id=self.service.card(str(id)).note().mid)
-        if kind == 'notes':
-            return {'noteId': int(id), 'profile': self.runtime.profile_name, 'tags': value['tags'],
-                    'fields': {field['name']: {'value': value['fields'][field['name']], 'order': index} for index, field in enumerate(model['flds'])},
-                    'modelName': model['name'], 'mod': int(datetime.fromisoformat(value['modifiedAt'].replace('Z', '+00:00')).timestamp()),
-                    'cards': [int(id) for id in value['cardIds']]}
+        model = self.model(id=value['noteType']['id'])
+        return {'noteId': int(id), 'profile': self.runtime.profile_name, 'tags': value['tags'],
+                'fields': {field['name']: {'value': value['fields'][field['name']], 'order': index} for index, field in enumerate(model['flds'])},
+                'modelName': model['name'], 'mod': int(datetime.fromisoformat(value['modifiedAt'].replace('Z', '+00:00')).timestamp()),
+                'cards': [int(id) for id in value['cardIds']]}
+
+    def card_info(self, id, fields=None):
+        if self.service is None:
+            self.service = self.runtime.service()
         card = self.service.card(str(id))
-        rendered = self.s('cards.render', id=str(id))
-        prediction = self.s('scheduling.predict', cardId=str(id))
-        return {'cardId': card.id, 'fields': {field['name']: {'value': card.note().fields[index], 'order': index} for index, field in enumerate(model['flds'])},
-                'fieldOrder': card.ord, 'question': rendered['questionHtml'], 'answer': rendered['answerHtml'],
-                'modelName': model['name'], 'ord': card.ord, 'deckName': value['deck']['name'], 'css': model['css'],
+        result = {'cardId': card.id, 'fieldOrder': card.ord, 'ord': card.ord,
                 'factor': card.factor, 'interval': card.ivl, 'note': card.nid, 'type': card.type, 'queue': card.queue,
                 'due': card.due, 'reps': card.reps, 'lapses': card.lapses, 'left': card.left, 'mod': card.mod,
-                'nextReviews': [item['label'] for item in prediction['answers']], 'flags': card.flags}
+                'flags': card.flags}
+        requested = None if fields is None else set(fields)
+        if requested is None or requested & {'fields', 'modelName', 'css'}:
+            note = card.note()
+            model = self.model(id=note.mid)
+            if requested is None or 'fields' in requested:
+                result['fields'] = {field['name']: {'value': note.fields[index], 'order': index} for index, field in enumerate(model['flds'])}
+            if requested is None or 'modelName' in requested:
+                result['modelName'] = model['name']
+            if requested is None or 'css' in requested:
+                result['css'] = model['css']
+        if requested is None or 'deckName' in requested:
+            result['deckName'] = self.resolve({'id': str(card.did)}, 'deck')['name']
+        if requested is None or requested & {'question', 'answer'}:
+            rendered = self.s('cards.render', id=str(id))
+            result.update(question=rendered['questionHtml'], answer=rendered['answerHtml'])
+        if requested is None or 'nextReviews' in requested:
+            prediction = self.s('scheduling.predict', cardId=str(id))
+            result['nextReviews'] = [item['label'] for item in prediction['answers']]
+        return result if requested is None else {key: value for key, value in result.items() if key in requested}
 
     def gui_call(self, name, p):
         runtime = self.runtime
@@ -412,6 +438,8 @@ class Legacy:
                     if field not in [value['name'] for value in model['flds']]:
                         raise ApiError('notFound', 'Field "' + field + '" not found in current note')
             patch = {key: value for key, value in source.items() if key in ('fields', 'tags')}
+            if 'tags' in patch:
+                patch['tags'] = self.without_empty_tags(patch['tags'])
             for old, new in [('deckName', 'deck'), ('modelName', 'noteType')]:
                 if old in source:
                     patch[new] = self.ref(source[old])
@@ -663,7 +691,7 @@ class Legacy:
                 current = self.s('notes.get', id=str(source['id']))
                 patch['fields'] = {key: value for key, value in source['fields'].items() if key in current['fields']}
             if name != 'updateNoteFields' and 'tags' in source:
-                patch['tags'] = [source['tags']] if isinstance(source['tags'], str) else list(source['tags'])
+                patch['tags'] = self.without_empty_tags([source['tags']] if isinstance(source['tags'], str) else source['tags'])
             if not patch:
                 raise ApiError('invalidParams', 'Must provide a "fields" or "tags" property.')
             self.runtime.dispatcher.params('notes.update', {'id': str(source['id']), 'patch': patch})
@@ -689,10 +717,16 @@ class Legacy:
             plan = self.s('notes.planConversion', source={'id': original['noteType']['id']}, target={'id': target['id']})
             old = self.model(id=original['noteType']['id'])
             for key, mapping in [('flds', plan['fields']), ('tmpls', plan['templates'])]:
-                for entry in mapping:
-                    matches = [item['name'] for item in old[key] if item['name'].lower() == entry['target'].lower()]
+                names = [[item['name'] for item in old[key] if item['name'].lower() == entry['target'].lower()]
+                         for entry in mapping]
+                for matches in names:
                     if len(matches) > 1 or (key == 'tmpls' and not matches and len(old[key]) > 1):
                         raise ApiError('compatibilityError', 'Explicit conversion mappings are required.')
+                # Raw mid assignment kept cards by ordinal. A lone source template without a
+                # namesake keeps Anki's positional mapping instead of losing its cards.
+                if key == 'tmpls' and not any(names):
+                    continue
+                for entry, matches in zip(mapping, names):
                     entry['source'] = matches[0] if matches else None
             self.s('notes.convert', ids=[str(source['id'])], target={'id': target['id']}, fields=plan['fields'], templates=plan['templates'], planToken=plan['token'])
             fields = {item['name']: '' for item in target['fields']}
@@ -700,12 +734,12 @@ class Legacy:
                 actual = next((field for field in fields if field.lower() == name.lower()), None)
                 if actual:
                     fields[actual] = value
-            self.s('notes.update', id=str(source['id']), patch={'fields': fields, **({'tags': source['tags']} if 'tags' in source else {})})
+            self.s('notes.update', id=str(source['id']), patch={'fields': fields, **({'tags': self.without_empty_tags(source['tags'])} if 'tags' in source else {})})
             return None
         if name == 'getNoteTags':
             return self.s('notes.get', id=str(p['note']))['tags']
         if name in ('addTags', 'removeTags'):
-            tags = self.service.col.tags.split(p['tags']) if isinstance(p['tags'], str) else list(p['tags'])
+            tags = self.without_empty_tags(self.service.col.tags.split(p['tags']) if isinstance(p['tags'], str) else p['tags'])
             method = 'tags.remove' if name == 'removeTags' or not p.get('add', True) else 'tags.add'
             self.unwrap(self.s(method, noteIds=self.ids(p['notes']), tags=tags), missing=True)
             return None
@@ -724,6 +758,9 @@ class Legacy:
         if name in ('findNotes', 'findCards'):
             return [] if p['query'] is None else [int(id) for id in self.all_pages('notes.search' if name == 'findNotes' else 'cards.search', query=p['query'])]
         if name in ('notesInfo', 'cardsInfo', 'notesModTime', 'cardsModTime'):
+            fields = p.get('fields') if name == 'cardsInfo' else None
+            if fields is not None and (not isinstance(fields, list) or not all(isinstance(field, str) for field in fields)):
+                raise ApiError('invalidParams', 'fields must be a list of card record field names.')
             kind = 'notes' if name.startswith('notes') else 'cards'
             ids = p.get(kind)
             if name == 'notesInfo' and p['query'] is not None:
@@ -737,7 +774,7 @@ class Legacy:
                         native = self.service.note(str(id)) if kind == 'notes' else self.service.card(str(id))
                         result.append({'noteId' if kind == 'notes' else 'cardId': int(id), 'mod': native.mod})
                     else:
-                        result.append(self.record(kind, id))
+                        result.append(self.record(kind, id, fields))
                 except Exception as error:
                     from anki.errors import NotFoundError
                     if isinstance(error, NotFoundError) or isinstance(error, ApiError) and error.kind == 'notFound':

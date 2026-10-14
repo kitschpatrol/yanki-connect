@@ -615,8 +615,8 @@ class AnkiConnect:
         return self.legacy('findCards', {'query': query})
 
     @util.api()
-    def cardsInfo(self, cards):
-        return self.legacy('cardsInfo', {'cards': cards})
+    def cardsInfo(self, cards, fields=None):
+        return self.legacy('cardsInfo', {'cards': cards, 'fields': fields})
 
     @util.api()
     def cardsModTime(self, cards):

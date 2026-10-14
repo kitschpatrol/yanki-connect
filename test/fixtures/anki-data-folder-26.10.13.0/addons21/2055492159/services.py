@@ -798,7 +798,7 @@ class Services:
     def noteTypes_deleteUnused(self, noteTypes):
         def delete(reference):
             model = self.resolve(reference, 'noteType')
-            if self.col.models.use_count(model['id']):
+            if self.col.models.use_count(model):
                 raise ApiError('conflict', 'Note type is in use.')
             self.change(self.col.models.remove(model['id']))
             return {'changed': True}

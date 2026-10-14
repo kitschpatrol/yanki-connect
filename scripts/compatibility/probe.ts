@@ -1,3 +1,4 @@
+/* eslint-disable max-lines -- One probe case per client action, so the registry grows with the upstream API. */
 // cspell:ignore unsuspended
 import { createHash } from 'node:crypto'
 import { once } from 'node:events'
@@ -8,6 +9,7 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { isDeepStrictEqual } from 'node:util'
 import type * as Yanki from '../../src/index.ts'
+import type { CardInfo } from '../../src/types/card'
 import type { Note } from '../../src/types/note'
 import type { Actions } from '../../src/types/shared'
 import type { ActionOutcome } from './shared.ts'
@@ -76,12 +78,47 @@ const TEXT_BASE64 = 'dGVzdA=='
 const PNG_BASE64 =
 	'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg=='
 const UNRELATED_HASH = createHash('md5').update('unrelated').digest('hex')
+const TEXT_MD5 = createHash('md5').update('test').digest('hex')
+/**
+ * Keys of `T` that are not optional: an empty record only satisfies the
+ * optional ones.
+ */
+type RequiredKeys<T> = {
+	[K in keyof T]-?: Record<string, never> extends Pick<T, K> ? never : K
+}[keyof T]
+
+/** Every required property of a card record, kept in step with the client type. */
+const CARD_INFO_KEYS: Record<RequiredKeys<CardInfo>, true> = {
+	answer: true,
+	cardId: true,
+	css: true,
+	deckName: true,
+	due: true,
+	fieldOrder: true,
+	fields: true,
+	interval: true,
+	lapses: true,
+	left: true,
+	mod: true,
+	modelName: true,
+	note: true,
+	ord: true,
+	question: true,
+	queue: true,
+	reps: true,
+	type: true,
+}
 const MEDIA_FILES = {
 	data: '_yanki-compat-data.txt',
 	path: '_yanki-compat-path.txt',
 	url: '_yanki-compat-url.txt',
 }
 const POLL_TIMEOUT = 15_000
+/**
+ * AnkiConnect 26.10 rejects requests while a previous GUI operation is still
+ * running.
+ */
+const BUSY_ERROR = 'A collection operation is active.'
 
 function assert(condition: boolean, message: string): asserts condition {
 	if (!condition) {
@@ -183,14 +220,47 @@ async function ensureAnswered(context: Context): Promise<void> {
 		return
 	}
 
-	await client.graphical.guiDeckReview({ name: context.deck })
 	const current = async () => client.graphical.guiCurrentCard()
-	await settle(context, current, (card) => card.cardId === cardId, 'review of the card')
-	await client.graphical.guiShowQuestion()
-	await client.graphical.guiShowAnswer()
-	await client.graphical.guiAnswerCard({ ease: 3 })
+	const steps: Array<[string, () => Promise<unknown>]> = [
+		['guiDeckReview', async () => client.graphical.guiDeckReview({ name: context.deck })],
+		[
+			'guiCurrentCard',
+			async () => settle(context, current, (card) => card.cardId === cardId, 'review of the card'),
+		],
+		['guiShowQuestion', async () => client.graphical.guiShowQuestion()],
+		['guiShowAnswer', async () => client.graphical.guiShowAnswer()],
+		['guiAnswerCard', async () => client.graphical.guiAnswerCard({ ease: 3 })],
+	]
+	const attempt = async (): Promise<string | undefined> => {
+		for (const [label, step] of steps) {
+			try {
+				await step()
+			} catch (error) {
+				return `${label}: ${error instanceof Error ? error.message : String(error)}`
+			}
+		}
+
+		return undefined
+	}
+
+	// The reviewer occasionally drops its card between steps, so repeat the
+	// sequence until the card has a review.
+	const start = Date.now()
+	let lastError: string | undefined
+	while (!(await answered())) {
+		if (Date.now() - start >= POLL_TIMEOUT) {
+			throw new BehaviorError(
+				`card could not be answered through the reviewer within ${String(POLL_TIMEOUT / 1000)}s${lastError === undefined ? '' : `: ${lastError}`}`,
+			)
+		}
+
+		lastError = (await attempt()) ?? lastError
+		await new Promise((resolve) => {
+			setTimeout(resolve, 250)
+		})
+	}
+
 	await client.graphical.guiDeckBrowser()
-	assert(await answered(), 'card could be answered')
 }
 
 /** Open the card browser on the note with only required parameters. */
@@ -223,12 +293,15 @@ async function trySelect(context: Context): Promise<boolean> {
 }
 
 /**
- * Every media variant: inline data, local path, and URL, with and without
- * target fields.
+ * Every media source: inline data, local path, and URL. Each names its target
+ * fields, since omitting them needs a later release than the actions'
+ * minimums.
  */
 function media(context: Context): Pick<Note, 'audio' | 'picture' | 'video'> {
 	return {
-		audio: [{ filename: '_yanki-compat-audio.mp3', url: context.mediaUrl('audio.mp3') }],
+		audio: [
+			{ fields: ['Back'], filename: '_yanki-compat-audio.mp3', url: context.mediaUrl('audio.mp3') },
+		],
 		picture: [
 			{
 				data: PNG_BASE64,
@@ -310,6 +383,11 @@ async function templateNames(context: Context): Promise<string[]> {
 }
 
 /* eslint-disable perfectionist/sort-objects -- Cases run in declaration order; later cases depend on state created by earlier ones. */
+/**
+ * One case per action. Each sends only the parameters, and expects only the
+ * response fields, that the action's minimum release supports; later additions
+ * are optional in the client types and name their release there.
+ */
 const cases: Record<Actions, 'untestable' | ProbeCase> = {
 	// Miscellaneous
 	async version({ client }) {
@@ -368,6 +446,24 @@ const cases: Record<Actions, 'untestable' | ProbeCase> = {
 			}),
 			MEDIA_FILES.data,
 			'store from data',
+		)
+		assertNull(
+			await client.media.storeMediaFile({
+				data: TEXT_BASE64,
+				filename: MEDIA_FILES.data,
+				skipHash: TEXT_MD5,
+			}),
+			'store skipped by matching hash',
+		)
+		assertEqual(
+			await client.media.storeMediaFile({
+				data: TEXT_BASE64,
+				deleteExisting: true,
+				filename: MEDIA_FILES.data,
+				skipHash: UNRELATED_HASH,
+			}),
+			MEDIA_FILES.data,
+			'store with non-matching hash',
 		)
 		const fromPath = await client.media.storeMediaFile({
 			deleteExisting: false,
@@ -432,6 +528,13 @@ const cases: Record<Actions, 'untestable' | ProbeCase> = {
 		const ids = await context.client.deck.deckNamesAndIds()
 		assertEqual(ids[context.deck], required(context, 'deckId'), 'deck id by name')
 	},
+	async deckNameFromId(context) {
+		assertEqual(
+			await context.client.deck.deckNameFromId({ deckId: required(context, 'deckId') }),
+			context.deck,
+			'deck name by id',
+		)
+	},
 	async createModel(context) {
 		const model = await context.client.model.createModel({
 			cardTemplates: [TEMPLATE],
@@ -461,6 +564,13 @@ const cases: Record<Actions, 'untestable' | ProbeCase> = {
 	async modelNamesAndIds(context) {
 		const ids = await context.client.model.modelNamesAndIds()
 		assertEqual(ids[context.modelName], required(context, 'modelId'), 'model id by name')
+	},
+	async modelNameFromId(context) {
+		assertEqual(
+			await context.client.model.modelNameFromId({ modelId: required(context, 'modelId') }),
+			context.modelName,
+			'model name by id',
+		)
 	},
 	// Notes
 	async addNote(context) {
@@ -500,6 +610,31 @@ const cases: Record<Actions, 'untestable' | ProbeCase> = {
 		})
 		assert(details[0]?.canAdd === false && details[0].error.length > 0, 'duplicate note has error')
 		assertEqual(details[1], { canAdd: true }, 'new note can be added')
+	},
+	async canAddNote(context) {
+		assertEqual(
+			await context.client.note.canAddNote({ note: note(context, context.deck) }),
+			false,
+			'duplicate note cannot be added',
+		)
+		assertEqual(
+			await context.client.note.canAddNote({ note: note(context, `${context.deck}-extra`) }),
+			true,
+			'new note can be added',
+		)
+	},
+	async canAddNoteWithErrorDetail(context) {
+		const duplicate = await context.client.note.canAddNoteWithErrorDetail({
+			note: note(context, context.deck),
+		})
+		assert(!duplicate.canAdd && duplicate.error.length > 0, 'duplicate note has error')
+		assertEqual(
+			await context.client.note.canAddNoteWithErrorDetail({
+				note: note(context, `${context.deck}-extra`),
+			}),
+			{ canAdd: true },
+			'new note can be added',
+		)
 	},
 	async addNotes(context) {
 		const added = await context.client.note.addNotes({
@@ -665,6 +800,11 @@ const cases: Record<Actions, 'untestable' | ProbeCase> = {
 				card.deckName === context.deck &&
 				card.note === required(context, 'noteId'),
 			'card info identifies the card',
+		)
+		assertEqual(
+			Object.keys(CARD_INFO_KEYS).filter((key) => !Object.hasOwn(card, key)),
+			[],
+			'complete card record',
 		)
 		assertEqual(info[1], {}, 'missing card info')
 	},
@@ -1199,6 +1339,9 @@ const cases: Record<Actions, 'untestable' | ProbeCase> = {
 		const card = await current()
 		assertEqual(card.cardId, cardId, 'guiCurrentCard')
 	},
+	async guiReviewActive({ client }) {
+		assertEqual(await client.graphical.guiReviewActive(), true, 'guiReviewActive')
+	},
 	async guiStartCardTimer({ client }) {
 		assertEqual(await client.graphical.guiStartCardTimer(), true, 'guiStartCardTimer')
 	},
@@ -1230,10 +1373,7 @@ const cases: Record<Actions, 'untestable' | ProbeCase> = {
 	async guiBrowse(context) {
 		const cardId = required(context, 'cardId')
 		const browse = async () =>
-			context.client.graphical.guiBrowse({
-				query: `nid:${String(required(context, 'noteId'))}`,
-				reorderCards: { columnId: 'cardDue', order: 'ascending' },
-			})
+			context.client.graphical.guiBrowse({ query: `nid:${String(required(context, 'noteId'))}` })
 		await settle(context, browse, (cards) => cards.includes(cardId), 'card browser')
 		const cards = await browse()
 		assert(cards.includes(cardId), 'guiBrowse lists the card')
@@ -1277,6 +1417,25 @@ const cases: Record<Actions, 'untestable' | ProbeCase> = {
 		assertNull(
 			await context.client.graphical.guiEditNote({ note: required(context, 'noteId') }),
 			'guiEditNote',
+		)
+	},
+	async guiAddNoteSetData(context) {
+		// Changing the note type is rejected once the draft has content, so start
+		// from a blank dialog before the guiAddCards case fills one.
+		await context.client.graphical.guiAddCards({})
+		assertEqual(
+			await context.client.graphical.guiAddNoteSetData({
+				append: true,
+				note: {
+					deckName: context.deck,
+					fields: { Back: 'Answer', Front: `${context.deck}-draft` },
+					modelName: context.modelName,
+					...media(context),
+					tags: [context.deck],
+				},
+			}),
+			true,
+			'guiAddNoteSetData',
 		)
 	},
 	async guiAddCards(context) {
@@ -1390,20 +1549,30 @@ export async function probe(options: ProbeOptions = {}): Promise<ProbeReport> {
 		async fetchAdapter(input, init) {
 			const request = JSON.parse(init!.body!) as { action: Actions }
 			calls.push(request.action)
-			// eslint-disable-next-line node/no-unsupported-features/node-builtins -- Scripts run on the development Node version.
-			const response = await fetch(input, {
-				...init,
-				// AnkiConnect closes every connection, so do not try to reuse sockets.
-				headers: { ...init?.headers, connection: 'close' },
-				signal: AbortSignal.timeout(timeout),
-			})
-			// eslint-disable-next-line ts/no-restricted-types -- AnkiConnect responses use JSON null.
-			const body = (await response.clone().json()) as { error: null | string; result: unknown }
-			if (recording && response.status === 200 && body.error === null) {
-				records.push({ action: request.action, result: body.result })
-			}
+			const start = Date.now()
+			for (;;) {
+				const response = await fetch(input, {
+					...init,
+					// AnkiConnect closes every connection, so do not try to reuse sockets.
+					headers: { ...init?.headers, connection: 'close' },
+					signal: AbortSignal.timeout(timeout),
+				})
+				// eslint-disable-next-line ts/no-restricted-types -- AnkiConnect responses use JSON null.
+				const body = (await response.clone().json()) as { error: null | string; result: unknown }
+				// A busy rejection did nothing, so wait for the running operation and resend.
+				if (body.error === BUSY_ERROR && Date.now() - start < POLL_TIMEOUT) {
+					await new Promise((resolve) => {
+						setTimeout(resolve, 250)
+					})
+					continue
+				}
 
-			return response
+				if (recording && response.status === 200 && body.error === null) {
+					records.push({ action: request.action, result: body.result })
+				}
+
+				return response
+			}
 		},
 		...(options.host !== undefined && { host: options.host }),
 		...(options.port !== undefined && { port: options.port }),

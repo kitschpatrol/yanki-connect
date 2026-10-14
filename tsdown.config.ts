@@ -7,7 +7,7 @@ export default defineConfig([
 		fixedExtension: false,
 		minify: false,
 		platform: 'neutral',
-		target: ['node20.19.0', 'chrome100', 'safari18', 'firefox110'],
+		target: ['node22.12.0', 'chrome100', 'safari18', 'firefox110'],
 		tsconfig: 'tsconfig.build.json',
 	},
 	// Standalone build for CDNs

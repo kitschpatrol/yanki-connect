@@ -1,3 +1,5 @@
+import type { CardsInfoMethod } from './types/card'
+import type { StoreMediaFileMethod } from './types/media'
 import type {
 	Actions,
 	ActionsWithoutParams,
@@ -35,7 +37,6 @@ export type YankiFetchAdapter = (
 ) => Promise<
 	| undefined
 	| {
-			// eslint-disable-next-line node/no-unsupported-features/node-builtins
 			headers: Headers | Record<string, string>
 			// eslint-disable-next-line ts/no-explicit-any
 			json(): Promise<any>
@@ -107,7 +108,6 @@ export type YankiConnectOptions = {
 
 export const defaultYankiConnectOptions: YankiConnectOptions = {
 	autoLaunch: false,
-	// eslint-disable-next-line node/no-unsupported-features/node-builtins
 	fetchAdapter: fetch.bind(globalThis),
 	host: 'http://127.0.0.1',
 	key: undefined,
@@ -116,20 +116,21 @@ export const defaultYankiConnectOptions: YankiConnectOptions = {
 }
 
 /**
- * **YankiConnect is a client for the [AnkiConnect
- * API](https://git.sr.ht/~foosoft/anki-connect/tree/25.11.9.0/item/README.md)**.
+ * **YankiConnect is a client for the legacy [AnkiConnect
+ * API](https://git.sr.ht/~foosoft/anki-connect/tree/26.10.12.2/item/API_LEGACY.md)**.
  *
- * It implements every endpoint from AnkiConnect version 25.11.9.0, released
- * 2025-11-09.
+ * It implements every legacy endpoint from AnkiConnect version 26.10.12.2,
+ * released 2026-10-12.
  *
  * Inline documentation is by the AnkiConnect authors, generated from [the
- * readme.md](https://git.sr.ht/~foosoft/anki-connect/tree/25.11.9.0/item/README.md)
+ * legacy API
+ * reference](https://git.sr.ht/~foosoft/anki-connect/tree/26.10.12.2/item/API_LEGACY.md)
  */
 export class YankiConnect {
 	/**
 	 * **Card Actions**
 	 *
-	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/25.11.9.0/item/README.md#card-actions)
+	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.10.12.2/item/API_LEGACY.md#card-actions)
 	 */
 	public readonly card = {
 		/**
@@ -168,15 +169,26 @@ export class YankiConnect {
 		 * belongs to, and deck name, last modification timestamp as well as ease
 		 * and interval.
 		 *
-		 * Includes the required nextReviews response field and its Anki backend
-		 * API.
+		 * The optional `fields` list selects top-level card record properties (for
+		 * example, `["cardId", "fields", "queue", "type"]`). Omitting it returns
+		 * the complete record; `[]` returns an empty object for each card. Unknown
+		 * property names are ignored. Missing cards remain `{}`, and input order
+		 * and duplicates are preserved. Filtering skips rendering and scheduler
+		 * prediction when their results are not requested.
+		 *
+		 * Later releases added the optional `fields` parameter (26.10.12.2) and the
+		 * `flags` (24.11.5.0) and `nextReviews` (24.6.17.0) response fields.
+		 *
+		 * Includes the empty object returned for unknown card IDs; earlier releases
+		 * fail there on Anki 2.1.55 and later. AnkiConnect 24.6.17.0 and 24.7.25.0
+		 * fail on Anki 2.1.50 through 2.1.54 while computing `nextReviews`.
 		 *
 		 * @minimumAnki 2.1.55
-		 * @minimumAnkiConnect 24.6.17.0
-		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/24.6.17.0/item/plugin/__init__.py#L1526}
+		 * @minimumAnkiConnect 23.2.5.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/23.2.5.0/item/plugin/__init__.py#L1360}
 		 * @see {@link https://github.com/ankitects/anki/blob/2.1.55/proto/anki/scheduler.proto}
 		 */
-		cardsInfo: this.build('cardsInfo'),
+		cardsInfo: this.build('cardsInfo') as CardsInfoMethod,
 		/**
 		 * Returns a list of objects containing for each card ID the modification
 		 * time. This function is about 15 times faster than executing `cardsInfo`.
@@ -316,7 +328,7 @@ export class YankiConnect {
 	/**
 	 * **Deck Actions**
 	 *
-	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/25.11.9.0/item/README.md#deck-actions)
+	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.10.12.2/item/API_LEGACY.md#deck-actions)
 	 */
 	public readonly deck = {
 		/**
@@ -348,6 +360,16 @@ export class YankiConnect {
 		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L504}
 		 */
 		createDeck: this.build('createDeck'),
+		/**
+		 * Returns the name of an existing deck by its numeric ID. Releases before
+		 * 26.10.11.0 return the Default deck's name for an unknown ID; later
+		 * releases raise an error.
+		 *
+		 * @minimumAnki 2.1.15
+		 * @minimumAnkiConnect 22.2.19.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L1120}
+		 */
+		deckNameFromId: this.build('deckNameFromId'),
 		/**
 		 * Gets the complete list of deck names for the current user.
 		 *
@@ -438,7 +460,7 @@ export class YankiConnect {
 	/**
 	 * **Graphical Actions**
 	 *
-	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/25.11.9.0/item/README.md#graphical-actions)
+	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.10.12.2/item/API_LEGACY.md#graphical-actions)
 	 */
 	public readonly graphical = {
 		/**
@@ -455,13 +477,32 @@ export class YankiConnect {
 		 * The result is the ID of the note which would be added, if the user chose
 		 * to confirm the _Add Cards_ dialogue.
 		 *
-		 * Includes note media without a fields array.
+		 * Omitting `note` opens the dialog without presets.
 		 *
-		 * @minimumAnki 23.10.0
-		 * @minimumAnkiConnect 25.11.2.0
-		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/25.11.2.0/item/plugin/__init__.py#L1841}
+		 * Media entries may omit `fields` from 25.11.2.0 on Anki 23.10 or later.
+		 *
+		 * @minimumAnki 2.1.15
+		 * @minimumAnkiConnect 22.2.19.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L1370}
 		 */
 		guiAddCards: this.build('guiAddCards'),
+		/**
+		 * Updates the open _Add Cards_ dialog with the given note data. Fields and
+		 * tags replace the current values by default; `append: true` concatenates
+		 * field text and unions tags. Deck and note type always replace. Audio,
+		 * video, and picture files can be embedded via the `audio`, `video`, and
+		 * `picture` keys, as in `addNote`.
+		 *
+		 * Returns `true` once the draft is updated. When the dialog is not open,
+		 * the result is `{ error: 'Add Note dialog is not open', code: 1 }` rather
+		 * than an error. Changing the note type, or replacing fields, fails with
+		 * `Draft contains unsaved edits.` once the open draft already has content.
+		 *
+		 * @minimumAnki 26.08.0
+		 * @minimumAnkiConnect 26.10.11.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/26.10.11.0/item/plugin/__init__.py#L685}
+		 */
+		guiAddNoteSetData: this.build('guiAddNoteSetData'),
 		/**
 		 * Answers the current card; returns `true` if succeeded or `false`
 		 * otherwise. Note that the answer for the current card must be displayed
@@ -485,11 +526,11 @@ export class YankiConnect {
 		 * code](https://github.com/ankitects/anki/blob/main/rslib/src/browser_table.rs)).
 		 * The specified column needs to be visible in the _Card Browser_.
 		 *
-		 * Includes the optional reorderCards parameter.
+		 * The optional `reorderCards` parameter requires 24.1.21.0.
 		 *
-		 * @minimumAnki 2.1.45
-		 * @minimumAnkiConnect 24.1.21.0
-		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/24.1.21.0/item/plugin/__init__.py#L1646}
+		 * @minimumAnki 2.1.15
+		 * @minimumAnkiConnect 22.2.19.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L1349}
 		 */
 		guiBrowse: this.build('guiBrowse'),
 		/**
@@ -587,6 +628,14 @@ export class YankiConnect {
 		 */
 		guiPlayAudio: this.build('guiPlayAudio'),
 		/**
+		 * Returns whether the GUI reviewer is active.
+		 *
+		 * @minimumAnki 2.1.15
+		 * @minimumAnkiConnect 22.2.19.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L1520}
+		 */
+		guiReviewActive: this.build('guiReviewActive'),
+		/**
 		 * Finds the open instance of the Card Browser dialog and selects a card
 		 * given a card identifier. Returns true if the Card Browser is open, false
 		 * otherwise.
@@ -655,7 +704,7 @@ export class YankiConnect {
 	/**
 	 * **Media Actions**
 	 *
-	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/25.11.9.0/item/README.md#media-actions)
+	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.10.12.2/item/API_LEGACY.md#media-actions)
 	 */
 	public readonly media = {
 		/**
@@ -706,16 +755,21 @@ export class YankiConnect {
 		 * non-conflicting
 		 * name](https://github.com/ankitects/anki/blob/aeba725d3ea9628c73300648f748140db3fdd5ed/rslib/src/media/files.rs#L194).
 		 *
+		 * Returns the actual filename, or `null` when `skipHash` matches the MD5
+		 * hex digest of the incoming data, in which case nothing is stored.
+		 *
+		 * Includes the optional skipHash and deleteExisting parameters.
+		 *
 		 * @minimumAnki 2.1.15
 		 * @minimumAnkiConnect 22.2.19.0
 		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L614}
 		 */
-		storeMediaFile: this.build('storeMediaFile'),
+		storeMediaFile: this.build('storeMediaFile') as StoreMediaFileMethod,
 	}
 	/**
 	 * **Miscellaneous Actions**
 	 *
-	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/25.11.9.0/item/README.md#miscellaneous-actions)
+	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.10.12.2/item/API_LEGACY.md#miscellaneous-actions)
 	 */
 	public readonly miscellaneous = {
 		/**
@@ -848,7 +902,7 @@ export class YankiConnect {
 	/**
 	 * **Model Actions**
 	 *
-	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/25.11.9.0/item/README.md#model-actions)
+	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.10.12.2/item/API_LEGACY.md#model-actions)
 	 */
 	public readonly model = {
 		/**
@@ -1007,6 +1061,14 @@ export class YankiConnect {
 		 */
 		modelFieldsOnTemplates: this.build('modelFieldsOnTemplates'),
 		/**
+		 * Returns the name of an existing note type by its numeric ID.
+		 *
+		 * @minimumAnki 2.1.15
+		 * @minimumAnkiConnect 22.2.19.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L986}
+		 */
+		modelNameFromId: this.build('modelNameFromId'),
+		/**
 		 * Gets the complete list of model names for the current user.
 		 *
 		 * @minimumAnki 2.1.15
@@ -1100,7 +1162,7 @@ export class YankiConnect {
 	/**
 	 * **Note Actions**
 	 *
-	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/25.11.9.0/item/README.md#note-actions)
+	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.10.12.2/item/API_LEGACY.md#note-actions)
 	 */
 	public readonly note = {
 		/**
@@ -1140,11 +1202,11 @@ export class YankiConnect {
 		 * - `duplicateScopeOptions.checkAllModels` specifies whether duplicate checks
 		 *   are performed across all note types. The default value is `false`.
 		 *
-		 * Includes note media without a fields array.
+		 * Media entries may omit `fields` from 25.11.2.0 on Anki 23.10 or later.
 		 *
-		 * @minimumAnki 23.10.0
-		 * @minimumAnkiConnect 25.11.2.0
-		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/25.11.2.0/item/plugin/__init__.py#L745}
+		 * @minimumAnki 2.1.15
+		 * @minimumAnkiConnect 22.2.19.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L668}
 		 */
 		addNote: this.build('addNote'),
 		/**
@@ -1155,11 +1217,11 @@ export class YankiConnect {
 		 * Please see the documentation for `addNote` for an explanation of objects
 		 * in the `notes` array.
 		 *
-		 * Includes note media without a fields array.
+		 * Media entries may omit `fields` from 25.11.2.0 on Anki 23.10 or later.
 		 *
-		 * @minimumAnki 23.10.0
-		 * @minimumAnkiConnect 25.11.2.0
-		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/25.11.2.0/item/plugin/__init__.py#L2075}
+		 * @minimumAnki 2.1.15
+		 * @minimumAnkiConnect 22.2.19.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L1643}
 		 */
 		addNotes: this.build('addNotes'),
 		/**
@@ -1171,16 +1233,29 @@ export class YankiConnect {
 		 */
 		addTags: this.build('addTags'),
 		/**
+		 * Accepts an object which defines parameters for a candidate note (see
+		 * `addNote`) and returns a boolean indicating whether or not the parameters
+		 * could be used to create a new note, without downloading or storing its
+		 * media.
+		 *
+		 * Media entries may omit `fields` from 25.11.2.0 on Anki 23.10 or later.
+		 *
+		 * @minimumAnki 2.1.15
+		 * @minimumAnkiConnect 22.2.19.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L730}
+		 */
+		canAddNote: this.build('canAddNote'),
+		/**
 		 * Accepts an array of objects which define parameters for candidate notes
 		 * (see `addNote`) and returns an array of booleans indicating whether or
 		 * not the parameters at the corresponding index could be used to create a
 		 * new note.
 		 *
-		 * Includes note media without a fields array.
+		 * Media entries may omit `fields` from 25.11.2.0 on Anki 23.10 or later.
 		 *
-		 * @minimumAnki 23.10.0
-		 * @minimumAnkiConnect 25.11.2.0
-		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/25.11.2.0/item/plugin/__init__.py#L2095}
+		 * @minimumAnki 2.1.15
+		 * @minimumAnkiConnect 22.2.19.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L1655}
 		 */
 		canAddNotes: this.build('canAddNotes'),
 		/**
@@ -1192,13 +1267,28 @@ export class YankiConnect {
 		 *   index could be used to create a new note.
 		 * - `error` contains an explanation of why a note cannot be added.
 		 *
-		 * Includes note media without a fields array.
+		 * Media entries may omit `fields` from 25.11.2.0 on Anki 23.10 or later.
 		 *
-		 * @minimumAnki 23.10.0
-		 * @minimumAnkiConnect 25.11.2.0
-		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/25.11.2.0/item/plugin/__init__.py#L2103}
+		 * @minimumAnki 2.1.50
+		 * @minimumAnkiConnect 24.2.26.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/24.2.26.0/item/plugin/__init__.py#L1974}
 		 */
 		canAddNotesWithErrorDetail: this.build('canAddNotesWithErrorDetail'),
+		/**
+		 * Accepts an object which defines parameters for a candidate note (see
+		 * `addNote`) and returns an object with fields `canAdd` and `error`.
+		 *
+		 * - `canAdd` indicates whether or not the parameters could be used to create
+		 *   a new note.
+		 * - `error` contains an explanation of why the note cannot be added.
+		 *
+		 * Media entries may omit `fields` from 25.11.2.0 on Anki 23.10 or later.
+		 *
+		 * @minimumAnki 2.1.50
+		 * @minimumAnkiConnect 24.2.26.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/24.2.26.0/item/plugin/__init__.py#L792}
+		 */
+		canAddNoteWithErrorDetail: this.build('canAddNoteWithErrorDetail'),
 		/**
 		 * Clears all the unused tags in the notes for the current user.
 		 *
@@ -1244,13 +1334,18 @@ export class YankiConnect {
 		/**
 		 * Returns a list of objects containing for each note ID the note fields,
 		 * tags, note type, modification time, the cards belonging to the note and
-		 * the profile where the note was created.
+		 * the profile where the note was created. Accepts either a list of note IDs
+		 * or a search `query`.
 		 *
-		 * Includes the required mod and profile response fields.
+		 * Later releases added the `query` parameter (25.2.24.0) and the `mod` and
+		 * `profile` response fields (24.7.25.0).
 		 *
-		 * @minimumAnki 2.1.50
-		 * @minimumAnkiConnect 24.7.25.0
-		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/24.7.25.0/item/plugin/__init__.py#L1687}
+		 * Includes the empty object returned for unknown note IDs; earlier releases
+		 * fail there on Anki 2.1.55 and later.
+		 *
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 23.2.5.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/23.2.5.0/item/plugin/__init__.py#L1487}
 		 */
 		notesInfo: this.build('notesInfo'),
 		/**
@@ -1317,11 +1412,11 @@ export class YankiConnect {
 		 * > issue](https://github.com/FooSoft/anki-connect/issues/82) for further
 		 * > details.
 		 *
-		 * Includes note media without a fields array.
+		 * Media entries may omit `fields` from 25.11.2.0 on Anki 23.10 or later.
 		 *
-		 * @minimumAnki 23.10.0
-		 * @minimumAnkiConnect 25.11.2.0
-		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/25.11.2.0/item/plugin/__init__.py#L837}
+		 * @minimumAnki 2.1.45
+		 * @minimumAnkiConnect 23.4.11.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/23.4.11.0/item/plugin/__init__.py#L823}
 		 */
 		updateNote: this.build('updateNote'),
 		/**
@@ -1336,11 +1431,11 @@ export class YankiConnect {
 		 * > issue](https://github.com/FooSoft/anki-connect/issues/82) for further
 		 * > details.
 		 *
-		 * Includes note media without a fields array.
+		 * Media entries may omit `fields` from 25.11.2.0 on Anki 23.10 or later.
 		 *
-		 * @minimumAnki 23.10.0
-		 * @minimumAnkiConnect 25.11.2.0
-		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/25.11.2.0/item/plugin/__init__.py#L823}
+		 * @minimumAnki 2.1.15
+		 * @minimumAnkiConnect 22.2.19.0
+		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L738}
 		 */
 		updateNoteFields: this.build('updateNoteFields'),
 		/**
@@ -1366,7 +1461,7 @@ export class YankiConnect {
 	/**
 	 * **Statistic Actions**
 	 *
-	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/25.11.9.0/item/README.md#statistic-actions)
+	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.10.12.2/item/API_LEGACY.md#statistic-actions)
 	 */
 	public readonly statistic = {
 		/**
@@ -1497,7 +1592,7 @@ export class YankiConnect {
 	/**
 	 * Directly invoke the Anki Connect API.
 	 *
-	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/25.11.9.0/item/README.md)
+	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.10.12.2/item/API_LEGACY.md)
 	 *
 	 * Primarily for internal use, since the client provides a more convenient
 	 * methods on its class, e.g. instead of:

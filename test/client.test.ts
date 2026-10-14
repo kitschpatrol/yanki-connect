@@ -8,7 +8,6 @@ const hasLegacyEditor = Number(inject('ankiVersion').split('.', 1)[0]) < 26
 const client = new YankiConnect({
 	// Record coverage while forwarding every request to the real Anki fixture.
 	async fetchAdapter(input, init) {
-		// eslint-disable-next-line node/no-unsupported-features/node-builtins -- Fetch is supported by the project's minimum Node 20.
 		const response = await fetch(input, init)
 		const request = JSON.parse(init!.body!) as { action: Actions }
 		exercised.add(request.action)
@@ -62,7 +61,11 @@ describe('real AnkiConnect endpoints', { concurrent: false }, () => {
 			actions: endpoints,
 			scopes: ['actions'],
 		})
-		expect(new Set(reflected.actions)).toEqual(new Set(endpoints))
+		// The 2025 fixture predates guiAddNoteSetData.
+		const expectedActions = isLegacy
+			? endpoints.filter((action) => action !== 'guiAddNoteSetData')
+			: endpoints
+		expect(new Set(reflected.actions)).toEqual(new Set(expectedActions))
 		await expect(client.miscellaneous.requestPermission()).resolves.toMatchObject({
 			permission: 'granted',
 			requireApikey: false,
@@ -89,6 +92,7 @@ describe('real AnkiConnect endpoints', { concurrent: false }, () => {
 	it('deck actions', async () => {
 		expect(await client.deck.deckNames()).toContain(deck)
 		await expect(client.deck.deckNamesAndIds()).resolves.toMatchObject({ [deck]: deckId })
+		expect(await client.deck.deckNameFromId({ deckId })).toBe(deck)
 		expect(await client.deck.getDecks({ cards: [cardId] })).toEqual({ [deck]: [cardId] })
 		await expect(client.deck.getDeckStats({ decks: [deck] })).resolves.toMatchObject({
 			[String(deckId)]: {
@@ -125,6 +129,7 @@ describe('real AnkiConnect endpoints', { concurrent: false }, () => {
 	it('model actions', async () => {
 		expect(await client.model.modelNames()).toContain(modelName)
 		await expect(client.model.modelNamesAndIds()).resolves.toMatchObject({ [modelName]: modelId })
+		expect(await client.model.modelNameFromId({ modelId })).toBe(modelName)
 		await expect(client.model.findModelsById({ modelIds: [modelId] })).resolves.toMatchObject([
 			{ name: modelName },
 		])
@@ -208,6 +213,12 @@ describe('real AnkiConnect endpoints', { concurrent: false }, () => {
 		const details = await client.note.canAddNotesWithErrorDetail({ notes: [note, extraNote] })
 		expect(details[0]).toMatchObject({ canAdd: false })
 		expect(details[1]).toEqual({ canAdd: true })
+		expect(await client.note.canAddNote({ note })).toBe(false)
+		expect(await client.note.canAddNote({ note: extraNote })).toBe(true)
+		expect(await client.note.canAddNoteWithErrorDetail({ note })).toMatchObject({ canAdd: false })
+		expect(await client.note.canAddNoteWithErrorDetail({ note: extraNote })).toEqual({
+			canAdd: true,
+		})
 		const added = await client.note.addNotes({ notes: [extraNote] })
 		expect(added).toHaveLength(1)
 		expect(added[0]).toBeGreaterThan(0)
@@ -237,6 +248,9 @@ describe('real AnkiConnect endpoints', { concurrent: false }, () => {
 				mod: expect.any(Number) as number,
 				profile: 'yanki-tests',
 			},
+		])
+		await expect(client.note.notesInfo({ query: `nid:${noteId}` })).resolves.toMatchObject([
+			{ noteId },
 		])
 		await client.note.updateNote({
 			note: { fields: { Back: 'Combined update' }, id: noteId, tags: [deck] },
@@ -278,10 +292,23 @@ describe('real AnkiConnect endpoints', { concurrent: false }, () => {
 			{
 				cardId,
 				deckName: deck,
+				flags: expect.any(Number) as number,
 				nextReviews: expect.any(Array) as string[],
 				note: noteId,
 			},
 		])
+		if (isLegacy) {
+			// eslint-disable-next-line test/no-conditional-expect -- The 2025 fixture predates the fields parameter.
+			await expect(client.card.cardsInfo({ cards, fields: ['cardId', 'queue'] })).rejects.toThrow(
+				'fields',
+			)
+		} else {
+			// eslint-disable-next-line test/no-conditional-expect -- Only the newer fixture filters card records.
+			expect(await client.card.cardsInfo({ cards, fields: ['cardId', 'queue'] })).toEqual([
+				{ cardId, queue: 0 },
+			])
+		}
+
 		expect(await client.card.cardsModTime({ cards })).toEqual([
 			{ cardId, mod: expect.any(Number) as number },
 		])
@@ -345,6 +372,15 @@ describe('real AnkiConnect endpoints', { concurrent: false }, () => {
 		const filename = `${deck}.txt`
 		const data = 'dGVzdA=='
 		expect(await client.media.storeMediaFile({ data, filename })).toBe(filename)
+		// The MD5 of the decoded data tells AnkiConnect the file is unchanged.
+		expect(
+			await client.media.storeMediaFile({
+				data,
+				filename,
+				skipHash: '098f6bcd4621d373cade4e832627b4f6',
+			}),
+		).toBeNull()
+		expect(await client.media.getMediaFilesNames({})).toContain(filename)
 		expect(await client.media.retrieveMediaFile({ filename })).toBe(data)
 		expect(await client.media.getMediaFilesNames({ pattern: `${deck}*` })).toContain(filename)
 		await client.media.deleteMediaFile({ filename })
@@ -364,6 +400,19 @@ describe('real AnkiConnect endpoints', { concurrent: false }, () => {
 
 	it('graphical actions', async () => {
 		await client.graphical.guiDeckBrowser()
+		expect(await client.graphical.guiReviewActive()).toBe(false)
+		const draft = { note: { fields: { Front: 'draft' }, tags: ['draft'] } }
+		if (isLegacy) {
+			// eslint-disable-next-line test/no-conditional-expect -- The 2025 fixture predates this action.
+			await expect(client.graphical.guiAddNoteSetData(draft)).rejects.toThrow('unsupported action')
+		} else {
+			// eslint-disable-next-line test/no-conditional-expect -- Only the newer fixture reports the closed dialog.
+			expect(await client.graphical.guiAddNoteSetData(draft)).toEqual({
+				code: 1,
+				error: 'Add Note dialog is not open',
+			})
+		}
+
 		await expect(client.graphical.guiStartCardTimer()).resolves.toBe(false)
 		await expect(client.graphical.guiPlayAudio()).resolves.toBe(false)
 		expect(await client.graphical.guiCheckDatabase()).toBe(true)
@@ -380,6 +429,7 @@ describe('real AnkiConnect endpoints', { concurrent: false }, () => {
 				nextReviews: expect.any(Array) as string[],
 				template: 'Card 1',
 			})
+		expect(await client.graphical.guiReviewActive()).toBe(true)
 		expect(await client.graphical.guiStartCardTimer()).toBe(true)
 		expect(await client.graphical.guiShowQuestion()).toBe(true)
 		expect(await client.graphical.guiPlayAudio()).toBe(true)
@@ -412,6 +462,10 @@ describe('real AnkiConnect endpoints', { concurrent: false }, () => {
 				note: { ...note, fields: { Back: '', Front: '' } },
 			})),
 		).toBe('number')
+		if (!isLegacy) {
+			// eslint-disable-next-line test/no-conditional-expect -- The 2025 fixture predates this action.
+			expect(await client.graphical.guiAddNoteSetData({ ...draft, append: true })).toBe(true)
+		}
 	}, 30_000)
 
 	it('exit and exhaustive endpoint coverage', async () => {

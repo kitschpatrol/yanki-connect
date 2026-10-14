@@ -53,10 +53,14 @@ class Gui:
 
     def browser_open(self, query=None, sort=None):
         import aqt
-        browser = aqt.dialogs.open('Browser', self.mw)
+        already_open = self.browser() is not None
+        # Start a new browser with the target query, before its editor loads.
+        # Existing browsers must save their current note before changing search.
+        initial_search = {'search': (query,)} if not already_open and query is not None else {}
+        browser = aqt.dialogs.open('Browser', self.mw, **initial_search)
         browser.activateWindow()
         def opened(_):
-            if query is not None:
+            if already_open and query is not None:
                 browser.form.searchEdit.lineEdit().setText(query)
                 browser.onSearchActivated()
             if sort:

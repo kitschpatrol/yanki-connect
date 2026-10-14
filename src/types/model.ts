@@ -78,7 +78,16 @@ export type ModelRequests =
 	  >
 	| Request<'findModelsById', 6, { modelIds: number[] }, Model[]>
 	| Request<'findModelsByName', 6, { modelNames: string[] }, Model[]>
-	| Request<'modelFieldAdd', 6, { fieldName: string; index: number; modelName: string }>
+	| Request<
+			'modelFieldAdd',
+			6,
+			{
+				fieldName: string
+				/** Position of the new field. Defaults to the end of the field list. */
+				index?: number
+				modelName: string
+			}
+	  >
 	| Request<'modelFieldDescriptions', 6, { modelName: string }, string[]>
 	| Request<
 			'modelFieldFonts',
@@ -114,6 +123,7 @@ export type ModelRequests =
 			{ modelName: string },
 			Record<string, [string[], string[]]>
 	  > // Note tuple
+	| Request<'modelNameFromId', 6, { modelId: number }, string>
 	| Request<'modelNames', 6, never, string[]>
 	| Request<'modelNamesAndIds', 6, never, Record<string, number>>
 	| Request<'modelStyling', 6, { modelName: string }, { css: string }>
