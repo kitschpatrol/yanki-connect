@@ -31,7 +31,7 @@ export default eslintConfig(
 		rules: {
 			'jsdoc/check-tag-names': [
 				'error',
-				{ definedTags: ['public', 'minimumAnki', 'minimumAnkiConnect'] },
+				{ definedTags: ['public', 'maximumAnkiConnect', 'minimumAnki', 'minimumAnkiConnect'] },
 			],
 		},
 	},

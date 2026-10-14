@@ -13,8 +13,12 @@ export default mdatConfig({
 
 		for (const [group, actions] of Object.entries(actionTree)) {
 			for (const action of actions) {
+				const ankiConnect =
+					action.maximumAnkiConnect === undefined
+						? action.minimumAnkiConnect
+						: `${action.minimumAnkiConnect} to ${action.maximumAnkiConnect}`
 				actionList.push(
-					`| \`client.${group}.${action.name}\` | ${action.minimumAnki} | ${action.minimumAnkiConnect} |`,
+					`| \`client.${group}.${action.name}\` | ${action.minimumAnki} | ${ankiConnect} |`,
 				)
 			}
 		}

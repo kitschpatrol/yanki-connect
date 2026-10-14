@@ -105,4 +105,4 @@ export type CardRequests =
 	  >
 	| Request<'suspend', 6, { cards: number[] }, boolean>
 	| Request<'suspended', 6, { card: number }, boolean>
-	| Request<'unsuspend', 6, { cards: number[] }, boolean>
+	| Request<'unsuspend', 6, { cards: number[] }, boolean | null>

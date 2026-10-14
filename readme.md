@@ -66,7 +66,7 @@ This library is used in the [`yanki`](https://github.com/kitschpatrol/yanki) CLI
 Yanki Connect is universal / isomorphic: it runs in the browser and in Node.js. The exported APIs are ESM-only. It's implemented in TypeScript and bundles extensive type definitions.
 
 - [Node.js](https://nodejs.org/) 20.19.0+
-- [Anki desktop app](https://apps.ankiweb.net/) 23.10.0+ (many methods will with 2.1.45+)
+- [Anki desktop app](https://apps.ankiweb.net/) 23.10.0+ (many methods work with 2.1.15+)
 - [AnkiConnect add-on](https://ankiweb.net/shared/info/2055492159) 25.11.9.0+ (many methods work with 22.2.19.0+)
 
 The action table below lists the minimum versions for individual actions.
@@ -117,132 +117,132 @@ All <!-- actionCount -->116<!-- /actionCount --> AnkiConnect actions are exposed
 
 AnkiConnect has accumulated additional methods over the years, some of which require specific minimum versions of Anki for compatibility.
 
-The table below shows all AnkiConnect methods exposed in a YankiConnect client, with the minimum Anki and AnkiConnect versions required to support their full documented type signatures. An action may have existed earlier; its minimum includes later additions to its parameters, response fields, and shared types. AnkiConnect minimums refer to tagged releases, with 22.2.19.0 as the oldest audited tag.
+The table below shows all AnkiConnect methods exposed in a YankiConnect client, with the minimum Anki and AnkiConnect versions required to support their full documented type signatures. An action may have existed earlier; its minimum includes later additions to its parameters, response fields, and shared types. The Compatibility workflow verifies every row against every release combination. Anki 2.1.15 and AnkiConnect 22.2.19.0 are the oldest audited releases, so a minimum equal to one of them may be lower in practice. A range in the AnkiConnect column marks an action that a later release removed.
 
 <!-- actionList -->
 
-| Action                                      | Minimum Anki | Minimum Anki-Connect |
-| ------------------------------------------- | ------------ | -------------------- |
-| `client.card.answerCards`                   | 2.1.45       | 23.10.29.0           |
-| `client.card.areDue`                        | 2.1.45       | 22.2.19.0            |
-| `client.card.areSuspended`                  | 2.1.45       | 22.2.19.0            |
-| `client.card.cardsInfo`                     | 2.1.55       | 24.6.17.0            |
-| `client.card.cardsModTime`                  | 2.1.45       | 22.2.19.0            |
-| `client.card.cardsToNotes`                  | 2.1.45       | 22.2.19.0            |
-| `client.card.findCards`                     | 2.1.45       | 22.2.19.0            |
-| `client.card.forgetCards`                   | 2.1.45       | 22.2.19.0            |
-| `client.card.getEaseFactors`                | 2.1.45       | 22.2.19.0            |
-| `client.card.getIntervals`                  | 2.1.45       | 22.2.19.0            |
-| `client.card.relearnCards`                  | 2.1.45       | 22.2.19.0            |
-| `client.card.setDueDate`                    | 23.10.0      | 25.2.24.0            |
-| `client.card.setEaseFactors`                | 2.1.45       | 22.2.19.0            |
-| `client.card.setSpecificValueOfCard`        | 2.1.45       | 22.4.26.0            |
-| `client.card.suspend`                       | 2.1.45       | 22.2.19.0            |
-| `client.card.suspended`                     | 2.1.45       | 22.2.19.0            |
-| `client.card.unsuspend`                     | 2.1.45       | 22.2.19.0            |
-| `client.deck.changeDeck`                    | 2.1.45       | 22.2.19.0            |
-| `client.deck.cloneDeckConfigId`             | 2.1.45       | 22.2.19.0            |
-| `client.deck.createDeck`                    | 2.1.45       | 22.2.19.0            |
-| `client.deck.deckNames`                     | 2.1.45       | 22.2.19.0            |
-| `client.deck.deckNamesAndIds`               | 2.1.45       | 22.2.19.0            |
-| `client.deck.deleteDecks`                   | 2.1.45       | 22.4.26.0            |
-| `client.deck.getDeckConfig`                 | 2.1.45       | 22.2.19.0            |
-| `client.deck.getDecks`                      | 2.1.45       | 22.2.19.0            |
-| `client.deck.getDeckStats`                  | 2.1.47       | 22.7.14.0            |
-| `client.deck.removeDeckConfigId`            | 2.1.45       | 22.2.19.0            |
-| `client.deck.saveDeckConfig`                | 2.1.45       | 22.2.19.0            |
-| `client.deck.setDeckConfigId`               | 2.1.45       | 22.2.19.0            |
-| `client.graphical.guiAddCards`              | 23.10.0      | 25.11.5.0            |
-| `client.graphical.guiAnswerCard`            | 2.1.45       | 22.2.19.0            |
-| `client.graphical.guiBrowse`                | 2.1.45       | 24.1.21.0            |
-| `client.graphical.guiCheckDatabase`         | 2.1.45       | 22.2.19.0            |
-| `client.graphical.guiCurrentCard`           | 2.1.45       | 22.2.19.0            |
-| `client.graphical.guiDeckBrowser`           | 2.1.45       | 22.2.19.0            |
-| `client.graphical.guiDeckOverview`          | 2.1.45       | 22.2.19.0            |
-| `client.graphical.guiDeckReview`            | 2.1.45       | 22.2.19.0            |
-| `client.graphical.guiEditNote`              | 2.1.45       | 22.4.26.0            |
-| `client.graphical.guiExitAnki`              | 2.1.45       | 22.2.19.0            |
-| `client.graphical.guiImportFile`            | 2.1.52       | 23.10.29.0           |
-| `client.graphical.guiPlayAudio`             | 23.10.0      | 25.11.9.0            |
-| `client.graphical.guiSelectCard`            | 23.10.0      | 25.2.24.0            |
-| `client.graphical.guiSelectedNotes`         | 2.1.45       | 22.2.19.0            |
-| `client.graphical.guiSelectNote`            | 2.1.45       | 24.1.21.0            |
-| `client.graphical.guiShowAnswer`            | 2.1.45       | 22.2.19.0            |
-| `client.graphical.guiShowQuestion`          | 2.1.45       | 22.2.19.0            |
-| `client.graphical.guiStartCardTimer`        | 2.1.45       | 22.2.19.0            |
-| `client.graphical.guiUndo`                  | 2.1.45       | 23.10.29.0           |
-| `client.media.deleteMediaFile`              | 2.1.45       | 22.2.19.0            |
-| `client.media.getMediaDirPath`              | 2.1.45       | 23.4.11.0            |
-| `client.media.getMediaFilesNames`           | 2.1.45       | 22.2.19.0            |
-| `client.media.retrieveMediaFile`            | 2.1.45       | 22.2.19.0            |
-| `client.media.storeMediaFile`               | 2.1.45       | 22.2.19.0            |
-| `client.miscellaneous.apiReflect`           | 2.1.45       | 22.7.14.0            |
-| `client.miscellaneous.exportPackage`        | 2.1.45       | 22.2.19.0            |
-| `client.miscellaneous.getActiveProfile`     | 2.1.45       | 24.7.25.0            |
-| `client.miscellaneous.getProfiles`          | 2.1.45       | 22.2.19.0            |
-| `client.miscellaneous.importPackage`        | 2.1.45       | 22.2.19.0            |
-| `client.miscellaneous.loadProfile`          | 2.1.45       | 22.2.19.0            |
-| `client.miscellaneous.multi`                | 23.10.0      | 25.11.9.0            |
-| `client.miscellaneous.reloadCollection`     | 2.1.45       | 22.2.19.0            |
-| `client.miscellaneous.requestPermission`    | 2.1.45       | 22.2.19.0            |
-| `client.miscellaneous.sync`                 | 2.1.45       | 22.2.19.0            |
-| `client.miscellaneous.version`              | 2.1.45       | 22.2.19.0            |
-| `client.model.createModel`                  | 23.10.0      | 22.4.26.0            |
-| `client.model.findAndReplaceInModels`       | 2.1.45       | 22.4.26.0            |
-| `client.model.findModelsById`               | 23.10.0      | 24.1.21.0            |
-| `client.model.findModelsByName`             | 23.10.0      | 24.1.21.0            |
-| `client.model.modelFieldAdd`                | 2.1.45       | 22.9.18.0            |
-| `client.model.modelFieldDescriptions`       | 2.1.50       | 23.2.5.0             |
-| `client.model.modelFieldFonts`              | 2.1.45       | 23.2.5.0             |
-| `client.model.modelFieldNames`              | 2.1.45       | 22.2.19.0            |
-| `client.model.modelFieldRemove`             | 2.1.45       | 22.9.18.0            |
-| `client.model.modelFieldRename`             | 2.1.45       | 22.9.18.0            |
-| `client.model.modelFieldReposition`         | 2.1.45       | 22.9.18.0            |
-| `client.model.modelFieldSetDescription`     | 2.1.50       | 23.2.5.0             |
-| `client.model.modelFieldSetFont`            | 2.1.45       | 23.2.5.0             |
-| `client.model.modelFieldSetFontSize`        | 2.1.45       | 23.2.5.0             |
-| `client.model.modelFieldsOnTemplates`       | 2.1.45       | 22.2.19.0            |
-| `client.model.modelNames`                   | 2.1.45       | 22.2.19.0            |
-| `client.model.modelNamesAndIds`             | 2.1.45       | 22.2.19.0            |
-| `client.model.modelStyling`                 | 2.1.45       | 22.2.19.0            |
-| `client.model.modelTemplateAdd`             | 2.1.45       | 23.10.29.0           |
-| `client.model.modelTemplateRemove`          | 2.1.45       | 23.10.29.0           |
-| `client.model.modelTemplateRename`          | 2.1.45       | 23.10.29.0           |
-| `client.model.modelTemplateReposition`      | 2.1.45       | 23.10.29.0           |
-| `client.model.modelTemplates`               | 2.1.45       | 22.2.19.0            |
-| `client.model.updateModelStyling`           | 2.1.45       | 22.2.19.0            |
-| `client.model.updateModelTemplates`         | 2.1.45       | 22.2.19.0            |
-| `client.note.addNote`                       | 23.10.0      | 25.11.5.0            |
-| `client.note.addNotes`                      | 23.10.0      | 25.11.5.0            |
-| `client.note.addTags`                       | 2.1.45       | 22.2.19.0            |
-| `client.note.canAddNotes`                   | 23.10.0      | 25.11.5.0            |
-| `client.note.canAddNotesWithErrorDetail`    | 23.10.0      | 25.11.5.0            |
-| `client.note.clearUnusedTags`               | 2.1.45       | 22.2.19.0            |
-| `client.note.deleteNotes`                   | 2.1.45       | 22.2.19.0            |
-| `client.note.findNotes`                     | 2.1.45       | 22.2.19.0            |
-| `client.note.getNoteTags`                   | 2.1.45       | 23.4.11.0            |
-| `client.note.getTags`                       | 2.1.45       | 22.2.19.0            |
-| `client.note.notesInfo`                     | 2.1.45       | 24.7.25.0            |
-| `client.note.notesModTime`                  | 2.1.45       | 24.7.25.0            |
-| `client.note.removeEmptyNotes`              | 2.1.45       | 22.2.19.0            |
-| `client.note.removeTags`                    | 2.1.45       | 22.2.19.0            |
-| `client.note.replaceTags`                   | 2.1.45       | 22.2.19.0            |
-| `client.note.replaceTagsInAllNotes`         | 2.1.45       | 22.2.19.0            |
-| `client.note.updateNote`                    | 23.10.0      | 25.11.5.0            |
-| `client.note.updateNoteFields`              | 23.10.0      | 25.11.5.0            |
-| `client.note.updateNoteModel`               | 2.1.45       | 24.6.17.0            |
-| `client.note.updateNoteTags`                | 2.1.45       | 23.4.11.0            |
-| `client.statistic.cardReviews`              | 2.1.45       | 22.2.19.0            |
-| `client.statistic.getCollectionStatsHTML`   | 2.1.45       | 22.2.19.0            |
-| `client.statistic.getLatestReviewID`        | 2.1.45       | 22.2.19.0            |
-| `client.statistic.getNumCardsReviewedByDay` | 2.1.45       | 22.2.19.0            |
-| `client.statistic.getNumCardsReviewedToday` | 2.1.45       | 22.2.19.0            |
-| `client.statistic.getReviewsOfCards`        | 2.1.45       | 23.2.5.0             |
-| `client.statistic.insertReviews`            | 2.1.45       | 22.2.19.0            |
+| Action                                      | Minimum Anki | Minimum Anki-Connect   |
+| ------------------------------------------- | ------------ | ---------------------- |
+| `client.card.answerCards`                   | 2.1.45       | 23.10.29.0             |
+| `client.card.areDue`                        | 2.1.15       | 22.2.19.0              |
+| `client.card.areSuspended`                  | 2.1.15       | 22.2.19.0              |
+| `client.card.cardsInfo`                     | 2.1.55       | 24.6.17.0              |
+| `client.card.cardsModTime`                  | 2.1.45       | 23.2.5.0               |
+| `client.card.cardsToNotes`                  | 2.1.15       | 22.2.19.0              |
+| `client.card.findCards`                     | 2.1.15       | 22.2.19.0              |
+| `client.card.forgetCards`                   | 2.1.15       | 22.2.19.0              |
+| `client.card.getEaseFactors`                | 2.1.15       | 22.2.19.0              |
+| `client.card.getIntervals`                  | 2.1.15       | 22.2.19.0              |
+| `client.card.relearnCards`                  | 2.1.15       | 22.2.19.0              |
+| `client.card.setDueDate`                    | 23.10.0      | 25.2.24.0              |
+| `client.card.setEaseFactors`                | 2.1.15       | 22.2.19.0              |
+| `client.card.setSpecificValueOfCard`        | 2.1.45       | 22.4.26.0              |
+| `client.card.suspend`                       | 2.1.15       | 22.2.19.0              |
+| `client.card.suspended`                     | 2.1.15       | 22.2.19.0              |
+| `client.card.unsuspend`                     | 2.1.15       | 22.2.19.0              |
+| `client.deck.changeDeck`                    | 2.1.15       | 22.2.19.0              |
+| `client.deck.cloneDeckConfigId`             | 2.1.24       | 22.2.19.0              |
+| `client.deck.createDeck`                    | 2.1.15       | 22.2.19.0              |
+| `client.deck.deckNames`                     | 2.1.15       | 22.2.19.0              |
+| `client.deck.deckNamesAndIds`               | 2.1.15       | 22.2.19.0              |
+| `client.deck.deleteDecks`                   | 2.1.45       | 22.4.26.0              |
+| `client.deck.getDeckConfig`                 | 2.1.25       | 22.2.19.0              |
+| `client.deck.getDecks`                      | 2.1.15       | 22.2.19.0              |
+| `client.deck.getDeckStats`                  | 2.1.47       | 22.7.14.0              |
+| `client.deck.removeDeckConfigId`            | 2.1.24       | 22.2.19.0              |
+| `client.deck.saveDeckConfig`                | 2.1.24       | 22.2.19.0              |
+| `client.deck.setDeckConfigId`               | 2.1.24       | 22.2.19.0              |
+| `client.graphical.guiAddCards`              | 23.10.0      | 25.11.2.0              |
+| `client.graphical.guiAnswerCard`            | 2.1.15       | 22.2.19.0              |
+| `client.graphical.guiBrowse`                | 2.1.45       | 24.1.21.0              |
+| `client.graphical.guiCheckDatabase`         | 2.1.15       | 22.2.19.0              |
+| `client.graphical.guiCurrentCard`           | 2.1.15       | 22.2.19.0              |
+| `client.graphical.guiDeckBrowser`           | 2.1.15       | 22.2.19.0              |
+| `client.graphical.guiDeckOverview`          | 2.1.15       | 22.2.19.0              |
+| `client.graphical.guiDeckReview`            | 2.1.15       | 22.2.19.0              |
+| `client.graphical.guiEditNote`              | 26.08.0      | 26.10.11.0             |
+| `client.graphical.guiExitAnki`              | 2.1.15       | 22.2.19.0              |
+| `client.graphical.guiImportFile`            | 2.1.52       | 23.10.29.0             |
+| `client.graphical.guiPlayAudio`             | 23.10.0      | 25.11.9.0              |
+| `client.graphical.guiSelectCard`            | 23.10.0      | 25.2.24.0              |
+| `client.graphical.guiSelectedNotes`         | 2.1.15       | 22.2.19.0              |
+| `client.graphical.guiSelectNote`            | 2.1.45       | 24.1.21.0              |
+| `client.graphical.guiShowAnswer`            | 2.1.15       | 22.2.19.0              |
+| `client.graphical.guiShowQuestion`          | 2.1.15       | 22.2.19.0              |
+| `client.graphical.guiStartCardTimer`        | 2.1.15       | 22.2.19.0              |
+| `client.graphical.guiUndo`                  | 2.1.45       | 23.10.29.0             |
+| `client.media.deleteMediaFile`              | 2.1.15       | 22.2.19.0              |
+| `client.media.getMediaDirPath`              | 2.1.45       | 23.4.11.0              |
+| `client.media.getMediaFilesNames`           | 2.1.15       | 22.2.19.0              |
+| `client.media.retrieveMediaFile`            | 2.1.15       | 22.2.19.0              |
+| `client.media.storeMediaFile`               | 2.1.15       | 22.2.19.0              |
+| `client.miscellaneous.apiReflect`           | 2.1.45       | 22.7.14.0              |
+| `client.miscellaneous.exportPackage`        | 2.1.15       | 22.2.19.0              |
+| `client.miscellaneous.getActiveProfile`     | 2.1.50       | 24.7.25.0              |
+| `client.miscellaneous.getProfiles`          | 2.1.15       | 22.2.19.0              |
+| `client.miscellaneous.importPackage`        | 2.1.15       | 22.2.19.0              |
+| `client.miscellaneous.loadProfile`          | 2.1.15       | 22.2.19.0              |
+| `client.miscellaneous.multi`                | 2.1.15       | 22.2.19.0              |
+| `client.miscellaneous.reloadCollection`     | 2.1.15       | 22.2.19.0              |
+| `client.miscellaneous.requestPermission`    | 2.1.15       | 22.2.19.0              |
+| `client.miscellaneous.sync`                 | 2.1.45       | 22.2.19.0              |
+| `client.miscellaneous.version`              | 2.1.15       | 22.2.19.0              |
+| `client.model.createModel`                  | 23.10.0      | 22.4.26.0              |
+| `client.model.findAndReplaceInModels`       | 2.1.45       | 22.4.26.0              |
+| `client.model.findModelsById`               | 23.10.0      | 24.1.21.0              |
+| `client.model.findModelsByName`             | 23.10.0      | 24.1.21.0              |
+| `client.model.modelFieldAdd`                | 2.1.45       | 22.9.18.0              |
+| `client.model.modelFieldDescriptions`       | 2.1.50       | 23.2.5.0               |
+| `client.model.modelFieldFonts`              | 2.1.45       | 23.2.5.0               |
+| `client.model.modelFieldNames`              | 2.1.15       | 22.2.19.0              |
+| `client.model.modelFieldRemove`             | 2.1.45       | 22.9.18.0              |
+| `client.model.modelFieldRename`             | 2.1.45       | 22.9.18.0              |
+| `client.model.modelFieldReposition`         | 2.1.45       | 22.9.18.0              |
+| `client.model.modelFieldSetDescription`     | 2.1.50       | 23.2.5.0               |
+| `client.model.modelFieldSetFont`            | 2.1.45       | 23.2.5.0               |
+| `client.model.modelFieldSetFontSize`        | 2.1.45       | 23.2.5.0               |
+| `client.model.modelFieldsOnTemplates`       | 2.1.15       | 22.2.19.0              |
+| `client.model.modelNames`                   | 2.1.15       | 22.2.19.0              |
+| `client.model.modelNamesAndIds`             | 2.1.28       | 22.2.19.0              |
+| `client.model.modelStyling`                 | 2.1.15       | 22.2.19.0              |
+| `client.model.modelTemplateAdd`             | 2.1.45       | 23.10.29.0             |
+| `client.model.modelTemplateRemove`          | 2.1.45       | 23.10.29.0             |
+| `client.model.modelTemplateRename`          | 2.1.45       | 23.10.29.0             |
+| `client.model.modelTemplateReposition`      | 2.1.45       | 23.10.29.0             |
+| `client.model.modelTemplates`               | 2.1.15       | 22.2.19.0              |
+| `client.model.updateModelStyling`           | 2.1.15       | 22.2.19.0              |
+| `client.model.updateModelTemplates`         | 2.1.15       | 22.2.19.0              |
+| `client.note.addNote`                       | 23.10.0      | 25.11.2.0              |
+| `client.note.addNotes`                      | 23.10.0      | 25.11.2.0              |
+| `client.note.addTags`                       | 2.1.15       | 22.2.19.0              |
+| `client.note.canAddNotes`                   | 23.10.0      | 25.11.2.0              |
+| `client.note.canAddNotesWithErrorDetail`    | 23.10.0      | 25.11.2.0              |
+| `client.note.clearUnusedTags`               | 2.1.15       | 22.2.19.0              |
+| `client.note.deleteNotes`                   | 2.1.15       | 22.2.19.0              |
+| `client.note.findNotes`                     | 2.1.15       | 22.2.19.0              |
+| `client.note.getNoteTags`                   | 2.1.45       | 23.4.11.0              |
+| `client.note.getTags`                       | 2.1.15       | 22.2.19.0              |
+| `client.note.notesInfo`                     | 2.1.50       | 24.7.25.0              |
+| `client.note.notesModTime`                  | 2.1.50       | 24.7.25.0              |
+| `client.note.removeEmptyNotes`              | 2.1.15       | 22.2.19.0 to 25.11.9.0 |
+| `client.note.removeTags`                    | 2.1.15       | 22.2.19.0              |
+| `client.note.replaceTags`                   | 2.1.15       | 22.2.19.0              |
+| `client.note.replaceTagsInAllNotes`         | 2.1.15       | 22.2.19.0              |
+| `client.note.updateNote`                    | 23.10.0      | 25.11.2.0              |
+| `client.note.updateNoteFields`              | 23.10.0      | 25.11.2.0              |
+| `client.note.updateNoteModel`               | 2.1.50       | 24.6.17.0              |
+| `client.note.updateNoteTags`                | 2.1.45       | 23.4.11.0              |
+| `client.statistic.cardReviews`              | 2.1.15       | 22.2.19.0              |
+| `client.statistic.getCollectionStatsHTML`   | 2.1.15       | 22.2.19.0              |
+| `client.statistic.getLatestReviewID`        | 2.1.15       | 22.2.19.0              |
+| `client.statistic.getNumCardsReviewedByDay` | 2.1.15       | 22.2.19.0              |
+| `client.statistic.getNumCardsReviewedToday` | 2.1.15       | 22.2.19.0              |
+| `client.statistic.getReviewsOfCards`        | 2.1.45       | 23.2.5.0               |
+| `client.statistic.insertReviews`            | 2.1.15       | 22.2.19.0              |
 
 <!-- /actionList -->
 
-Only the "legacy" AnkiConnect API version 6 is supported. The minimums include `guiBrowse.reorderCards`, optional note-media `fields`, the complete model schema, and all required card, note, and deck-statistics response fields. `multi` inherits the minimums needed for every action allowed by its nested request types. AnkiConnect 25.11.9.0 with Anki >=23.10.0 provides all documented signatures; newer AnkiConnect releases can require a newer Anki version. These minimums are based on upstream source and schema history; the integration tests currently cover AnkiConnect 25.11.9.0 and 26.10.12.0.
+Only the "legacy" AnkiConnect API version 6 is supported. The minimums include `guiBrowse.reorderCards`, optional note-media `fields`, the complete model schema, and all required card, note, and deck-statistics response fields. Each AnkiConnect release also has its own Anki requirement, which applies on top of the table: 22.2.19.0 needs a Qt5 build of Anki (2.1.66 or older), 22.4.26.0 needs Anki 2.1.45, 24.2.26.0 needs 2.1.50, 24.11.5.0 needs 24.06.3, 24.11.5.1 needs 23.10 (25.2.24.0 through 25.6.12.0 fail on 23.10 exactly and need 23.10.1), and 26.10.11.0 needs 26.08. `guiEditNote` is only fully compatible from Anki 26.08 with AnkiConnect 26.10.11.0, because every older AnkiConnect release's editor breaks on newer Anki. AnkiConnect 25.11.9.0 with Anki 23.10.0 or later provides every other documented signature. The integration tests cover AnkiConnect 25.11.9.0 and 26.10.12.0; the Compatibility workflow last verified the table on 2026-10-13.
 
 ### API
 
