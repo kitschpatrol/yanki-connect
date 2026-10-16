@@ -9,6 +9,13 @@ type NoteMedia = {
 	/** Base64-encoded contents. Used first when more than one source is given. */
 	data?: string
 	/**
+	 * Replace an existing media file with the same name. `false` lets Anki give
+	 * the new file a non-conflicting name instead. AnkiConnect 22.2.19.0 ignores
+	 * it and replaces. When omitted, 22.4.26.0 through 25.11.9.0 default to
+	 * `false`, and later releases to `true`.
+	 */
+	deleteExisting?: boolean
+	/**
 	 * Fields to embed the file in. Optional from AnkiConnect 25.11.2.0 on Anki
 	 * 23.10 or later; earlier releases require it.
 	 */
@@ -51,8 +58,17 @@ export type NoteRequests =
 			'addTags',
 			6,
 			{
+				/**
+				 * `false` removes the tags instead, like `removeTags`. Defaults to
+				 * `true`.
+				 */
+				add?: boolean
 				notes: number[]
-				tags: string // Array allowed?
+				/**
+				 * Space-separated tags. Arrays of tags require AnkiConnect 26.10.11.0;
+				 * earlier releases reject them.
+				 */
+				tags: string | string[]
 			}
 	  >
 	| Request<'canAddNote', 6, { note: NoteWithCreationOptions }, boolean>
@@ -148,7 +164,11 @@ export type NoteRequests =
 			6,
 			{
 				notes: number[]
-				tags: string // Array allowed?
+				/**
+				 * Space-separated tags. Arrays of tags require AnkiConnect 26.10.11.0;
+				 * earlier releases reject them.
+				 */
+				tags: string | string[]
 			}
 	  >
 	| Request<
@@ -210,7 +230,11 @@ export type NoteRequests =
 					fields: Record<string, string>
 					id: number
 					modelName: string
-					tags: string[]
+					/**
+					 * Replaces the note's tags. When omitted, AnkiConnect 24.6.17.0
+					 * through 25.11.9.0 clear the tags, and later releases keep them.
+					 */
+					tags?: string[]
 				}
 			}
 	  >

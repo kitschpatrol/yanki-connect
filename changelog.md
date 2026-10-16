@@ -1,16 +1,21 @@
 # Changelog
 
-## 5.0.1
+## 5.1.0
 
-Documentation update for AnkiConnect 26.10.14.0. Runtime behavior and types are unchanged.
+Documentation update for AnkiConnect 26.10.14.0, plus parameter types that were missing or narrower than the API. Runtime behavior is unchanged.
 
+- `addTags` accepts `add: false` to remove the tags instead.
+- `addTags` and `removeTags` accept `tags` as an array (AnkiConnect 26.10.11.0 or later) as well as a space-separated string.
+- Note media entries (`audio`, `picture`, `video`) accept `deleteExisting`. When it's omitted, AnkiConnect 22.4.26.0 through 25.11.9.0 keep an existing file with the same name, and later releases replace it.
+- `updateNoteModel` `tags` is optional. When it's omitted, AnkiConnect 24.6.17.0 through 25.11.9.0 clear the note's tags, and later releases keep them.
 - Upstream documentation links point to the AnkiConnect 26.10.14.0 legacy API reference, and the readme recommends AnkiConnect 26.10.14.0 or later.
 - Action documentation describes upstream fixes in AnkiConnect 26.10.13.0 and 26.10.14.0:
   - `updateNote` and `updateNoteFields`: media entries can target note fields that `fields` leaves out. AnkiConnect 26.10.11.0 through 26.10.13.0 store the file without adding it to those fields. Field names match case-insensitively from 26.10.14.0.
   - `guiAddCards`: on Anki 26.08 and later, AnkiConnect 26.10.11.0 through 26.10.13.0 do not save preset tags with the added note.
   - `updateNoteModel`: when the note's only card template has no namesake in the new model, AnkiConnect 26.10.11.0 through 26.10.12.2 replace the card and lose its review history.
 - AnkiConnect 26.10.14.0 also accepts looser legacy input, such as decimal-string IDs, `"true"` and `0`/`1` booleans, single values for list parameters, whitespace-separated tag strings, and `null` optional values. The client types keep the strict forms, which every supported release accepts.
-- Integration tests run against the AnkiConnect 26.10.14.0 fixture instead of 26.10.13.0, and cover media attached to a field that an update's `fields` leaves out.
+- The readme and the client's class documentation credit both upstream sources for action descriptions: the legacy API reference and the AnkiConnect 25.11.9.0 readme.
+- Integration tests run against the AnkiConnect 26.10.14.0 fixture instead of 26.10.13.0, and cover the parameters above and media attached to a field that an update's `fields` leaves out.
 
 ## 5.0.0
 
@@ -74,6 +79,6 @@ Breaking release. The type definitions were audited against every AnkiConnect re
 
 ### Internal
 
-- Integration tests run against two bundled AnkiConnect fixtures (25.11.9.0 and 26.10.12.2) in Node and Chromium, on Linux, macOS, and Windows in CI.
+- Integration tests run against two bundled AnkiConnect fixtures (25.11.9.0 and 26.10.13.0) in Node and Chromium, on Linux, macOS, and Windows in CI.
 - Added `scripts/compatibility/` and the manual Compatibility workflow.
 - Development dependency updates. Runtime dependencies are unchanged.

@@ -342,7 +342,7 @@ Chen Lijun's [autoanki](https://github.com/chenlijun99/autoanki) also implements
 
 Thanks to [Alex Yatskov](https://foosoft.net/) for creating [AnkiConnect](https://ankiweb.net/shared/info/2055492159).
 
-All of the embedded action descriptions in Yanki Connect are taken directly from the [AnkiConnect legacy API reference](https://git.sr.ht/~foosoft/anki-connect/tree/26.10.14.0/item/API_LEGACY.md).
+Most of the embedded action descriptions in Yanki Connect are taken from the [AnkiConnect legacy API reference](https://git.sr.ht/~foosoft/anki-connect/tree/26.10.14.0/item/API_LEGACY.md) and its predecessor, the [AnkiConnect 25.11.9.0 readme](https://git.sr.ht/~foosoft/anki-connect/tree/25.11.9.0/item/README.md). Notes on version-specific behavior are Yanki Connect's own.
 
 <!-- contributing -->
 

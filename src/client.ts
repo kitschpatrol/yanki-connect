@@ -122,9 +122,12 @@ export const defaultYankiConnectOptions: YankiConnectOptions = {
  * It implements every legacy endpoint from AnkiConnect version 26.10.14.0,
  * released 2026-10-14.
  *
- * Inline documentation is by the AnkiConnect authors, generated from [the
+ * Most inline documentation is by the AnkiConnect authors, taken from [the
  * legacy API
  * reference](https://git.sr.ht/~foosoft/anki-connect/tree/26.10.14.0/item/API_LEGACY.md)
+ * and [the 25.11.9.0
+ * readme](https://git.sr.ht/~foosoft/anki-connect/tree/25.11.9.0/item/README.md).
+ * Notes on version-specific behavior are Yanki Connect's own.
  */
 export class YankiConnect {
 	/**
@@ -1232,7 +1235,11 @@ export class YankiConnect {
 		 */
 		addNotes: this.build('addNotes'),
 		/**
-		 * Adds tags to notes by note ID.
+		 * Adds tags to notes by note ID. Set `add` to `false` to remove them
+		 * instead.
+		 *
+		 * `tags` takes a space-separated string, or an array of tags from
+		 * 26.10.11.0.
 		 *
 		 * @minimumAnki 2.1.15
 		 * @minimumAnkiConnect 22.2.19.0
@@ -1379,6 +1386,9 @@ export class YankiConnect {
 		/**
 		 * Remove tags from notes by note ID.
 		 *
+		 * `tags` takes a space-separated string, or an array of tags from
+		 * 26.10.11.0.
+		 *
 		 * @minimumAnki 2.1.15
 		 * @minimumAnkiConnect 22.2.19.0
 		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L769}
@@ -1459,6 +1469,9 @@ export class YankiConnect {
 		 * Update the model, fields, and tags of an existing note. This allows you
 		 * to change the note's model, update its fields with new content, and set
 		 * new tags.
+		 *
+		 * When `tags` is omitted, AnkiConnect 24.6.17.0 through 25.11.9.0 clear the
+		 * note's tags, and later releases keep them.
 		 *
 		 * When the note's only card template has no namesake in the new model,
 		 * AnkiConnect 26.10.11.0 through 26.10.12.2 replace the card and lose its

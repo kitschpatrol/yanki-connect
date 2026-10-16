@@ -239,6 +239,30 @@ describe('real AnkiConnect endpoints', { concurrent: false }, () => {
 		expect(await client.note.getNoteTags({ note: noteId })).toContain('replaced')
 		await client.note.removeTags({ notes: [noteId], tags: 'replaced' })
 		expect(await client.note.getNoteTags({ note: noteId })).not.toContain('replaced')
+		await client.note.addTags({ notes: [noteId], tags: 'toggled' })
+		expect(await client.note.getNoteTags({ note: noteId })).toContain('toggled')
+		await client.note.addTags({ add: false, notes: [noteId], tags: 'toggled' })
+		expect(await client.note.getNoteTags({ note: noteId })).not.toContain('toggled')
+		const tagArray = ['array-a', 'array-b']
+		if (isLegacy) {
+			// eslint-disable-next-line test/no-conditional-expect -- The 2025 fixture predates tag arrays.
+			await expect(client.note.addTags({ notes: [noteId], tags: tagArray })).rejects.toThrow(
+				'bad argument type for built-in operation',
+			)
+		} else {
+			const arrayTags = async () => {
+				const tags = await client.note.getNoteTags({ note: noteId })
+				return tags.filter((tag) => tag.startsWith('array-'))
+			}
+
+			await client.note.addTags({ notes: [noteId], tags: tagArray })
+			// eslint-disable-next-line test/no-conditional-expect -- Only the newer fixture accepts tag arrays.
+			expect(await arrayTags()).toEqual(tagArray)
+			await client.note.removeTags({ notes: [noteId], tags: tagArray })
+			// eslint-disable-next-line test/no-conditional-expect -- Only the newer fixture accepts tag arrays.
+			expect(await arrayTags()).toEqual([])
+		}
+
 		await client.note.updateNoteTags({ note: noteId, tags: [deck, 'updated'] })
 		expect(await client.note.getNoteTags({ note: noteId })).toContain('updated')
 		await client.note.updateNoteFields({ note: { fields: { Back: 'Updated answer' }, id: noteId } })
@@ -252,17 +276,27 @@ describe('real AnkiConnect endpoints', { concurrent: false }, () => {
 		await expect(client.note.notesInfo({ query: `nid:${noteId}` })).resolves.toMatchObject([
 			{ noteId },
 		])
-		// Media may target a field that the text update leaves out.
+		// Media may target a field that the text update leaves out, and
+		// `deleteExisting: false` keeps an existing file with the same name.
 		const attachment = `${deck}-attachment.txt`
+		const original = 'b3JpZ2luYWw='
+		expect(await client.media.storeMediaFile({ data: original, filename: attachment })).toBe(
+			attachment,
+		)
 		await client.note.updateNoteFields({
 			note: {
-				audio: [{ data: 'dGVzdA==', fields: ['Back'], filename: attachment }],
+				audio: [
+					{ data: 'dGVzdA==', deleteExisting: false, fields: ['Back'], filename: attachment },
+				],
 				fields: {},
 				id: added[0]!,
 			},
 		})
+		expect(await client.media.retrieveMediaFile({ filename: attachment })).toBe(original)
+		// Anki renames the new file with the SHA-1 of its contents ("test").
+		const renamed = `${deck}-attachment-a94a8fe5ccb19ba61c4c0873d391e987982fbbd3.txt`
 		await expect(client.note.notesInfo({ notes: added })).resolves.toMatchObject([
-			{ fields: { Back: { value: `Answer[sound:${attachment}]` } } },
+			{ fields: { Back: { value: `Answer[sound:${renamed}]` } } },
 		])
 		await client.note.updateNote({
 			note: { fields: { Back: 'Combined update' }, id: noteId, tags: [deck] },
@@ -274,10 +308,11 @@ describe('real AnkiConnect endpoints', { concurrent: false }, () => {
 			},
 		])
 		await client.note.updateNoteModel({
-			note: { fields: extraNote.fields, id: added[0]!, modelName: 'Basic', tags: [deck] },
+			note: { fields: extraNote.fields, id: added[0]!, modelName: 'Basic' },
 		})
 		await expect(client.note.notesInfo({ notes: added })).resolves.toMatchObject([
-			{ modelName: 'Basic' },
+			// Without `tags`, the 2025 fixture clears the note's tags and the newer one keeps them.
+			{ modelName: 'Basic', tags: isLegacy ? [] : [deck] },
 		])
 		expect(await client.note.notesModTime({ notes: [noteId] })).toEqual([
 			{ mod: expect.any(Number) as number, noteId },
