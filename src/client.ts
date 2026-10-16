@@ -9,17 +9,9 @@ import type {
 	ResponseForAction,
 	ResultForAction,
 } from './types/shared'
+import { AnkiConnectUnreachableError } from './errors'
 import { launchAnkiApp } from './utilities/launcher'
 import { ENVIRONMENT, PLATFORM } from './utilities/platform'
-
-// For ease of extracting fields from connection errors
-// type TypeErrorCause = {
-// 	address?: string
-// 	code?: string
-// 	errno?: number
-// 	port?: number
-// 	syscall?: string
-// }
 
 /**
  * Subset of built-in Fetch interface that's actually used by Anki, for ease of
@@ -50,7 +42,9 @@ export type YankiConnectOptions = {
 	 * Attempt to open the desktop Anki.app if it's not already running.
 	 *
 	 * - `true` will always attempt to open Anki _when a request is made_. This
-	 *   might introduce significant latency on the first launch.
+	 *   might introduce significant latency on the first launch. If Anki still
+	 *   can't be reached after repeated launch attempts, the request throws an
+	 *   `AnkiConnectUnreachableError`.
 	 * - `false` will never attempt to open Anki. Requests will fail until something
 	 *   or someone else opens the Anki app.
 	 * - `immediately` is a special option that will open Anki when the client is
@@ -1642,6 +1636,9 @@ export class YankiConnect {
 	 * const client = new AnkiConnectClient()
 	 * const result = await client.miscellaneous.version()
 	 * ```
+	 *
+	 * @throws {AnkiConnectUnreachableError} If AnkiConnect can't be reached,
+	 *   after any auto-launch attempts.
 	 */
 	public async invoke<T extends ActionsWithoutParams>(action: T): Promise<ResponseForAction<T>>
 	public async invoke<T extends ActionsWithParams>(
@@ -1652,12 +1649,11 @@ export class YankiConnect {
 		action: T,
 		params?: T extends ActionsWithParams ? ParamsForAction<T> : undefined,
 	): Promise<ResponseForAction<T>> {
-		let responseJson: ResponseForAction<T>
-		try {
-			// Fetch Response
-			const response: Awaited<ReturnType<YankiFetchAdapter>> = await this.fetchAdapter(
-				`${this.host}:${this.port}`,
-				{
+		// Each pass is one request; auto-launch retries with `continue`
+		for (;;) {
+			let response: Awaited<ReturnType<YankiFetchAdapter>>
+			try {
+				response = await this.fetchAdapter(`${this.host}:${this.port}`, {
 					body: JSON.stringify({
 						action,
 						...(this.key !== undefined && { key: this.key }),
@@ -1672,9 +1668,16 @@ export class YankiConnect {
 					// TODO how necessary is this?
 					// Ensure CORS mode is enabled
 					mode: 'cors',
-				},
-			)
+				})
+			} catch (error) {
+				if (await this.waitForAutoLaunch()) {
+					continue
+				}
 
+				throw new AnkiConnectUnreachableError(error)
+			}
+
+			// Reachable, but launching the app won't fix these
 			if (response === undefined) {
 				throw new Error('AnkiConnect response is undefined')
 			}
@@ -1683,46 +1686,26 @@ export class YankiConnect {
 				throw new Error(`AnkiConnect response status is ${response.status}`)
 			}
 
-			responseJson = (await response.json()) as ResponseForAction<T>
+			const responseJson = (await response.json()) as ResponseForAction<T>
 
-			if (this.autoLaunch !== false && responseJson.error === 'collection is not available') {
-				throw new Error(responseJson.error)
-			}
-		} catch (error) {
-			// Attempt restart, but if it's a permissions issue then throw and stop trying
+			// Anki is open but still starting up, or no profile is loaded yet
 			if (
-				this.autoLaunch !== false
-				// TODO what about permission denial, or missing AnkiConnect plugin?
-				// &&
-				// !(error instanceof TypeError && (error.cause as TypeErrorCause)?.code === 'ECONNREFUSED')
+				responseJson.error === 'collection is not available' &&
+				(await this.waitForAutoLaunch())
 			) {
-				console.warn(`Can't connect to Anki app, retrying with auto-launch...`)
-
-				// Internally throttled
-				await launchAnkiApp()
-
-				await new Promise((resolve) => {
-					setTimeout(resolve, 500)
-				})
-
-				return params === undefined
-					? (this.invoke(action as ActionsWithoutParams) as Promise<ResponseForAction<T>>)
-					: (this.invoke(action as ActionsWithParams, params) as Promise<ResponseForAction<T>>)
+				continue
 			}
 
-			throw error
-		}
+			if (!('error' in responseJson)) {
+				throw new Error('response is missing required error field')
+			}
 
-		// Non-recoverable by launching app
-		if (!('error' in responseJson)) {
-			throw new Error('response is missing required error field')
-		}
+			if (!('result' in responseJson)) {
+				throw new Error('response is missing required result field')
+			}
 
-		if (!('result' in responseJson)) {
-			throw new Error('response is missing required result field')
+			return responseJson
 		}
-
-		return responseJson
 	}
 
 	/**
@@ -1754,6 +1737,32 @@ export class YankiConnect {
 
 			return response.result as ResultForAction<T>
 		}
+	}
+
+	/**
+	 * If auto-launch is enabled, tries to launch Anki and then pauses before the
+	 * caller retries its request.
+	 *
+	 * @returns `false` if the caller should stop retrying, because auto-launch is
+	 *   disabled or the launcher has given up.
+	 */
+	private async waitForAutoLaunch(): Promise<boolean> {
+		if (this.autoLaunch === false) {
+			return false
+		}
+
+		console.warn(`Can't connect to Anki app, retrying with auto-launch...`)
+
+		// Internally throttled
+		if (!(await launchAnkiApp())) {
+			return false
+		}
+
+		await new Promise((resolve) => {
+			setTimeout(resolve, 500)
+		})
+
+		return true
 	}
 }
 

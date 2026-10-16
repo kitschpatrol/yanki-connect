@@ -1,5 +1,16 @@
 # Changelog
 
+## 5.2.0
+
+Adds a dedicated error for requests that can't reach AnkiConnect, and stops auto-launch from retrying forever. Code that inspects the current connection errors keeps working.
+
+- New `AnkiConnectUnreachableError` export. The convenience methods and `invoke` throw it when the fetch adapter fails, for example because the Anki app isn't running. Check for it with `instanceof` instead of matching platform-specific messages such as `'fetch failed'` in Node or `'net::ERR_CONNECTION_REFUSED'` from Obsidian's `requestUrl`.
+- The error extends `TypeError` and keeps the original error's `message` and `cause`, so checks like `message === 'fetch failed'` and `cause.code === 'ECONNREFUSED'` still match. Its `name` is `'AnkiConnectUnreachableError'`.
+- Fixed: with `autoLaunch` enabled, a request that never reached Anki retried indefinitely, even after the launcher stopped launching. It now throws `AnkiConnectUnreachableError` once the launcher reaches its limit of 100 launches per session, at most one every 5 seconds.
+- Fixed: with `autoLaunch` enabled, a non-200 status, a missing response, or a response body that isn't valid JSON started the same endless relaunch loop. These errors are now thrown right away.
+- With `autoLaunch` enabled, `collection is not available` responses are still retried until the launcher gives up. After that, `invoke` returns the error response and the convenience methods throw it, as they do with `autoLaunch` disabled.
+- Tests cover the new error with fake fetch adapters in Node and Chromium and with a closed port in Node, and cover the auto-launch retry and launch limits with the launcher mocked.
+
 ## 5.1.0
 
 Documentation update for AnkiConnect 26.10.14.0, plus parameter types that were missing or narrower than the API. Runtime behavior is unchanged.
@@ -61,9 +72,13 @@ Breaking release. The type definitions were audited against every AnkiConnect re
   - `client.graphical.guiAddNoteSetData` (new in AnkiConnect 26.10.11.0, requires Anki 26.08).
 
 - `cardsInfo` `fields` selects which card properties to return (AnkiConnect 26.10.12.2 or later). The convenience method narrows its result type to the requested keys.
+
 - `notesInfo` accepts `{ query }` as an alternative to `{ notes }` (AnkiConnect 25.2.24.0 or later).
+
 - `storeMediaFile` `skipHash` skips storing when the MD5 digest matches the incoming data.
+
 - Parameters that were wrongly required are now optional: `guiAddCards.note`, `guiImportFile.path`, `getMediaFilesNames.pattern`, `cloneDeckConfigId.cloneFrom`, and `modelFieldAdd.index`.
+
 - Parameters and response fields carry JSDoc that names the AnkiConnect release that introduced them, visible on hover.
 
 ### Fixed
