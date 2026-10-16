@@ -397,7 +397,10 @@ export class YankiConnect {
 		 */
 		deleteDecks: this.build('deleteDecks'),
 		/**
-		 * Gets the configuration group object for the given deck.
+		 * Gets the configuration group object for the given deck. Releases before
+		 * 26.10.11.0 return a filtered deck's own object, with `dyn: 1`; later
+		 * releases raise an `int() argument must be a string, a bytes-like object
+		 * or a real number, not 'NoneType'` error for filtered decks.
 		 *
 		 * @minimumAnki 2.1.25
 		 * @minimumAnkiConnect 22.2.19.0
