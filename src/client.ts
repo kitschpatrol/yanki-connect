@@ -117,20 +117,20 @@ export const defaultYankiConnectOptions: YankiConnectOptions = {
 
 /**
  * **YankiConnect is a client for the legacy [AnkiConnect
- * API](https://git.sr.ht/~foosoft/anki-connect/tree/26.10.12.2/item/API_LEGACY.md)**.
+ * API](https://git.sr.ht/~foosoft/anki-connect/tree/26.10.14.0/item/API_LEGACY.md)**.
  *
- * It implements every legacy endpoint from AnkiConnect version 26.10.12.2,
- * released 2026-10-12.
+ * It implements every legacy endpoint from AnkiConnect version 26.10.14.0,
+ * released 2026-10-14.
  *
  * Inline documentation is by the AnkiConnect authors, generated from [the
  * legacy API
- * reference](https://git.sr.ht/~foosoft/anki-connect/tree/26.10.12.2/item/API_LEGACY.md)
+ * reference](https://git.sr.ht/~foosoft/anki-connect/tree/26.10.14.0/item/API_LEGACY.md)
  */
 export class YankiConnect {
 	/**
 	 * **Card Actions**
 	 *
-	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.10.12.2/item/API_LEGACY.md#card-actions)
+	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.10.14.0/item/API_LEGACY.md#card-actions)
 	 */
 	public readonly card = {
 		/**
@@ -328,7 +328,7 @@ export class YankiConnect {
 	/**
 	 * **Deck Actions**
 	 *
-	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.10.12.2/item/API_LEGACY.md#deck-actions)
+	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.10.14.0/item/API_LEGACY.md#deck-actions)
 	 */
 	public readonly deck = {
 		/**
@@ -463,7 +463,7 @@ export class YankiConnect {
 	/**
 	 * **Graphical Actions**
 	 *
-	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.10.12.2/item/API_LEGACY.md#graphical-actions)
+	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.10.14.0/item/API_LEGACY.md#graphical-actions)
 	 */
 	public readonly graphical = {
 		/**
@@ -483,6 +483,10 @@ export class YankiConnect {
 		 * Omitting `note` opens the dialog without presets.
 		 *
 		 * Media entries may omit `fields` from 25.11.2.0 on Anki 23.10 or later.
+		 *
+		 * On Anki 26.08 and later, AnkiConnect 26.10.11.0 through 26.10.13.0 show
+		 * the preset `tags` in the dialog but do not save them with the added
+		 * note.
 		 *
 		 * @minimumAnki 2.1.15
 		 * @minimumAnkiConnect 22.2.19.0
@@ -707,7 +711,7 @@ export class YankiConnect {
 	/**
 	 * **Media Actions**
 	 *
-	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.10.12.2/item/API_LEGACY.md#media-actions)
+	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.10.14.0/item/API_LEGACY.md#media-actions)
 	 */
 	public readonly media = {
 		/**
@@ -772,7 +776,7 @@ export class YankiConnect {
 	/**
 	 * **Miscellaneous Actions**
 	 *
-	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.10.12.2/item/API_LEGACY.md#miscellaneous-actions)
+	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.10.14.0/item/API_LEGACY.md#miscellaneous-actions)
 	 */
 	public readonly miscellaneous = {
 		/**
@@ -905,7 +909,7 @@ export class YankiConnect {
 	/**
 	 * **Model Actions**
 	 *
-	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.10.12.2/item/API_LEGACY.md#model-actions)
+	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.10.14.0/item/API_LEGACY.md#model-actions)
 	 */
 	public readonly model = {
 		/**
@@ -1165,7 +1169,7 @@ export class YankiConnect {
 	/**
 	 * **Note Actions**
 	 *
-	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.10.12.2/item/API_LEGACY.md#note-actions)
+	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.10.14.0/item/API_LEGACY.md#note-actions)
 	 */
 	public readonly note = {
 		/**
@@ -1417,6 +1421,11 @@ export class YankiConnect {
 		 *
 		 * Media entries may omit `fields` from 25.11.2.0 on Anki 23.10 or later.
 		 *
+		 * Media entries can target note fields that `fields` leaves out, but
+		 * AnkiConnect 26.10.11.0 through 26.10.13.0 store the file without adding
+		 * it to those fields. Field names match case-insensitively from 26.10.14.0;
+		 * earlier releases ignore names whose case differs.
+		 *
 		 * @minimumAnki 2.1.45
 		 * @minimumAnkiConnect 23.4.11.0
 		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/23.4.11.0/item/plugin/__init__.py#L823}
@@ -1436,6 +1445,11 @@ export class YankiConnect {
 		 *
 		 * Media entries may omit `fields` from 25.11.2.0 on Anki 23.10 or later.
 		 *
+		 * Media entries can target note fields that `fields` leaves out, but
+		 * AnkiConnect 26.10.11.0 through 26.10.13.0 store the file without adding
+		 * it to those fields. Field names match case-insensitively from 26.10.14.0;
+		 * earlier releases ignore names whose case differs.
+		 *
 		 * @minimumAnki 2.1.15
 		 * @minimumAnkiConnect 22.2.19.0
 		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L738}
@@ -1445,6 +1459,10 @@ export class YankiConnect {
 		 * Update the model, fields, and tags of an existing note. This allows you
 		 * to change the note's model, update its fields with new content, and set
 		 * new tags.
+		 *
+		 * When the note's only card template has no namesake in the new model,
+		 * AnkiConnect 26.10.11.0 through 26.10.12.2 replace the card and lose its
+		 * review history; later releases keep the card.
 		 *
 		 * @minimumAnki 2.1.50
 		 * @minimumAnkiConnect 24.6.17.0
@@ -1464,7 +1482,7 @@ export class YankiConnect {
 	/**
 	 * **Statistic Actions**
 	 *
-	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.10.12.2/item/API_LEGACY.md#statistic-actions)
+	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.10.14.0/item/API_LEGACY.md#statistic-actions)
 	 */
 	public readonly statistic = {
 		/**
@@ -1595,7 +1613,7 @@ export class YankiConnect {
 	/**
 	 * Directly invoke the Anki Connect API.
 	 *
-	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.10.12.2/item/API_LEGACY.md)
+	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.10.14.0/item/API_LEGACY.md)
 	 *
 	 * Primarily for internal use, since the client provides a more convenient
 	 * methods on its class, e.g. instead of:

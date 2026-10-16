@@ -1,5 +1,17 @@
 # Changelog
 
+## 5.0.1
+
+Documentation update for AnkiConnect 26.10.14.0. Runtime behavior and types are unchanged.
+
+- Upstream documentation links point to the AnkiConnect 26.10.14.0 legacy API reference, and the readme recommends AnkiConnect 26.10.14.0 or later.
+- Action documentation describes upstream fixes in AnkiConnect 26.10.13.0 and 26.10.14.0:
+  - `updateNote` and `updateNoteFields`: media entries can target note fields that `fields` leaves out. AnkiConnect 26.10.11.0 through 26.10.13.0 store the file without adding it to those fields. Field names match case-insensitively from 26.10.14.0.
+  - `guiAddCards`: on Anki 26.08 and later, AnkiConnect 26.10.11.0 through 26.10.13.0 do not save preset tags with the added note.
+  - `updateNoteModel`: when the note's only card template has no namesake in the new model, AnkiConnect 26.10.11.0 through 26.10.12.2 replace the card and lose its review history.
+- AnkiConnect 26.10.14.0 also accepts looser legacy input, such as decimal-string IDs, `"true"` and `0`/`1` booleans, single values for list parameters, whitespace-separated tag strings, and `null` optional values. The client types keep the strict forms, which every supported release accepts.
+- Integration tests run against the AnkiConnect 26.10.14.0 fixture instead of 26.10.13.0, and cover media attached to a field that an update's `fields` leaves out.
+
 ## 5.0.0
 
 Breaking release. The type definitions were audited against every AnkiConnect release from 22.2.19.0 to 26.10.13.0 with a new end-to-end compatibility suite, and many signatures changed to match what the add-on actually accepts and returns. Runtime behavior is unchanged except where noted under Fixed.

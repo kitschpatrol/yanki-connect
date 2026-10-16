@@ -1,4 +1,4 @@
-const ANKI_CONNECT_VERSIONS = ['25.11.9.0', '26.10.13.0']
+const ANKI_CONNECT_VERSIONS = ['25.11.9.0', '26.10.14.0']
 
 /**
  * Selects the AnkiConnect fixtures to test, defaulting to all supported

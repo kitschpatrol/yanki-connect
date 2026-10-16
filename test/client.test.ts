@@ -252,6 +252,18 @@ describe('real AnkiConnect endpoints', { concurrent: false }, () => {
 		await expect(client.note.notesInfo({ query: `nid:${noteId}` })).resolves.toMatchObject([
 			{ noteId },
 		])
+		// Media may target a field that the text update leaves out.
+		const attachment = `${deck}-attachment.txt`
+		await client.note.updateNoteFields({
+			note: {
+				audio: [{ data: 'dGVzdA==', fields: ['Back'], filename: attachment }],
+				fields: {},
+				id: added[0]!,
+			},
+		})
+		await expect(client.note.notesInfo({ notes: added })).resolves.toMatchObject([
+			{ fields: { Back: { value: `Answer[sound:${attachment}]` } } },
+		])
 		await client.note.updateNote({
 			note: { fields: { Back: 'Combined update' }, id: noteId, tags: [deck] },
 		})
