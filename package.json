@@ -47,11 +47,10 @@
 	],
 	"scripts": {
 		"build": "tsdown && attw -P --profile esm-only && publint",
-		"clean-deep": "shx rm -f pnpm-lock.yaml && git clean -fdX -e !.claude/",
+		"clean-deep": "shx rm -f pnpm-lock.yaml && git clean -fdX",
 		"coverage": "node scripts/test.ts --coverage",
-		"fix": "ksc fix",
-		"lint": "ksc lint",
-		"prepare": "skills experimental_sync -y -f",
+		"fix": "pnpm build && ksc fix",
+		"lint": "pnpm build && ksc lint",
 		"release": "bumpp --commit 'Release: %s' && pnpm build && pnpm publish --otp $(op item get npm --otp)",
 		"test": "node scripts/test.ts"
 	},
@@ -61,7 +60,7 @@
 	},
 	"devDependencies": {
 		"@arethetypeswrong/cli": "^0.18.5",
-		"@kitschpatrol/shared-config": "^8.13.1",
+		"@kitschpatrol/shared-config": "^8.14.0",
 		"@vitest/browser-playwright": "^5.0.3",
 		"@vitest/coverage-v8": "^5.0.3",
 		"bumpp": "^12.3.0",
@@ -69,13 +68,12 @@
 		"playwright": "^1.64.0",
 		"publint": "^0.3.25",
 		"shx": "^0.4.0",
-		"skills": "^1.7.2",
 		"ts-morph": "^28.0.0",
 		"tsdown": "^0.23.1",
 		"typescript": "~6.0.3",
 		"vitest": "^5.0.3"
 	},
-	"packageManager": "pnpm@12.11.2",
+	"packageManager": "pnpm@12.15.0",
 	"engines": {
 		"node": "^22.12.0 || ^24.0.0 || >=26.0.0"
 	},

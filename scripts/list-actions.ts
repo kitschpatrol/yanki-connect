@@ -47,12 +47,11 @@ function generateMethodTree() {
 	for (const property of properties) {
 		const propertyName = property.getName()
 
-		if (['autoLaunch', 'host', 'port', 'version'].includes(propertyName)) {
-			continue
-		}
-
-		// Skip internal properties
-		if (propertyName.startsWith('_')) {
+		// Skip configuration and internal properties
+		if (
+			['autoLaunch', 'host', 'port', 'version'].includes(propertyName) ||
+			propertyName.startsWith('_')
+		) {
 			continue
 		}
 

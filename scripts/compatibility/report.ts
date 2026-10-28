@@ -435,7 +435,8 @@ function promptMarkdown(report: CompatibilityReport): string {
 	].join('\n')
 }
 
-if (process.argv[1] === fileURLToPath(import.meta.url)) {
+/** Writes the report files and fails if any documented minimum mismatches. */
+function main(): void {
 	const { values } = parseArgs({
 		options: {
 			output: { default: 'compatibility', type: 'string' },
@@ -468,10 +469,16 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
 
 	console.log(summary)
 	const mismatches = Object.values(report.actions).filter((action) => action.verdict === 'mismatch')
-	if (mismatches.length > 0) {
-		console.error(
-			`\n${String(mismatches.length)} action(s) have documented minimums that do not match the empirical results. See compatibility-prompt.md.`,
-		)
-		process.exitCode = 1
+	if (mismatches.length === 0) {
+		return
 	}
+
+	console.error(
+		`\n${String(mismatches.length)} action(s) have documented minimums that do not match the empirical results. See compatibility-prompt.md.`,
+	)
+	process.exitCode = 1
+}
+
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
+	main()
 }
