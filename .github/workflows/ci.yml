@@ -83,7 +83,7 @@ jobs:
           python-version: '3.13'
 
       - name: Install Anki
-        run: pip install "aqt==${{ env.ANKI_VERSION }}"
+        run: python -m pip install --constraint .github/anki-constraints.txt "aqt==${{ env.ANKI_VERSION }}"
 
       - name: Verify Anki is importable
         run: python -c "from aqt import run, appVersion; print('aqt OK, Anki ' + appVersion)"
