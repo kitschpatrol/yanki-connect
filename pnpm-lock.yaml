@@ -166,9 +166,6 @@ importers:
 
   .:
     dependencies:
-      '@types/node':
-        specifier: ~22.12.0
-        version: 22.12.0
       open:
         specifier: ^11.0.4
         version: 11.0.4
@@ -179,6 +176,9 @@ importers:
       '@kitschpatrol/shared-config':
         specifier: ^8.14.0
         version: 8.14.0(@pnpm/logger@1100.0.0)(@types/node@22.12.0)(@types/unist@3.0.3)(@typescript-eslint/utils@8.72.1(eslint@10.14.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3))(jiti@2.7.0)(mdast-util-from-markdown@2.1.0(supports-color@10.2.2))(mdast-util-mdx@3.0.0(supports-color@10.2.2))(micromark-util-types@2.0.3)(postcss-html@2.0.0(postcss@8.5.32))(remark-parse@11.0.0(supports-color@10.2.2))(stylelint-order@8.1.2(stylelint@17.16.0(supports-color@10.2.2)(typescript@6.0.3)))(supports-color@10.2.2)(svelte@5.57.3(@typescript-eslint/types@8.72.1))(typescript@6.0.3)(vitest@5.0.5)
+      '@types/node':
+        specifier: ~22.12.0
+        version: 22.12.0
       '@vitest/browser-playwright':
         specifier: ^5.0.5
         version: 5.0.5(playwright@1.64.1)(vite@8.3.5(@types/node@22.12.0)(jiti@2.7.0)(yaml@2.9.1))(vitest@5.0.5)
