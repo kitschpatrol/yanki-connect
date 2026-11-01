@@ -55,25 +55,25 @@
 		"test": "node scripts/test.ts"
 	},
 	"dependencies": {
-		"@types/node": "~20.19.43",
+		"@types/node": "~22.12.0",
 		"open": "^11.0.4"
 	},
 	"devDependencies": {
 		"@arethetypeswrong/cli": "^0.18.5",
 		"@kitschpatrol/shared-config": "^8.14.0",
-		"@vitest/browser-playwright": "^5.0.3",
-		"@vitest/coverage-v8": "^5.0.3",
+		"@vitest/browser-playwright": "^5.0.5",
+		"@vitest/coverage-v8": "^5.0.5",
 		"bumpp": "^12.3.0",
-		"execa": "^10.1.0",
-		"playwright": "^1.64.0",
+		"execa": "^10.2.1",
+		"playwright": "^1.64.1",
 		"publint": "^0.3.25",
 		"shx": "^0.4.0",
 		"ts-morph": "^28.0.0",
-		"tsdown": "^0.23.1",
+		"tsdown": "^0.23.4",
 		"typescript": "~6.0.3",
-		"vitest": "^5.0.3"
+		"vitest": "^5.0.5"
 	},
-	"packageManager": "pnpm@12.15.0",
+	"packageManager": "pnpm@12.16.1",
 	"engines": {
 		"node": "^22.12.0 || ^24.0.0 || >=26.0.0"
 	},
