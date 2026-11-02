@@ -482,8 +482,9 @@ describe('real AnkiConnect endpoints', { concurrent: false }, () => {
 		expect(await client.graphical.guiPlayAudio()).toBe(true)
 		expect(await client.graphical.guiShowAnswer()).toBe(true)
 		expect(await client.graphical.guiAnswerCard({ ease: 3 })).toBe(true)
-		expect(await client.graphical.guiUndo()).toBe(true)
-		await client.graphical.guiDeckBrowser()
+		// Answering and undoing return before their background collection operations finish.
+		await expect.poll(async () => client.graphical.guiUndo(), { timeout: 10_000 }).toBe(true)
+		await expect.poll(async () => client.graphical.guiDeckBrowser(), { timeout: 10_000 }).toBeNull()
 		await client.graphical.guiImportFile({ path: `${mediaPath}/${deck}.apkg` })
 		// GUI imports return before their native dialog and collection operation finish.
 		await expect

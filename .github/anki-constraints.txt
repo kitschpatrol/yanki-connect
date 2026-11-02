@@ -1,0 +1,6 @@
+# Keep the Windows Qt and WebEngine bindings and runtimes on matching releases.
+# Mixing Qt 6.12 with WebEngine 6.11 fails to import QtWebEngineCore in Anki.
+PyQt6==6.11.0; sys_platform == "win32"
+PyQt6-Qt6==6.11.2; sys_platform == "win32"
+PyQt6-WebEngine==6.11.0; sys_platform == "win32"
+PyQt6-WebEngine-Qt6==6.11.2; sys_platform == "win32"
