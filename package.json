@@ -51,7 +51,7 @@
 		"coverage": "node scripts/test.ts --coverage",
 		"fix": "pnpm build && ksc fix",
 		"lint": "pnpm build && ksc lint",
-		"release": "bumpp --commit 'Release: %s' && pnpm build && pnpm publish --otp $(op item get npm --otp)",
+		"release": "bumpp --commit 'Release: %s' --all --execute 'chagent' && pnpm build && pnpm publish --otp $(op item get npm --otp)",
 		"test": "node scripts/test.ts"
 	},
 	"dependencies": {
@@ -59,6 +59,7 @@
 	},
 	"devDependencies": {
 		"@arethetypeswrong/cli": "^0.18.5",
+		"@kitschpatrol/chagent": "0.4.0",
 		"@kitschpatrol/shared-config": "^8.14.0",
 		"@types/node": "~22.12.0",
 		"@vitest/browser-playwright": "^5.0.5",
