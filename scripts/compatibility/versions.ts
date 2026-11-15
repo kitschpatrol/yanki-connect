@@ -97,7 +97,7 @@ export async function getAnkiReleases(): Promise<AnkiRelease[]> {
 		releases.push({ source: 'pypi', spec: `aqt[qt]==${pypiVersion}`, version })
 	}
 
-	return releases.sort((a, b) => compareVersions(a.version, b.version))
+	return releases.toSorted((a, b) => compareVersions(a.version, b.version))
 }
 
 /** Every AnkiConnect release tag from the oldest documented tag onward. */
@@ -111,7 +111,7 @@ export async function getAnkiConnectVersions(): Promise<string[]> {
 		.split('\n')
 		.map((line) => line.split('refs/tags/', 2).at(1) ?? '')
 		.filter((tag) => ANKI_CONNECT_TAG.test(tag) && compareVersions(tag, OLDEST_ANKI_CONNECT) >= 0)
-		.sort(compareVersions)
+		.toSorted(compareVersions)
 }
 
 /**

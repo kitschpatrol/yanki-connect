@@ -3,6 +3,8 @@
 	"compilerOptions": {
 		"types": ["node"]
 	},
+	// Keep discovery local; the inherited include does not enumerate project files.
 	"include": ["**/**.*"],
+	// Exclude generated build output and test coverage, even when absent.
 	"exclude": ["coverage/", "dist/"]
 }

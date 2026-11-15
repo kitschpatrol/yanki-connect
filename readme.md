@@ -88,20 +88,28 @@ Yanki Connect runs in either Node.js or a browser and provides ESM exports with 
   _26.08.0+ recommended for full API support_
 - [AnkiConnect add-on](https://ankiweb.net/shared/info/2055492159) 22.2.19.0+\
   _26.10.14.0+ recommended for full API support_
-- **Node.js:** [Node.js](https://nodejs.org/) 22.12.0+\
-  _Older versions may work but are not verified_
 - **Browsers:** builds target Chrome 100+, Firefox 110+, and Safari 18+\
   _Older versions may work but are not verified_
 
+<!-- dependencies({ heading: false }) -->
+
+- [Node.js](https://nodejs.org/) 22.12.0 or newer (specifically `^22.12.0 || ^24.0.0 || >=26.0.0`)
+
+<!-- /dependencies -->
+
 The exact version / API compatibility story across different versions of the Anki desktop app and AnkiConnect is complex and honestly a bit of a mess. Test-driven derivations of version compatibility are shown in the action table below.
+
+<!-- install -->
 
 ### Installation
 
-Add the library to your project:
+Add it to your project:
 
 ```sh
 npm install yanki-connect
 ```
+
+<!-- /install -->
 
 ## Usage
 

@@ -229,7 +229,7 @@ export function buildReport(runs: AnkiRunResult[]): CompatibilityReport {
 				run.combinations.map((combination) => combination.ankiConnectVersion),
 			),
 		),
-	].sort(compareVersions)
+	].toSorted(compareVersions)
 
 	const report: CompatibilityReport = {
 		actions: {},

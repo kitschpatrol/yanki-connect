@@ -21,11 +21,16 @@ export default eslintConfig(
 						types: ['boolean', 'string', 'number', 'array'],
 					},
 				],
-				// Support minimum version 1.5.0 of Obsidian
-				'unicorn/no-array-sort': 'off',
 			},
 		},
 		type: 'lib',
+	},
+	{
+		files: ['src/**/*.ts'],
+		rules: {
+			// Array#toSorted is unavailable in the Chrome 100 and Firefox 110 build targets.
+			'unicorn/no-array-sort': 'off',
+		},
 	},
 	{
 		files: ['src/client.ts'],

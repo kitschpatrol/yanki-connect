@@ -9,7 +9,6 @@ export default cspellConfig({
 		'bfont',
 		'bqfmt',
 		'chagent',
-		'ECONNREFUSED',
 		'flds',
 		'odid',
 		'odue',

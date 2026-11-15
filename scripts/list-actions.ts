@@ -163,7 +163,7 @@ function extractMethodsFromType(type: Type, group: string): YankiConnectAction[]
 		})
 	}
 
-	return methods.sort((a, b) => a.name.localeCompare(b.name))
+	return methods.toSorted((a, b) => a.name.localeCompare(b.name))
 }
 
 /**

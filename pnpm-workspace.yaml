@@ -1,7 +1,3 @@
-allowBuilds:
-  unrs-resolver: true
-minimumReleaseAgeExclude:
-  - '@kitschpatrol/chagent@0.4.0'
 peerDependencyRules:
   allowedVersions:
     # Remove once the installed version declares ESLint 10 support.
@@ -10,6 +6,8 @@ peerDependencyRules:
     eslint-plugin-jsx-a11y@6>eslint: ^10.0.0
 permissions:
   '@kitschpatrol/shared-config':
+    skills: true
+  tsdown:
     skills: true
 publicHoistPattern:
   - '@kitschpatrol/repo-config'
@@ -25,4 +23,3 @@ publicHoistPattern:
 skills:
   dirs:
     - .agents/skills
-    - .claude/skills

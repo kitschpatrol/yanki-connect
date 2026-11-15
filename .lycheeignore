@@ -1,2 +1,5 @@
 # Lingers in the AnkiConnect fixtures' addons21/2055492159/config.md
 https://foosoft.net/projects/anki-connect/
+
+# Ignore fragment URLs on SourceHut.
+^https?://git\.sr\.ht/.*#
