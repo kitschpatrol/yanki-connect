@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 (Node.js support requirements have sometimes increased in minor or patch releases.)
 
+## [5.2.2] - 2026-11-15
+
+### Documentation
+
+- Clarify the supported Node.js version ranges and generate requirements and installation instructions from package metadata.
+
+### Maintenance
+
+- Integrate `chagent` into the release command for changelog generation and update the GitHub release-notes action.
+- Refresh Vitest, Playwright, tsdown, shared-config, pnpm, and workflow actions; update contributor lint, link-check, and skill-installation settings.
+
 ## [5.2.1] - 2026-11-01
 
 ### Maintenance
@@ -749,3 +760,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [5.1.0]: https://github.com/kitschpatrol/yanki-connect/compare/v5.0.0...v5.1.0
 [5.2.0]: https://github.com/kitschpatrol/yanki-connect/compare/v5.1.0...v5.2.0
 [5.2.1]: https://github.com/kitschpatrol/yanki-connect/compare/v5.2.0...v5.2.1
+[5.2.2]: https://github.com/kitschpatrol/yanki-connect/compare/v5.2.1...v5.2.2
