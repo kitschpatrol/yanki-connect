@@ -52,7 +52,8 @@
 		"fix": "pnpm build && ksc fix",
 		"lint": "pnpm build && ksc lint",
 		"release": "bumpp --commit 'Release: %s' --all --execute 'chagent' && pnpm build && pnpm publish --otp $(op item get npm --otp)",
-		"test": "node scripts/test.ts"
+		"test": "node scripts/test.ts",
+		"test:compatibility": "vitest run --config vitest.compatibility.config.ts"
 	},
 	"dependencies": {
 		"open": "^11.0.4"

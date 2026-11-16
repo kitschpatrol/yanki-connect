@@ -1099,7 +1099,7 @@ export class YankiConnect {
 		 * Gets the complete list of model names and their corresponding IDs for the
 		 * current user.
 		 *
-		 * @minimumAnki 2.1.28
+		 * @minimumAnki 2.1.15
 		 * @minimumAnkiConnect 22.2.19.0
 		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L977}
 		 */

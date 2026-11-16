@@ -192,6 +192,10 @@ function explain(
  * types. Returns an explanation for each record that fails.
  */
 export function checkSignatures(records: ProbeRecord[]): Map<number, string> {
+	if (records.length === 0) {
+		return new Map()
+	}
+
 	const header = [`import type { ResultForAction } from '../../src/types/shared'`, '']
 	const lines = [...header]
 	for (const [index, record] of records.entries()) {

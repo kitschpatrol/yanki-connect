@@ -2,15 +2,17 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { parseArgs } from 'node:util'
-import type { ActionStatus, AnkiRunResult } from './shared.ts'
+import type { Baseline, BaselineComparison } from './baseline.ts'
+import type { ActionStatus, AnkiRelease, AnkiRunResult, CombinationResult } from './shared.ts'
 import { getYankiConnectMethodTree } from '../list-actions.ts'
-import { compareVersions } from './shared.ts'
+import { compareBaseline, readBaseline } from './baseline.ts'
+import { collectionFailures, compareVersions } from './shared.ts'
 
 type Minimums = { minimumAnki: string; minimumAnkiConnect: string }
 type Documented = Minimums & { maximumAnkiConnect?: string }
-type Status = 'untested' | ActionStatus
+type Status = 'incompatible' | 'untested' | ActionStatus
 type Combination = [anki: string, ankiConnect: string]
-type Verdict = 'confirmed' | 'mismatch' | 'untestable'
+type Verdict = 'confirmed' | 'inconclusive' | 'mismatch' | 'untestable'
 
 type ActionReport = {
 	/**
@@ -27,20 +29,34 @@ type ActionReport = {
 	empirical?: Minimums
 	/** Tested combinations above the documented minimums that are not supported. */
 	exceptions: Combination[]
+	probeRevision: number
 	results: Record<string, Record<string, Status>>
 	verdict: Verdict
 }
 
-type CombinationSummary = { detail?: string; ok?: number; status: string }
+type CombinationSummary = {
+	attempts?: CombinationResult['attempts']
+	detail?: string
+	ok?: number
+	status: string
+}
 
 export type CompatibilityReport = {
 	actions: Record<string, ActionReport>
 	anki: Record<
 		string,
-		{ detail?: string; reportedVersion?: string; source: string; status: string }
+		{
+			detail?: string
+			reportedVersion?: string
+			runtimeNotes?: string[]
+			source: string
+			status: string
+		}
 	>
 	ankiConnect: string[]
+	collectionFailures: string[]
 	combinations: Record<string, Record<string, CombinationSummary>>
+	comparison: BaselineComparison
 	generatedAt: string
 	oldestTested: Minimums
 }
@@ -75,11 +91,19 @@ function summarizeCombination(run: AnkiRunResult, ankiConnect: string): Combinat
 	}
 
 	if (combination.status !== 'tested') {
-		return { detail: combination.detail ?? '', status: combination.status }
+		return {
+			...(combination.attempts !== undefined && { attempts: combination.attempts }),
+			detail: combination.detail ?? '',
+			status: combination.status,
+		}
 	}
 
 	const ok = Object.values(combination.actions).filter((outcome) => outcome.status === 'ok')
-	return { ok: ok.length, status: 'tested' }
+	return {
+		...(combination.attempts !== undefined && { attempts: combination.attempts }),
+		ok: ok.length,
+		status: 'tested',
+	}
 }
 
 /**
@@ -112,14 +136,16 @@ function collectActionGrid(
 				(candidate) => candidate.ankiConnectVersion === ankiConnect,
 			)
 			const outcome = combination?.status === 'tested' ? combination.actions[name] : undefined
-			grid.results[anki][ankiConnect] = outcome?.status ?? 'untested'
+			grid.results[anki][ankiConnect] =
+				combination?.status === 'addon-failed' ? 'incompatible' : (outcome?.status ?? 'untested')
 			if (outcome?.detail !== undefined) {
 				grid.details[anki][ankiConnect] = outcome.detail
 			}
 
 			grid.untestable ||= outcome?.status === 'untestable'
 			const tested =
-				outcome !== undefined && outcome.status !== 'untestable' && outcome.status !== 'skipped'
+				outcome !== undefined &&
+				!['infrastructure', 'skipped', 'untestable'].includes(outcome.status)
 			testedRow.push(tested)
 			okRow.push(tested && outcome.status === 'ok')
 		}
@@ -215,27 +241,106 @@ function sameMinimums(a: Minimums, b: Minimums): boolean {
 	)
 }
 
+function minimumVerdict(
+	documented: Documented,
+	empirical: Minimums | undefined,
+	evidence: { beyondMaximum: number; exceptions: number; unknown: number; untestable: boolean },
+): Verdict {
+	if (evidence.untestable) {
+		return 'untestable'
+	}
+
+	if (
+		evidence.exceptions > 0 ||
+		evidence.beyondMaximum > 0 ||
+		(empirical !== undefined &&
+			(compareVersions(empirical.minimumAnki, documented.minimumAnki) < 0 ||
+				compareVersions(empirical.minimumAnkiConnect, documented.minimumAnkiConnect) < 0))
+	) {
+		return 'mismatch'
+	}
+
+	if (empirical !== undefined && evidence.unknown === 0 && sameMinimums(documented, empirical)) {
+		return 'confirmed'
+	}
+
+	return 'inconclusive'
+}
+
+function missingActionResults(run: AnkiRunResult, names: string[]): string[] {
+	return run.combinations
+		.filter((combination) => combination.status === 'tested')
+		.flatMap((combination) =>
+			names
+				.filter((name) => combination.actions[name] === undefined)
+				.map(
+					(name) =>
+						`Anki ${run.release.version}, AnkiConnect ${combination.ankiConnectVersion}: missing action result ${name}`,
+				),
+		)
+}
+
 /**
  * Merge per-release results into one compatibility table and verify each
  * action's documented minimums: every tested combination above them must be
  * supported, and no lower minimums may have that property.
  */
-export function buildReport(runs: AnkiRunResult[]): CompatibilityReport {
-	const sortedRuns = runs.toSorted((a, b) => compareVersions(a.release.version, b.release.version))
+export function buildReport(
+	runs: AnkiRunResult[],
+	options: {
+		ankiConnectVersions?: string[]
+		ankiReleases?: AnkiRelease[]
+		baseline?: Baseline
+	} = {},
+): CompatibilityReport {
+	if (
+		runs.some((run) => run.diagnosticFocus !== undefined || run.diagnosticSandbox !== undefined)
+	) {
+		throw new Error(
+			'GUI diagnostic experiments cannot be used in compatibility reports or baselines',
+		)
+	}
+
+	const selectedRuns =
+		options.ankiReleases?.map(
+			(release): AnkiRunResult =>
+				runs.find((run) => compareVersions(run.release.version, release.version) === 0) ?? {
+					combinations: [],
+					detail: 'No result artifact was produced for this release',
+					release,
+					status: 'probe-failed',
+				},
+		) ?? runs
+	const sortedRuns = selectedRuns.toSorted((a, b) =>
+		compareVersions(a.release.version, b.release.version),
+	)
 	const ankiVersions = sortedRuns.map((run) => run.release.version)
-	const ankiConnectVersions = [
-		...new Set(
-			sortedRuns.flatMap((run) =>
-				run.combinations.map((combination) => combination.ankiConnectVersion),
+	const ankiConnectVersions = (
+		options.ankiConnectVersions ?? [
+			...new Set(
+				sortedRuns.flatMap(
+					(run) =>
+						run.ankiConnectVersions ??
+						run.combinations.map((combination) => combination.ankiConnectVersion),
+				),
 			),
-		),
-	].toSorted(compareVersions)
+		]
+	).toSorted(compareVersions)
+	if (ankiVersions.length === 0 || ankiConnectVersions.length === 0) {
+		throw new Error('Cannot report an empty compatibility matrix')
+	}
+
+	const documentedActions = documentedMinimums()
 
 	const report: CompatibilityReport = {
 		actions: {},
 		anki: {},
 		ankiConnect: ankiConnectVersions,
+		collectionFailures: sortedRuns.flatMap((run) =>
+			collectionFailures({ ...run, ankiConnectVersions }),
+		),
 		combinations: {},
+		comparison: { changedProbes: [], compared: 0, notSelected: 0, regressions: [], unverified: [] },
 		generatedAt: new Date().toISOString(),
 		oldestTested: {
 			minimumAnki: ankiVersions[0] ?? '',
@@ -248,6 +353,7 @@ export function buildReport(runs: AnkiRunResult[]): CompatibilityReport {
 		report.anki[version] = {
 			...(run.detail !== undefined && { detail: run.detail }),
 			...(run.reportedVersion !== undefined && { reportedVersion: run.reportedVersion }),
+			...(run.runtimeNotes !== undefined && { runtimeNotes: run.runtimeNotes }),
 			source: run.release.source,
 			status: run.status,
 		}
@@ -257,9 +363,23 @@ export function buildReport(runs: AnkiRunResult[]): CompatibilityReport {
 				summarizeCombination(run, ankiConnect),
 			]),
 		)
+		report.collectionFailures.push(...missingActionResults(run, documentedActions.keys().toArray()))
 	}
 
-	for (const [name, { group, ...documented }] of documentedMinimums()) {
+	for (const [name, { group, ...documented }] of documentedActions) {
+		const revisions = [
+			...new Set(
+				sortedRuns
+					.filter((run) => run.status === 'ok')
+					.map((run) => run.probeRevisions?.[name] ?? 1),
+			),
+		]
+		if (revisions.length > 1) {
+			report.collectionFailures.push(
+				`Mixed probe revisions for ${name}: ${revisions.join(', ')}; collect all results with the same probe suite`,
+			)
+		}
+
 		const grid = collectActionGrid(name, sortedRuns, ankiConnectVersions)
 		const { maximumAnkiConnect } = documented
 		const empirical = minimalCleanCorner(
@@ -289,22 +409,28 @@ export function buildReport(runs: AnkiRunResult[]): CompatibilityReport {
 							grid.ok[anki]![ankiConnect] === true &&
 							compareVersions(ankiConnectVersions[ankiConnect]!, maximumAnkiConnect) > 0,
 					)
-		let verdict: Verdict = 'mismatch'
-		if (grid.untestable) {
-			verdict = 'untestable'
-		} else if (
-			empirical !== undefined &&
-			exceptions.length === 0 &&
-			beyondMaximum.length === 0 &&
-			sameMinimums(documented, empirical)
-		) {
-			verdict = 'confirmed'
-		}
+		const unknown = combinationsWhere(ankiVersions, ankiConnectVersions, (anki, ankiConnect) => {
+			const status = grid.results[ankiVersions[anki]!]![ankiConnectVersions[ankiConnect]!]
+			return (
+				(status === 'untested' || status === 'skipped' || status === 'infrastructure') &&
+				compareVersions(ankiVersions[anki]!, documented.minimumAnki) >= 0 &&
+				compareVersions(ankiConnectVersions[ankiConnect]!, documented.minimumAnkiConnect) >= 0 &&
+				(maximumAnkiConnect === undefined ||
+					compareVersions(ankiConnectVersions[ankiConnect]!, maximumAnkiConnect) <= 0)
+			)
+		})
+		const verdict = minimumVerdict(documented, empirical, {
+			beyondMaximum: beyondMaximum.length,
+			exceptions: exceptions.length,
+			unknown: unknown.length,
+			untestable: grid.untestable,
+		})
 
 		report.actions[`${group}.${name}`] = {
 			beyondMaximum,
 			details: grid.details,
 			documented,
+			probeRevision: Math.max(1, ...revisions),
 			...(empirical !== undefined && { empirical }),
 			exceptions,
 			results: grid.results,
@@ -312,6 +438,7 @@ export function buildReport(runs: AnkiRunResult[]): CompatibilityReport {
 		}
 	}
 
+	report.comparison = compareBaseline(report, options.baseline)
 	return report
 }
 
@@ -366,18 +493,132 @@ function findings(report: CompatibilityReport): string[] {
 		.flatMap(([name, action]) => [describeMismatch(name, action), ...describeFailures(action)])
 }
 
+function comparisonMarkdown(report: CompatibilityReport): string[] {
+	const { comparison } = report
+	if (comparison.baselineGeneratedAt === undefined) {
+		return [
+			'No accepted baseline selected. This run discovers compatibility; regression checking is not configured.',
+		]
+	}
+
+	return [
+		`Accepted baseline generated ${comparison.baselineGeneratedAt}. Compared ${String(comparison.compared)} previously supported action/Anki/AnkiConnect combinations; ${String(comparison.notSelected)} were outside this run's selected versions.`,
+		'',
+		`${String(comparison.regressions.length)} regression(s); ${String(comparison.unverified.length)} previously supported combination(s) could not be verified.`,
+		'',
+		...comparison.changedProbes.map(
+			(change) =>
+				`- Changed probe: \`${change.action}\`, revision ${String(change.baselineRevision)} → ${String(change.currentRevision)}. ${String(change.observations)} observations need a new baseline; these assertions are not comparable to the accepted run.`,
+		),
+		...comparison.regressions
+			.slice(0, 20)
+			.map(
+				(change) =>
+					`- Regression: \`${change.action}\`, Anki ${change.anki}, AnkiConnect ${change.ankiConnect}: ok → ${change.status}`,
+			),
+		...comparison.unverified
+			.slice(0, 20)
+			.map(
+				(change) =>
+					`- Missing coverage: \`${change.action}\`, Anki ${change.anki}, AnkiConnect ${change.ankiConnect}: ${change.status}`,
+			),
+		'',
+		'Full regression and missing-coverage lists are in compatibility.json.',
+	]
+}
+
+function loadingBoundaries(report: CompatibilityReport): string[] {
+	const versions = Object.keys(report.anki).toSorted(compareVersions)
+	const lines = [
+		'## Add-on loading boundaries',
+		'',
+		'Ranges cover consecutive surveyed releases only. Loading successfully does not imply that every action is supported; action outcomes are recorded separately.',
+		'',
+		'| AnkiConnect | Loaded on Anki | Incompatible pairings | Untested pairings |',
+		'| --- | --- | --- | --- |',
+	]
+	for (const ankiConnect of report.ankiConnect) {
+		const ranges: string[] = []
+		let first: string | undefined
+		let last: string | undefined
+		let incompatible = 0
+		let untested = 0
+		for (const version of [...versions, undefined]) {
+			const status =
+				version === undefined ? undefined : report.combinations[version]?.[ankiConnect]?.status
+			if (status === 'tested') {
+				first ??= version
+				last = version
+				continue
+			}
+
+			if (first !== undefined) {
+				ranges.push(first === last ? first : `${first}–${last ?? first}`)
+				first = undefined
+			}
+
+			if (status === 'addon-failed') {
+				incompatible++
+			} else if (version !== undefined) {
+				untested++
+			}
+		}
+
+		lines.push(
+			`| ${ankiConnect} | ${ranges.length > 0 ? ranges.join(', ') : '—'} | ${String(incompatible)} | ${String(untested)} |`,
+		)
+	}
+
+	return lines
+}
+
+function runtimeMarkdown(report: CompatibilityReport): string[] {
+	const byNote = new Map<string, string[]>()
+	for (const [version, run] of Object.entries(report.anki)) {
+		const notes = run.runtimeNotes ?? []
+		for (const note of notes) {
+			const versions = byNote.get(note) ?? []
+			versions.push(version)
+			byNote.set(note, versions)
+		}
+	}
+
+	return byNote.size === 0
+		? []
+		: [
+				'## Runtime workarounds',
+				'',
+				'These observations use runtime adjustments in disposable Linux profiles. GUI focus and readiness assertions remain enabled.',
+				'',
+				...byNote.entries().map(([note, versions]) => `- Anki ${versions.join(', ')}: ${note}`),
+			]
+}
+
 function summaryMarkdown(report: CompatibilityReport): string {
 	const mismatches = Object.values(report.actions).filter((action) => action.verdict === 'mismatch')
+	const inconclusive = Object.values(report.actions).filter(
+		(action) => action.verdict === 'inconclusive',
+	)
 	const lines = [
 		'# Compatibility',
 		'',
-		`Tested ${String(Object.keys(report.anki).length)} Anki releases against ${String(report.ankiConnect.length)} AnkiConnect releases. Oldest tested: Anki ${report.oldestTested.minimumAnki}, AnkiConnect ${report.oldestTested.minimumAnkiConnect}.`,
+		`Surveyed ${String(Object.keys(report.anki).length)} Anki releases against ${String(report.ankiConnect.length)} AnkiConnect releases. Oldest selected: Anki ${report.oldestTested.minimumAnki}, AnkiConnect ${report.oldestTested.minimumAnkiConnect}.`,
 		'',
-		mismatches.length === 0
-			? 'Every documented minimum matches the empirical results.'
-			: `${String(mismatches.length)} action(s) have documented minimums that do not match the empirical results.`,
+		...comparisonMarkdown(report),
 		'',
-		'| Action | Documented Anki | Documented AnkiConnect | Lowest fully supported Anki | Lowest fully supported AnkiConnect | Exceptions | Verdict |',
+		`${String(report.collectionFailures.length)} collection failure(s). ${String(mismatches.length)} documentation mismatch(es); ${String(inconclusive.length)} inconclusive action(s). Documentation findings are informational. Missing coverage is not evidence for raising a documented minimum.`,
+		'',
+		...runtimeMarkdown(report),
+		'',
+		...attemptsMarkdown(report),
+		'',
+		...loadingBoundaries(report),
+		'',
+		'## Action minimums',
+		'',
+		'Observed minimums apply where the add-on loads and the action was tested. Incompatible pairings are outside this action-level calculation.',
+		'',
+		'| Action | Documented Anki | Documented AnkiConnect | Observed Anki | Observed AnkiConnect | Exceptions | Verdict |',
 		'| --- | --- | --- | --- | --- | --- | --- |',
 	]
 	for (const [name, action] of Object.entries(report.actions)) {
@@ -391,22 +632,50 @@ function summaryMarkdown(report: CompatibilityReport): string {
 		)
 	}
 
-	const failedReleases = Object.entries(report.anki)
-		.filter(([, release]) => release.status !== 'ok')
-		.map(([version, release]) => `- Anki ${version}: ${release.status}: ${release.detail ?? ''}`)
 	const untested = Object.entries(report.combinations).flatMap(([anki, byConnect]) =>
 		Object.entries(byConnect)
-			.filter(([, combination]) => combination.status !== 'tested')
+			.filter(
+				([, combination]) =>
+					combination.status !== 'tested' && combination.status !== 'addon-failed',
+			)
 			.map(
 				([ankiConnect, combination]) =>
 					`- Anki ${anki}, AnkiConnect ${ankiConnect}: ${combination.status}`,
 			),
 	)
-	if (failedReleases.length > 0 || untested.length > 0) {
-		lines.push('', '## Not tested', '', ...failedReleases, ...untested)
+	if (report.collectionFailures.length > 0 || untested.length > 0) {
+		lines.push(
+			'',
+			'## Incomplete coverage',
+			'',
+			...report.collectionFailures.map((failure) => `- ${failure}`),
+			...untested,
+		)
 	}
 
 	return lines.join('\n')
+}
+
+function attemptsMarkdown(report: CompatibilityReport): string[] {
+	const retried = Object.entries(report.combinations).flatMap(([anki, row]) =>
+		Object.entries(row)
+			.filter(([, result]) => (result.attempts?.length ?? 0) > 1)
+			.map(([ankiConnect, result]) => ({ anki, ankiConnect, result })),
+	)
+	if (retried.length === 0) {
+		return []
+	}
+
+	return [
+		'## Infrastructure retries',
+		'',
+		'Only explicit host failures are retried, once in a fresh profile. API and behavior failures are never retried. All attempt logs and results are retained.',
+		'',
+		...retried.map(
+			({ anki, ankiConnect, result }) =>
+				`- Anki ${anki}, AnkiConnect ${ankiConnect}: ${result.attempts?.at(-1)?.failures.length === 0 && result.status === 'tested' ? 'recovered' : 'unresolved'}; ${result.attempts?.[0]?.failures.join('; ') ?? ''}`,
+		),
+	]
 }
 
 /** A self-contained prompt for an LLM to reconcile the source with the results. */
@@ -415,30 +684,45 @@ function promptMarkdown(report: CompatibilityReport): string {
 	return [
 		'# Align documented AnkiConnect compatibility with empirical results',
 		'',
-		'The compatibility workflow for `yanki-connect` ran every client action end-to-end against every combination of Anki and AnkiConnect releases listed below. For an action to count as supported in a combination, the call had to succeed with every documented parameter, behave as documented, and return a value that type-checks against the declared `ResultForAction` type in `src/types/*.ts`. Partial support does not count.',
+		'The compatibility workflow for `yanki-connect` attempted the Anki and AnkiConnect combinations listed below. For an action to count as supported, the call had to succeed with every documented parameter, behave as documented, and return a value that type-checks against the declared `ResultForAction` type in `src/types/*.ts`. Partial support does not count. Add-on incompatibility and missing coverage are separate outcomes.',
 		'',
-		`Tested Anki releases: ${Object.keys(report.anki).join(', ')}.`,
+		`Selected Anki releases: ${Object.keys(report.anki).join(', ')}.`,
 		'',
-		`Tested AnkiConnect releases: ${report.ankiConnect.join(', ')}.`,
+		`Selected AnkiConnect releases: ${report.ankiConnect.join(', ')}.`,
 		'',
-		`Oldest tested: Anki ${report.oldestTested.minimumAnki} and AnkiConnect ${report.oldestTested.minimumAnkiConnect}. A minimum equal to one of these means the true minimum may be lower.`,
+		`Oldest selected: Anki ${report.oldestTested.minimumAnki} and AnkiConnect ${report.oldestTested.minimumAnkiConnect}. Observed minimums are bounded by the selected versions and available coverage.`,
 		'',
 		'Documented minimums are confirmed when every tested combination above them (up to any documented maximum) is supported and no lower minimums have that property. Each action in `src/client.ts` documents its requirements with `@minimumAnki` and `@minimumAnkiConnect` JSDoc tags (plus `@maximumAnkiConnect` when a later release removed the action) and `@see` links to the upstream source at the minimum AnkiConnect release. The `actionList` rule in `mdat.config.ts` regenerates the readme table from those tags; run `pnpm fix` afterwards.',
 		'',
+		'Never raise a documented minimum solely because an older Anki release could not launch, an artifact is missing, or an action was skipped. Those findings are inconclusive. Action minimums are conditional on the add-on loading; consult the loading boundaries separately. Documentation mismatches do not fail discovery runs. Only regressions against the explicitly accepted baseline and failures to collect or reverify results fail the report.',
+		'',
 		'For each finding below, decide whether the documented minimums are wrong (update the tags and `@see` links) or whether the declared parameter or result types promise more than AnkiConnect provides (adjust the types in `src/types/*.ts`, keeping them accurate for the latest release). When no minimums cover every tested combination, a later release removed or broke the action; document that in the action description and, for removals, add `@maximumAnkiConnect`. Verify each change against the upstream source linked from the action.',
+		'',
+		...runtimeMarkdown(report),
 		'',
 		'## Findings',
 		'',
-		...(lines.length === 0 ? ['None. Every documented minimum matches.'] : lines),
+		...(lines.length === 0
+			? [
+					'No demonstrated documentation mismatches. Check summary.md for inconclusive results and coverage gaps.',
+				]
+			: lines),
+		'',
+		'## Baseline comparison',
+		'',
+		...comparisonMarkdown(report),
 		'',
 		'The full per-combination results are in `compatibility.json` next to this file.',
 	].join('\n')
 }
 
-/** Writes the report files and fails if any documented minimum mismatches. */
+/** Write artifacts before failing for regressions or incomplete collection. */
 function main(): void {
 	const { values } = parseArgs({
 		options: {
+			'anki-connect-versions': { type: 'string' },
+			'anki-releases': { type: 'string' },
+			baseline: { type: 'string' },
 			output: { default: 'compatibility', type: 'string' },
 			results: { default: 'results', type: 'string' },
 		},
@@ -450,11 +734,19 @@ function main(): void {
 			(file) =>
 				JSON.parse(fs.readFileSync(path.join(values.results, file), 'utf8')) as AnkiRunResult,
 		)
-	if (runs.length === 0) {
+	if (runs.length === 0 && values['anki-releases'] === undefined) {
 		throw new Error(`No result files found in ${values.results}`)
 	}
 
-	const report = buildReport(runs)
+	const report = buildReport(runs, {
+		...(values['anki-releases'] !== undefined && {
+			ankiReleases: JSON.parse(values['anki-releases']) as AnkiRelease[],
+		}),
+		...(values['anki-connect-versions'] !== undefined && {
+			ankiConnectVersions: JSON.parse(values['anki-connect-versions']) as string[],
+		}),
+		...(values.baseline !== undefined && { baseline: readBaseline(values.baseline) }),
+	})
 	fs.mkdirSync(values.output, { recursive: true })
 	fs.writeFileSync(
 		path.join(values.output, 'compatibility.json'),
@@ -468,13 +760,17 @@ function main(): void {
 	}
 
 	console.log(summary)
-	const mismatches = Object.values(report.actions).filter((action) => action.verdict === 'mismatch')
-	if (mismatches.length === 0) {
+	const { comparison } = report
+	if (
+		report.collectionFailures.length === 0 &&
+		comparison.regressions.length === 0 &&
+		comparison.unverified.length === 0
+	) {
 		return
 	}
 
 	console.error(
-		`\n${String(mismatches.length)} action(s) have documented minimums that do not match the empirical results. See compatibility-prompt.md.`,
+		`\nCompatibility failed: ${String(report.collectionFailures.length)} collection failure(s), ${String(comparison.regressions.length)} regression(s), ${String(comparison.unverified.length)} unverified baseline observation(s). See summary.md.`,
 	)
 	process.exitCode = 1
 }

@@ -1,4 +1,4 @@
-// cspell:ignore prefs PYTHONHOME
+// cspell:ignore prefs
 import { execa } from 'execa'
 import fs from 'node:fs'
 import net from 'node:net'
@@ -6,10 +6,22 @@ import os from 'node:os'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { parseArgs } from 'node:util'
-import type { AnkiRelease, AnkiRunResult, CombinationResult } from './shared.ts'
+import type { AnkiProcess } from './anki-process.ts'
+import type {
+	AnkiRelease,
+	AnkiRunResult,
+	CombinationResult,
+	GuiDiagnosticOptions,
+} from './shared.ts'
+import { launchAnki } from './anki-process.ts'
+import { saveStartupLogs } from './diagnostics.ts'
 import { installAnki } from './install-anki.ts'
+import { captureNativeCrashes } from './native-crash.ts'
+import { PROBE_REVISIONS } from './probe-revisions.ts'
 import { probe } from './probe.ts'
-import { truncate } from './shared.ts'
+import { retryInfrastructure } from './retry.ts'
+import { prepareAnkiRuntime } from './runtime.ts'
+import { collectionFailures, truncate } from './shared.ts'
 
 const ANKI_CONNECT_PORT = 8765
 const ANKI_CONNECT_ID = '2055492159'
@@ -27,17 +39,6 @@ const START_TIMEOUT = 150_000
 /** Time allowed for AnkiConnect to answer once Anki has loaded its add-ons. */
 const ADDON_TIMEOUT = 60_000
 const STOP_TIMEOUT = 30_000
-const PYTHON_VARIABLES = new Set(['LD_LIBRARY_PATH', 'PYTHONHOME', 'PYTHONPATH'])
-
-type AnkiProcess = {
-	base: string
-	dialogsLog: string
-	exited: Promise<void>
-	kill: () => Promise<void>
-	log: () => string
-	running: () => boolean
-	versionFile: string
-}
 
 async function sleep(milliseconds: number): Promise<void> {
 	await new Promise((resolve) => {
@@ -77,12 +78,23 @@ async function ankiConnectResponds(): Promise<boolean> {
  * Create a disposable Anki base folder with the dialog-dismissing add-on and,
  * optionally, an AnkiConnect release.
  */
-async function createBase(pluginDirectory?: string): Promise<string> {
+async function createBase(
+	pluginDirectory?: string,
+	diagnosticFocus?: GuiDiagnosticOptions['focus'],
+): Promise<string> {
 	const base = await fs.promises.mkdtemp(path.join(os.tmpdir(), 'yanki-compat-anki-'))
 	await execa('python3', [CREATE_PREFS, base])
+	await fs.promises.copyFile('scripts/compatibility/fixtures/mpv.conf', path.join(base, 'mpv.conf'))
 	const dialogs = path.join(base, ADDON_DIRECTORY, DIALOGS_ADDON_ID)
 	await fs.promises.mkdir(dialogs, { recursive: true })
 	await fs.promises.copyFile(DIALOGS_ADDON, path.join(dialogs, '__init__.py'))
+	if (diagnosticFocus !== undefined) {
+		await fs.promises.writeFile(
+			path.join(dialogs, 'diagnostic.json'),
+			JSON.stringify({ focus: diagnosticFocus }),
+		)
+	}
+
 	if (pluginDirectory !== undefined) {
 		await fs.promises.cp(pluginDirectory, path.join(base, ADDON_DIRECTORY, ANKI_CONNECT_ID), {
 			recursive: true,
@@ -92,56 +104,27 @@ async function createBase(pluginDirectory?: string): Promise<string> {
 	return base
 }
 
-function readTail(file: string, lines = 20): string {
-	const content = fs.existsSync(file) ? fs.readFileSync(file, 'utf8') : ''
-	return truncate(content.trim().split('\n').slice(-lines).join('\n'), 2000)
-}
+async function stopAnki(
+	anki: AnkiProcess,
+	diagnosticsDirectory?: string,
+	coreDirectory?: string,
+): Promise<void> {
+	try {
+		await anki.kill()
+		const start = Date.now()
+		while ((await portOpen()) && Date.now() - start < STOP_TIMEOUT) {
+			await sleep(250)
+		}
 
-function launchAnki(executable: string, base: string, environment: NodeJS.ProcessEnv): AnkiProcess {
-	const logPath = path.join(base, 'anki.log')
-	const child = execa(executable, ['-b', base], {
-		cleanup: false,
-		detached: true,
-		env: { ...environment, LANG: 'en_US.UTF-8' },
-		extendEnv: false,
-		reject: false,
-		stderr: { append: true, file: logPath },
-		stdin: 'ignore',
-		stdout: { append: true, file: logPath },
-	})
-	let running = true
-	const exited = (async () => {
-		await child
-		running = false
-	})()
-	child.nodeChildProcess.unref()
-
-	const addonDirectory = path.join(base, ADDON_DIRECTORY, DIALOGS_ADDON_ID)
-	return {
-		base,
-		dialogsLog: path.join(addonDirectory, 'dialogs.log'),
-		exited,
-		async kill() {
-			if (running && child.pid !== undefined) {
-				try {
-					process.kill(-child.pid, 'SIGKILL')
-				} catch {
-					// Process group already gone
-				}
-			}
-
-			await Promise.race([exited, sleep(STOP_TIMEOUT)])
-			const start = Date.now()
-			while ((await portOpen()) && Date.now() - start < STOP_TIMEOUT) {
-				await sleep(250)
-			}
-		},
-		log() {
-			const dialogs = readTail(path.join(addonDirectory, 'dialogs.log'), 10)
-			return `${readTail(logPath)}${dialogs === '' ? '' : `\nDismissed dialogs:\n${dialogs}`}`
-		},
-		running: () => running,
-		versionFile: path.join(addonDirectory, 'anki-version.txt'),
+		if (coreDirectory !== undefined) {
+			await captureNativeCrashes(coreDirectory, anki.base)
+		}
+	} finally {
+		try {
+			await saveStartupLogs(anki.base, diagnosticsDirectory)
+		} finally {
+			await fs.promises.rm(anki.base, { force: true, recursive: true })
+		}
 	}
 }
 
@@ -166,65 +149,103 @@ async function waitForStart(anki: AnkiProcess): Promise<string | undefined> {
  * Wait for AnkiConnect to answer. An add-on load error dialog mentioning the
  * add-on means it never will, so give up as soon as one is dismissed.
  */
-async function waitForAnkiConnect(anki: AnkiProcess): Promise<boolean> {
+async function waitForAnkiConnect(
+	anki: AnkiProcess,
+): Promise<'addon-failed' | 'probe-failed' | 'ready'> {
 	const start = Date.now()
 	while (Date.now() - start < ADDON_TIMEOUT && anki.running()) {
 		if (await ankiConnectResponds()) {
-			return true
+			return 'ready'
 		}
 
-		if (fs.existsSync(anki.dialogsLog)) {
-			// Only a traceback naming the add-on means it failed to load; the
-			// add-on update prompt also mentions it.
-			const dialogs = fs.readFileSync(anki.dialogsLog, 'utf8')
-			if (dialogs.includes(ANKI_CONNECT_ID) && dialogs.includes('Traceback')) {
-				return false
-			}
+		// Newer Anki versions write load errors to stderr rather than a dialog.
+		const log = anki.log()
+		if (log.includes(ANKI_CONNECT_ID) && log.includes('Traceback')) {
+			return 'addon-failed'
 		}
 
 		await sleep(500)
 	}
 
-	return false
+	// A process may exit immediately after reporting its load error.
+	const log = anki.log()
+	return log.includes(ANKI_CONNECT_ID) && log.includes('Traceback')
+		? 'addon-failed'
+		: 'probe-failed'
 }
 
 /**
  * Launch the given Anki executable with one AnkiConnect release installed in a
  * disposable profile, probe every action, and shut Anki down again.
  */
-export async function testCombination(
+async function testCombinationAttempt(
 	executable: string,
 	pluginDirectory: string,
 	ankiConnectVersion: string,
 	environment: NodeJS.ProcessEnv = process.env,
+	diagnosticsDirectory?: string,
+	diagnostic?: GuiDiagnosticOptions,
 ): Promise<CombinationResult> {
-	const base = await createBase(pluginDirectory)
-	const anki = launchAnki(executable, base, environment)
+	const base = await createBase(pluginDirectory, diagnostic?.focus)
+	const anki = launchAnki(executable, base, environment, diagnostic?.sandbox)
 	try {
 		if ((await waitForStart(anki)) === undefined) {
 			return {
 				actions: {},
 				ankiConnectVersion,
-				detail: `Anki did not load its add-ons:\n${anki.log()}`,
+				detail: `Anki did not load its add-ons:\n${truncate(anki.log(), 4000)}`,
 				status: 'launch-failed',
 			}
 		}
 
-		if (!(await waitForAnkiConnect(anki))) {
+		const startup = await waitForAnkiConnect(anki)
+		if (startup !== 'ready') {
 			return {
 				actions: {},
 				ankiConnectVersion,
-				detail: `AnkiConnect did not respond:\n${anki.log()}`,
-				status: 'addon-failed',
+				detail: `AnkiConnect did not respond:\n${truncate(anki.log(), 4000)}`,
+				status: startup,
 			}
 		}
 
-		const report = await probe()
+		const report = await probe({ guiStateFile: anki.guiStateFile })
 		return { actions: report.actions, ankiConnectVersion, status: 'tested' }
 	} finally {
-		await anki.kill()
-		await fs.promises.rm(base, { force: true, recursive: true })
+		await stopAnki(anki, diagnosticsDirectory, diagnostic?.coreDirectory)
 	}
+}
+
+/** Preserve each attempt; only a diagnosed host failure permits a fresh profile. */
+export async function testCombination(
+	executable: string,
+	pluginDirectory: string,
+	ankiConnectVersion: string,
+	environment: NodeJS.ProcessEnv = process.env,
+	diagnosticsDirectory?: string,
+	diagnostic?: GuiDiagnosticOptions,
+): Promise<CombinationResult> {
+	return retryInfrastructure(async (attempt) => {
+		const directory =
+			diagnosticsDirectory === undefined
+				? undefined
+				: path.join(diagnosticsDirectory, `attempt-${String(attempt)}`)
+		const result = await testCombinationAttempt(
+			executable,
+			pluginDirectory,
+			ankiConnectVersion,
+			environment,
+			directory,
+			diagnostic,
+		)
+		if (directory !== undefined) {
+			await fs.promises.writeFile(
+				path.join(directory, 'result.json'),
+				JSON.stringify(result, undefined, '\t'),
+			)
+		}
+
+		return result
+	})
 }
 
 /**
@@ -236,12 +257,23 @@ export async function runAnkiRelease(
 	installDirectory: string,
 	pluginsDirectory: string,
 	ankiConnectVersions: string[],
+	diagnosticsDirectory?: string,
+	diagnostic?: GuiDiagnosticOptions,
 ): Promise<AnkiRunResult> {
+	const { environment, notes } = prepareAnkiRuntime(release, process.env, diagnostic)
+	const metadata = {
+		...(diagnostic !== undefined && {
+			diagnosticFocus: diagnostic.focus,
+			diagnosticSandbox: diagnostic.sandbox,
+		}),
+		...(notes.length > 0 && { runtimeNotes: notes }),
+	}
 	let executable: string
 	try {
 		executable = await installAnki(release, installDirectory)
 	} catch (error) {
 		return {
+			...metadata,
 			combinations: [],
 			detail: truncate(error instanceof Error ? error.message : String(error), 2000),
 			release,
@@ -253,28 +285,24 @@ export async function runAnkiRelease(
 		throw new Error(`Port ${String(ANKI_CONNECT_PORT)} is already in use`)
 	}
 
-	// Bundles ship their own Python; the Python set up for pip installs must not leak into them.
-	const environment =
-		release.source === 'github'
-			? Object.fromEntries(
-					Object.entries(process.env).filter(([name]) => !PYTHON_VARIABLES.has(name)),
-				)
-			: process.env
-
 	const preflightBase = await createBase()
-	const preflight = launchAnki(executable, preflightBase, environment)
+	const preflight = launchAnki(executable, preflightBase, environment, diagnostic?.sandbox)
 	let reportedVersion: string | undefined
 	let preflightLog: string
 	try {
 		reportedVersion = await waitForStart(preflight)
-		preflightLog = preflight.log()
+		preflightLog = truncate(preflight.log(), 4000)
 	} finally {
-		await preflight.kill()
-		await fs.promises.rm(preflightBase, { force: true, recursive: true })
+		await stopAnki(
+			preflight,
+			diagnosticsDirectory === undefined ? undefined : path.join(diagnosticsDirectory, 'preflight'),
+			diagnostic?.coreDirectory,
+		)
 	}
 
 	if (reportedVersion === undefined) {
 		return {
+			...metadata,
 			combinations: [],
 			detail: `Anki did not start:\n${preflightLog}`,
 			release,
@@ -285,12 +313,27 @@ export async function runAnkiRelease(
 	console.log(`Anki ${release.version} reports version ${reportedVersion}`)
 	const combinations: CombinationResult[] = []
 	for (const ankiConnectVersion of ankiConnectVersions) {
-		const result = await testCombination(
-			executable,
-			path.join(pluginsDirectory, ankiConnectVersion),
-			ankiConnectVersion,
-			environment,
-		)
+		let result: CombinationResult
+		try {
+			result = await testCombination(
+				executable,
+				path.join(pluginsDirectory, ankiConnectVersion),
+				ankiConnectVersion,
+				environment,
+				diagnosticsDirectory === undefined
+					? undefined
+					: path.join(diagnosticsDirectory, ankiConnectVersion),
+				diagnostic,
+			)
+		} catch (error) {
+			result = {
+				actions: {},
+				ankiConnectVersion,
+				detail: truncate(error instanceof Error ? error.message : String(error), 2000),
+				status: 'probe-failed',
+			}
+		}
+
 		const ok = Object.values(result.actions).filter((outcome) => outcome.status === 'ok').length
 		console.log(
 			`AnkiConnect ${ankiConnectVersion}: ${result.status}${result.status === 'tested' ? ` (${String(ok)} actions ok)` : ''}`,
@@ -298,14 +341,17 @@ export async function runAnkiRelease(
 		combinations.push(result)
 	}
 
-	return { combinations, release, reportedVersion, status: 'ok' }
+	return { ...metadata, combinations, release, reportedVersion, status: 'ok' }
 }
 
-if (process.argv[1] === fileURLToPath(import.meta.url)) {
+async function main(): Promise<void> {
 	const { values } = parseArgs({
 		options: {
 			'anki-connect-versions': { type: 'string' },
 			'anki-release': { type: 'string' },
+			'core-directory': { type: 'string' },
+			'diagnostic-focus': { type: 'string' },
+			'diagnostic-sandbox': { type: 'string' },
 			'install-directory': { type: 'string' },
 			output: { type: 'string' },
 			plugins: { type: 'string' },
@@ -313,14 +359,62 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
 	})
 	const release = JSON.parse(values['anki-release'] ?? '') as AnkiRelease
 	const ankiConnectVersions = JSON.parse(values['anki-connect-versions'] ?? '') as string[]
-	const result = await runAnkiRelease(
-		release,
-		values['install-directory'] ?? path.join(os.tmpdir(), 'yanki-compat-install'),
-		values.plugins ?? 'plugins',
-		ankiConnectVersions,
-	)
 	const output = values.output ?? `results/anki-${release.version}.json`
+	const focus = values['diagnostic-focus']
+	const sandbox = values['diagnostic-sandbox']
+	let diagnostic: GuiDiagnosticOptions | undefined
+	if (focus !== undefined || sandbox !== undefined || values['core-directory'] !== undefined) {
+		if ((focus !== 'enabled' && focus !== 'disabled') || values['core-directory'] === undefined) {
+			throw new Error(
+				'GUI diagnostics require --diagnostic-focus enabled|disabled and --core-directory',
+			)
+		}
+
+		if (sandbox !== undefined && sandbox !== 'enabled' && sandbox !== 'disabled') {
+			throw new Error('GUI diagnostics require --diagnostic-sandbox enabled|disabled')
+		}
+
+		diagnostic = { coreDirectory: values['core-directory'], focus, sandbox }
+	}
+
+	let result: AnkiRunResult
+	try {
+		result = await runAnkiRelease(
+			release,
+			values['install-directory'] ?? path.join(os.tmpdir(), 'yanki-compat-install'),
+			values.plugins ?? 'plugins',
+			ankiConnectVersions,
+			path.join(path.dirname(output), 'logs', release.version),
+			diagnostic,
+		)
+	} catch (error) {
+		result = {
+			combinations: [],
+			detail: truncate(error instanceof Error ? error.message : String(error), 2000),
+			release,
+			status: 'probe-failed',
+		}
+	}
+
+	result.ankiConnectVersions = ankiConnectVersions
+	if (diagnostic !== undefined) {
+		result.diagnosticFocus = diagnostic.focus
+		result.diagnosticSandbox = diagnostic.sandbox
+	}
+
+	result.probeRevisions = PROBE_REVISIONS
 	await fs.promises.mkdir(path.dirname(output), { recursive: true })
 	await fs.promises.writeFile(output, JSON.stringify(result, undefined, '\t'))
 	console.log(`${result.status}: wrote ${output}`)
+	const failures = collectionFailures(result)
+	if (failures.length === 0) {
+		return
+	}
+
+	console.error(failures.join('\n'))
+	process.exitCode = 1
+}
+
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
+	await main()
 }

@@ -1,8 +1,9 @@
 name: Compatibility
 
 # Probes every client action against every Anki and AnkiConnect release
-# combination on Linux, type-checks the responses, and verifies the
-# @minimumAnki and @minimumAnkiConnect tags documented in src/client.ts.
+# combination on Linux, type-checks the responses, and reports loading
+# boundaries and documented minimums. An explicitly accepted baseline gates
+# regressions; incomplete collection also fails the run.
 # Runs monthly on the 15th and on demand, with one job per Anki release.
 
 on:
@@ -10,12 +11,22 @@ on:
     - cron: '0 0 15 * *' # 00:00 UTC on the 15th of each month.
   workflow_dispatch:
     inputs:
+      diagnose-gui-crash:
+        description: 'Compare the QtWebEngine sandbox on/off with native backtraces for selected versions (defaults: Anki 2.1.49 + AnkiConnect 23.10.29.0; ignores baseline)'
+        type: boolean
+        required: false
+        default: false
       anki-versions:
-        description: 'Comma-separated Anki releases to test (empty = every release with a Linux build)'
+        description: 'Comma-separated Anki releases to test (empty = every Linux release, or 2.1.49 in diagnostic mode)'
         required: false
         default: ''
       anki-connect-versions:
-        description: 'Comma-separated AnkiConnect releases to test (empty = every release since 22.2.19.0)'
+        description: 'Comma-separated AnkiConnect releases to test (empty = every release since 22.2.19.0, or 23.10.29.0 in diagnostic mode)'
+        required: false
+        default: ''
+      baseline-run-id:
+        description: 'Accepted compatibility run ID (empty = repository variable COMPATIBILITY_BASELINE_RUN_ID, or discovery only)'
+        type: string
         required: false
         default: ''
 
@@ -23,7 +34,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.ref }}-${{ inputs.diagnose-gui-crash && 'gui-diagnostics' || 'survey' }}
   cancel-in-progress: true
 
 jobs:
@@ -56,8 +67,8 @@ jobs:
       - name: Enumerate releases
         id: versions
         env:
-          ANKI_VERSIONS: ${{ inputs.anki-versions }}
-          ANKI_CONNECT_VERSIONS: ${{ inputs.anki-connect-versions }}
+          ANKI_VERSIONS: ${{ inputs.anki-versions || (inputs.diagnose-gui-crash && '2.1.49' || '') }}
+          ANKI_CONNECT_VERSIONS: ${{ inputs.anki-connect-versions || (inputs.diagnose-gui-crash && '23.10.29.0' || '') }}
           GITHUB_TOKEN: ${{ github.token }}
         run: node scripts/compatibility/versions.ts >> "$GITHUB_OUTPUT"
 
@@ -79,14 +90,16 @@ jobs:
           retention-days: 7
 
   probe:
-    name: Probe Anki ${{ matrix.anki.version }}
+    name: Probe Anki ${{ matrix.anki.version }}${{ inputs.diagnose-gui-crash && format(' (sandbox {0})', matrix.sandbox) || '' }}
     needs: versions
-    runs-on: ubuntu-latest
-    timeout-minutes: 150
+    # Old bundled Qt libraries cannot load under the newer glibc in Ubuntu 26.04.
+    runs-on: ubuntu-24.04
+    timeout-minutes: ${{ inputs.diagnose-gui-crash && 25 || 150 }}
     strategy:
       fail-fast: false
       matrix:
         anki: ${{ fromJSON(needs.versions.outputs.anki) }}
+        sandbox: ${{ fromJSON(inputs.diagnose-gui-crash && '["enabled", "disabled"]' || '["enabled"]') }}
 
     steps:
       - name: Checkout
@@ -96,10 +109,12 @@ jobs:
 
       - name: Install system dependencies
         run: |
-          sudo apt-get update
-          sudo apt-get install -y --no-install-recommends \
+          sudo apt-get -o Acquire::Retries=3 -o APT::Update::Error-Mode=any update
+          sudo apt-get -o Acquire::Retries=3 install -y --no-install-recommends \
             bzip2 \
             xvfb \
+            openbox \
+            mpv \
             zstd \
             libegl1 \
             libgl1 \
@@ -127,6 +142,21 @@ jobs:
             libpango-1.0-0 \
             libcairo2 \
             libatspi2.0-0
+
+      - name: Verify media playback
+        run: |
+          mpv --version
+          for media in scripts/compatibility/fixtures/audio.mp3 scripts/compatibility/fixtures/video.mp4; do
+            mpv --no-config --include=scripts/compatibility/fixtures/mpv.conf --really-quiet "$media"
+          done
+
+      - name: Enable native crash capture
+        if: ${{ inputs.diagnose-gui-crash }}
+        run: |
+          sudo apt-get -o Acquire::Retries=3 install -y --no-install-recommends gdb libc6-dbg
+          mkdir -p "$RUNNER_TEMP/anki-cores"
+          cat /proc/sys/kernel/core_pattern > "$RUNNER_TEMP/original-core-pattern"
+          sudo sysctl -w "kernel.core_pattern=$RUNNER_TEMP/anki-cores/core.%p.%E"
 
       - name: Setup Python
         uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
@@ -158,28 +188,93 @@ jobs:
         env:
           ANKI_RELEASE: ${{ toJSON(matrix.anki) }}
           ANKI_CONNECT_VERSIONS: ${{ needs.versions.outputs.anki-connect }}
+          GUI_DIAGNOSTIC_SANDBOX: ${{ inputs.diagnose-gui-crash && matrix.sandbox || '' }}
         run: |
-          xvfb-run --auto-servernum node scripts/compatibility/run.ts \
-            --anki-release "$ANKI_RELEASE" \
-            --anki-connect-versions "$ANKI_CONNECT_VERSIONS" \
-            --install-directory "$RUNNER_TEMP/anki" \
-            --plugins plugins \
-            --output results/anki.json
+          mkdir -p results
+          xvfb-run --auto-servernum bash <<'PROBE'
+            set -euo pipefail
+            diagnostic_args=()
+            if [[ -n "$GUI_DIAGNOSTIC_SANDBOX" ]]; then
+              ulimit -c unlimited
+              node scripts/compatibility/native-crash.ts \
+                --core-directory "$RUNNER_TEMP/anki-cores" \
+                --output results/native-capture-check
+              diagnostic_args=(
+                --diagnostic-focus enabled
+                --diagnostic-sandbox "$GUI_DIAGNOSTIC_SANDBOX"
+                --core-directory "$RUNNER_TEMP/anki-cores"
+              )
+            fi
+            openbox --sm-disable > results/window-manager.log 2>&1 &
+            window_manager=$!
+            trap 'kill "$window_manager" 2>/dev/null || true' EXIT
+            node scripts/compatibility/run.ts \
+              --anki-release "$ANKI_RELEASE" \
+              --anki-connect-versions "$ANKI_CONNECT_VERSIONS" \
+              --install-directory "$RUNNER_TEMP/anki" \
+              --plugins plugins \
+              --output results/anki.json \
+              "${diagnostic_args[@]}"
+          PROBE
+
+      - name: Summarize GUI diagnostics
+        if: ${{ !cancelled() && inputs.diagnose-gui-crash }}
+        env:
+          ANKI_VERSION: ${{ matrix.anki.version }}
+          ANKI_CONNECT_VERSIONS: ${{ join(fromJSON(needs.versions.outputs.anki-connect), ', ') }}
+          GUI_DIAGNOSTIC_SANDBOX: ${{ matrix.sandbox }}
+        run: |
+          {
+            printf '## GUI crash diagnosis: sandbox %s\n\n' "$GUI_DIAGNOSTIC_SANDBOX"
+            printf 'Anki %s + AnkiConnect %s. Focus and readiness checks are enabled in both jobs. Diagnostic results are excluded from compatibility baselines.\n\n' "$ANKI_VERSION" "$ANKI_CONNECT_VERSIONS"
+            printf '| Stage | Process exit | QTWEBENGINE_DISABLE_SANDBOX | Native capture | Renderer cores | Action outcomes |\n| --- | --- | --- | --- | --- | --- |\n'
+            for file in results/logs/*/preflight/process.json results/logs/*/*/attempt-*/process.json; do
+              [[ -f "$file" ]] || continue
+              directory="${file%/process.json}"
+              exit_status=$(jq -r '(.signal // (.exitCode // "unknown" | tostring)) + (if .cleanup.signal then " (runner cleanup)" else "" end)' "$file")
+              sandbox_override=$(jq -r '.qtWebEngineDisableSandbox // "unknown"' "$file")
+              capture_status=missing
+              renderer_cores=unknown
+              if [[ -f "$directory/native-crash.json" ]]; then
+                capture_status=$(jq -r '"\(.status) (\(.crashes | length) cores)"' "$directory/native-crash.json")
+                renderer_cores=$(jq -r '[.crashes[] | select(.executable | endswith("/QtWebEngineProcess"))] | length' "$directory/native-crash.json")
+              fi
+              outcomes='not probed'
+              if [[ -f "$directory/result.json" ]]; then
+                outcomes=$(jq -r '.status + ": " + ([.actions[].status] | group_by(.) | map("\(.[0])=\(length)") | join(", "))' "$directory/result.json")
+              fi
+              printf '| %s | %s | %s | %s | %s | %s |\n' "${directory#results/logs/}" "$exit_status" "$sandbox_override" "$capture_status" "$renderer_cores" "$outcomes"
+            done
+            printf '\nSee the artifact for native backtraces, focus-call traces, and the native capture check.\n'
+          } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload results
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: compatibility-anki-${{ matrix.anki.version }}
+          name: ${{ inputs.diagnose-gui-crash && 'compatibility-debug' || 'compatibility-anki' }}-${{ matrix.anki.version }}${{ inputs.diagnose-gui-crash && format('-sandbox-{0}', matrix.sandbox) || '' }}
           path: results
           retention-days: 90
 
+      - name: Restore native crash settings
+        if: ${{ always() && inputs.diagnose-gui-crash }}
+        run: |
+          if [[ -f "$RUNNER_TEMP/original-core-pattern" ]]; then
+            original_pattern=$(cat "$RUNNER_TEMP/original-core-pattern")
+            sudo sysctl -w "kernel.core_pattern=$original_pattern"
+          fi
+
   report:
     name: Report
-    needs: probe
-    if: ${{ !cancelled() }}
+    needs: [versions, probe]
+    if: ${{ !cancelled() && needs.versions.result == 'success' && !inputs.diagnose-gui-crash }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    permissions:
+      actions: read
+      contents: read
+    env:
+      BASELINE_RUN_ID: ${{ inputs.baseline-run-id || vars.COMPATIBILITY_BASELINE_RUN_ID }}
 
     steps:
       - name: Checkout
@@ -206,13 +301,35 @@ jobs:
           path: results
           merge-multiple: false
 
+      - name: Download accepted baseline
+        if: ${{ !cancelled() && env.BASELINE_RUN_ID != '' }}
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: compatibility
+          path: baseline
+          run-id: ${{ env.BASELINE_RUN_ID }}
+          github-token: ${{ github.token }}
+
       - name: Build report
+        if: ${{ !cancelled() }}
+        env:
+          ANKI_RELEASES: ${{ needs.versions.outputs.anki }}
+          ANKI_CONNECT_VERSIONS: ${{ needs.versions.outputs.anki-connect }}
         run: |
           mkdir -p merged
           for file in results/*/anki.json; do
-            cp "$file" "merged/$(basename "$(dirname "$file")").json"
+            if [[ -f "$file" ]]; then
+              cp "$file" "merged/$(basename "$(dirname "$file")").json"
+            fi
           done
-          node scripts/compatibility/report.ts --results merged --output compatibility
+          baseline_args=()
+          if [[ -n "$BASELINE_RUN_ID" ]]; then
+            baseline_args=(--baseline baseline/compatibility.json)
+          fi
+          node scripts/compatibility/report.ts --results merged --output compatibility \
+            --anki-releases "$ANKI_RELEASES" \
+            --anki-connect-versions "$ANKI_CONNECT_VERSIONS" \
+            "${baseline_args[@]}"
 
       - name: Upload report
         if: ${{ !cancelled() }}

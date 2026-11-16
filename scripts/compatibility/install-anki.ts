@@ -2,15 +2,65 @@
 import { execa } from 'execa'
 import fs from 'node:fs/promises'
 import path from 'node:path'
+import { setTimeout } from 'node:timers/promises'
 import type { AnkiRelease } from './shared.ts'
 
-async function download(url: string, destination: string): Promise<void> {
-	const response = await fetch(url)
-	if (!response.ok || response.body === null) {
-		throw new Error(`Download of ${url} failed with status ${String(response.status)}`)
-	}
+const DOWNLOAD_ATTEMPTS = 3
+const DOWNLOAD_TIMEOUT = 180_000
+const RETRYABLE_STATUS = new Set([408, 429, 500, 502, 503, 504])
 
-	await fs.writeFile(destination, response.body)
+class DownloadResponseError extends Error {
+	retryable: boolean
+
+	constructor(url: string, status: number) {
+		super(`Download of ${url} failed with status ${String(status)}`)
+		this.retryable = RETRYABLE_STATUS.has(status)
+	}
+}
+
+function retryableDownload(error: unknown): boolean {
+	return (
+		(error instanceof DownloadResponseError && error.retryable) ||
+		error instanceof TypeError ||
+		(error instanceof Error && ['AbortError', 'TimeoutError'].includes(error.name))
+	)
+}
+
+async function download(url: string, destination: string): Promise<void> {
+	const partial = `${destination}.part`
+	for (let attempt = 1; ; attempt++) {
+		try {
+			// The deadline includes receiving the body, not just the response headers.
+			const response = await fetch(url, { signal: AbortSignal.timeout(DOWNLOAD_TIMEOUT) })
+			if (!response.ok || response.body === null) {
+				await response.body?.cancel()
+				throw new DownloadResponseError(url, response.status)
+			}
+
+			await fs.writeFile(partial, response.body)
+			await fs.rename(partial, destination)
+			return
+		} catch (error) {
+			if (!retryableDownload(error)) {
+				throw error
+			}
+
+			const message = error instanceof Error ? error.message : String(error)
+			if (attempt === DOWNLOAD_ATTEMPTS) {
+				throw new Error(`Download failed after ${String(attempt)} attempts: ${message}`, {
+					cause: error,
+				})
+			}
+
+			const delay = 5000 * attempt
+			console.warn(
+				`Download attempt ${String(attempt)} failed: ${message}. Retrying in ${String(delay / 1000)}s.`,
+			)
+			await setTimeout(delay)
+		} finally {
+			await fs.rm(partial, { force: true })
+		}
+	}
 }
 
 /**

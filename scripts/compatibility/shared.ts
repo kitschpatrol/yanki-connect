@@ -8,9 +8,12 @@
  * - `signature`: the call succeeded but a response did not match the declared
  *   result type.
  * - `skipped`: a prerequisite from an earlier action was unavailable.
+ * - `infrastructure`: the host UI or diagnostic helper failed, so this is not
+ *   evidence of action incompatibility.
  * - `untestable`: the action cannot be exercised in an isolated profile.
  */
-export type ActionStatus = 'error' | 'failed' | 'ok' | 'signature' | 'skipped' | 'untestable'
+export type ActionStatus =
+	'error' | 'failed' | 'infrastructure' | 'ok' | 'signature' | 'skipped' | 'untestable'
 
 export type ActionOutcome = {
 	detail?: string
@@ -22,21 +25,82 @@ export type AnkiRelease =
 	| { source: 'github'; url: string; version: string }
 	| { source: 'pypi'; spec: string; version: string }
 
+/** Controlled GUI crash experiment; these results cannot be used as a baseline. */
+export type GuiDiagnosticOptions = {
+	coreDirectory: string
+	focus: 'disabled' | 'enabled'
+	sandbox?: 'disabled' | 'enabled'
+}
+
 /** Results for one AnkiConnect version against one installed Anki version. */
 export type CombinationResult = {
 	actions: Record<string, ActionOutcome>
 	ankiConnectVersion: string
+	/** Every attempt is retained when infrastructure requires a fresh profile. */
+	attempts?: Array<{ failures: string[]; status: CombinationResult['status'] }>
 	detail?: string
-	status: 'addon-failed' | 'launch-failed' | 'tested'
+	status: 'addon-failed' | 'launch-failed' | 'probe-failed' | 'tested'
 }
 
 /** Results for every AnkiConnect version against one Anki release. */
 export type AnkiRunResult = {
+	/** Requested versions, including combinations that could not be attempted. */
+	ankiConnectVersions?: string[]
 	combinations: CombinationResult[]
 	detail?: string
+	diagnosticFocus?: GuiDiagnosticOptions['focus']
+	diagnosticSandbox?: GuiDiagnosticOptions['sandbox']
+	/** Assertion revisions, keyed by action name; omitted actions use revision 1. */
+	probeRevisions?: Record<string, number>
 	release: AnkiRelease
 	reportedVersion?: string
-	status: 'install-failed' | 'launch-failed' | 'ok'
+	/** Runtime adjustments used to collect these observations. */
+	runtimeNotes?: string[]
+	status: 'install-failed' | 'launch-failed' | 'ok' | 'probe-failed'
+}
+
+/** Explicit host failures, deduplicated across dependent actions. */
+export function infrastructureFailures(result: CombinationResult): string[] {
+	return [
+		...new Set(
+			Object.values(result.actions)
+				.filter((outcome) => outcome.status === 'infrastructure')
+				.map((outcome) => outcome.detail ?? 'GUI infrastructure unavailable'),
+		),
+	]
+}
+
+/** Failures to collect results; an add-on rejecting a pairing is a result. */
+export function collectionFailures(run: AnkiRunResult): string[] {
+	if (run.status !== 'ok') {
+		return [`Anki ${run.release.version}: ${run.status}: ${run.detail ?? ''}`]
+	}
+
+	const failures = run.combinations
+		.filter(
+			(combination) =>
+				combination.status === 'launch-failed' || combination.status === 'probe-failed',
+		)
+		.map(
+			(combination) =>
+				`Anki ${run.release.version}, AnkiConnect ${combination.ankiConnectVersion}: ${combination.status}: ${combination.detail ?? ''}`,
+		)
+	for (const combination of run.combinations) {
+		for (const failure of infrastructureFailures(combination)) {
+			failures.push(
+				`Anki ${run.release.version}, AnkiConnect ${combination.ankiConnectVersion}: infrastructure: ${failure}`,
+			)
+		}
+	}
+
+	const requested = run.ankiConnectVersions ?? []
+	for (const version of requested) {
+		if (run.combinations.every((combination) => combination.ankiConnectVersion !== version)) {
+			failures.push(`Anki ${run.release.version}, AnkiConnect ${version}: missing result`)
+		}
+	}
+
+	return failures
 }
 
 /**

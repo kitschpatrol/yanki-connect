@@ -227,7 +227,7 @@ A range in the AnkiConnect column marks an action that a later release either br
 | `client.model.modelFieldsOnTemplates`       | 2.1.15       | 22.2.19.0              |
 | `client.model.modelNameFromId`              | 2.1.15       | 22.2.19.0              |
 | `client.model.modelNames`                   | 2.1.15       | 22.2.19.0              |
-| `client.model.modelNamesAndIds`             | 2.1.28       | 22.2.19.0              |
+| `client.model.modelNamesAndIds`             | 2.1.15       | 22.2.19.0              |
 | `client.model.modelStyling`                 | 2.1.15       | 22.2.19.0              |
 | `client.model.modelTemplateAdd`             | 2.1.45       | 23.10.29.0             |
 | `client.model.modelTemplateRemove`          | 2.1.45       | 23.10.29.0             |

@@ -14,10 +14,14 @@ import type { Note } from '../../src/types/note'
 import type { Actions } from '../../src/types/shared'
 import type { ActionOutcome } from './shared.ts'
 import type { ProbeRecord } from './signatures.ts'
+import { setMainWindowFocus, waitForGuiState } from './gui-state.ts'
+import { BehaviorError, runProbeCase, SkipError } from './probe-case.ts'
 import { truncate } from './shared.ts'
 import { applySignatureChecks } from './signatures.ts'
 
 export type ProbeOptions = {
+	/** UI observations from the disposable profile's test add-on. */
+	guiStateFile?: string
 	host?: string
 	port?: number
 	/** Per-request timeout in milliseconds. */
@@ -29,12 +33,6 @@ export type ProbeReport = {
 	records: ProbeRecord[]
 }
 
-/** Thrown when an earlier action failed to produce state this action needs. */
-class SkipError extends Error {}
-
-/** Thrown when a response is well-typed but not what the documentation promises. */
-class BehaviorError extends Error {}
-
 type Context = {
 	cardId?: number
 	client: Yanki.YankiConnect
@@ -43,6 +41,7 @@ type Context = {
 	deck: string
 	deckId?: number
 	extraNoteId?: number
+	guiStateFile?: string
 	mediaUrl: (filename: string) => string
 	modelId?: number
 	modelName: string
@@ -563,7 +562,13 @@ const cases: Record<Actions, 'untestable' | ProbeCase> = {
 	},
 	async modelNamesAndIds(context) {
 		const ids = await context.client.model.modelNamesAndIds()
-		assertEqual(ids[context.modelName], required(context, 'modelId'), 'model id by name')
+		// Older createModel responses encode the fixture ID as a string. Compare
+		// identity here; signature checks still validate both unmodified responses.
+		assertEqual(
+			String(ids[context.modelName]),
+			String(required(context, 'modelId')),
+			'model id by name',
+		)
 	},
 	async modelNameFromId(context) {
 		assertEqual(
@@ -1314,23 +1319,36 @@ const cases: Record<Actions, 'untestable' | ProbeCase> = {
 		assertNull(await client.note.removeEmptyNotes(), 'removeEmptyNotes')
 	},
 	// Graphical
-	async guiDeckBrowser({ client }) {
+	async guiDeckBrowser({ client, guiStateFile }) {
+		await setMainWindowFocus(guiStateFile, true)
+		await waitForGuiState(guiStateFile, { mainWindow: true })
 		assertNull(await client.graphical.guiDeckBrowser(), 'guiDeckBrowser')
 	},
-	async guiCheckDatabase({ client }) {
+	async guiCheckDatabase({ client, guiStateFile }) {
 		assertEqual(await client.graphical.guiCheckDatabase(), true, 'guiCheckDatabase')
+		await waitForGuiState(guiStateFile)
 	},
 	async guiDeckOverview(context) {
-		const open = async () => context.client.graphical.guiDeckOverview({ name: context.deck })
-		await settle(context, open, (result) => result, 'deck overview')
-		assertEqual(await open(), true, 'guiDeckOverview')
+		await waitForGuiState(context.guiStateFile, { mainWindow: true })
+		assertEqual(
+			await context.client.graphical.guiDeckOverview({ name: context.deck }),
+			true,
+			'guiDeckOverview',
+		)
+		await waitForGuiState(context.guiStateFile, { mainWindow: true })
 	},
 	async guiDeckReview(context) {
+		await waitForGuiState(context.guiStateFile, { mainWindow: true })
 		assertEqual(
 			await context.client.graphical.guiDeckReview({ name: context.deck }),
 			true,
 			'guiDeckReview',
 		)
+		await waitForGuiState(context.guiStateFile, {
+			cardId: required(context, 'cardId'),
+			mainWindow: true,
+			side: 'question',
+		})
 	},
 	async guiCurrentCard(context) {
 		const cardId = required(context, 'cardId')
@@ -1345,22 +1363,35 @@ const cases: Record<Actions, 'untestable' | ProbeCase> = {
 	async guiStartCardTimer({ client }) {
 		assertEqual(await client.graphical.guiStartCardTimer(), true, 'guiStartCardTimer')
 	},
-	async guiShowQuestion({ client }) {
-		assertEqual(await client.graphical.guiShowQuestion(), true, 'guiShowQuestion')
+	async guiShowQuestion(context) {
+		const cardId = required(context, 'cardId')
+		await waitForGuiState(context.guiStateFile, { cardId, mainWindow: true })
+		assertEqual(await context.client.graphical.guiShowQuestion(), true, 'guiShowQuestion')
+		await waitForGuiState(context.guiStateFile, { cardId, mainWindow: true, side: 'question' })
 	},
 	async guiPlayAudio({ client }) {
 		assertEqual(await client.graphical.guiPlayAudio(), true, 'guiPlayAudio')
 	},
-	async guiShowAnswer({ client }) {
-		assertEqual(await client.graphical.guiShowAnswer(), true, 'guiShowAnswer')
+	async guiShowAnswer(context) {
+		const cardId = required(context, 'cardId')
+		await waitForGuiState(context.guiStateFile, { cardId, mainWindow: true, side: 'question' })
+		assertEqual(await context.client.graphical.guiShowAnswer(), true, 'guiShowAnswer')
+		await waitForGuiState(context.guiStateFile, { cardId, mainWindow: true, side: 'answer' })
 	},
-	async guiAnswerCard({ client }) {
-		assertEqual(await client.graphical.guiAnswerCard({ ease: 3 }), true, 'guiAnswerCard')
+	async guiAnswerCard(context) {
+		await waitForGuiState(context.guiStateFile, {
+			cardId: required(context, 'cardId'),
+			mainWindow: true,
+			side: 'answer',
+		})
+		assertEqual(await context.client.graphical.guiAnswerCard({ ease: 3 }), true, 'guiAnswerCard')
+		await waitForGuiState(context.guiStateFile)
 	},
 	async guiUndo({ client }) {
 		assertEqual(await client.graphical.guiUndo(), true, 'guiUndo')
 	},
 	async guiImportFile(context) {
+		await setMainWindowFocus(context.guiStateFile, false)
 		if (!fs.existsSync(context.packagePath)) {
 			throw new SkipError('Requires the package from exportPackage')
 		}
@@ -1500,22 +1531,19 @@ async function setUp(context: Context): Promise<void> {
 	}
 }
 
-function classify(error: unknown): ActionOutcome {
-	const message = truncate(error instanceof Error ? error.message : String(error))
-	if (error instanceof SkipError) {
-		return { detail: message, status: 'skipped' }
-	}
-
-	const status = error instanceof BehaviorError ? 'failed' : 'error'
-	return { detail: message, status }
-}
-
 /** Serve media bytes to AnkiConnect for the `url` media variant. */
 async function startMediaServer(): Promise<{
 	close: () => void
 	url: (filename: string) => string
 }> {
+	const audio = await fs.promises.readFile(new URL('fixtures/audio.mp3', import.meta.url))
 	const server = http.createServer((request, response) => {
+		if (request.url === '/audio.mp3') {
+			response.setHeader('Content-Type', 'audio/mpeg')
+			response.end(audio)
+			return
+		}
+
 		response.statusCode = request.url?.startsWith('/') === true ? 200 : 404
 		response.end('test')
 	})
@@ -1585,6 +1613,7 @@ export async function probe(options: ProbeOptions = {}): Promise<ProbeReport> {
 		client,
 		clozeModelName: `${deck}-cloze`,
 		deck,
+		...(options.guiStateFile !== undefined && { guiStateFile: options.guiStateFile }),
 		mediaUrl: mediaServer.url,
 		modelName: `${deck}-model`,
 		packagePath: path.join(directory, `${deck}.apkg`),
@@ -1600,7 +1629,7 @@ export async function probe(options: ProbeOptions = {}): Promise<ProbeReport> {
 		videoPath: path.join(directory, 'video.mp4'),
 	}
 	await fs.promises.writeFile(context.textPath, 'test')
-	await fs.promises.writeFile(context.videoPath, 'test')
+	await fs.promises.copyFile(new URL('fixtures/video.mp4', import.meta.url), context.videoPath)
 
 	const outcomes: Partial<Record<Actions, ActionOutcome>> = {}
 	try {
@@ -1613,17 +1642,10 @@ export async function probe(options: ProbeOptions = {}): Promise<ProbeReport> {
 				continue
 			}
 
-			const before = calls.length
-			try {
-				await probeCase(context)
-				outcomes[action] = calls.slice(before).includes(action)
-					? { status: 'ok' }
-					: { detail: `Probe did not call ${action}`, status: 'failed' }
-			} catch (error) {
-				outcomes[action] = classify(error)
-			}
+			outcomes[action] = await runProbeCase(action, async () => probeCase(context), calls, outcomes)
 		}
 	} finally {
+		await setMainWindowFocus(context.guiStateFile, false)
 		mediaServer.close()
 		await fs.promises.rm(directory, { force: true, recursive: true })
 	}

@@ -18,6 +18,34 @@ env:
   ANKI_CONNECT_TIMEOUT: '60000'
 
 jobs:
+  compatibility-tools:
+    name: Compatibility tools
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
+
+      - name: Setup Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '24'
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm ci
+
+      - name: Build
+        run: pnpm run build
+
+      - name: Test compatibility tools
+        run: pnpm test:compatibility
+
   test:
     name: Test (${{ matrix.os }}, AnkiConnect ${{ matrix.anki-connect-version }})
     runs-on: ${{ matrix.os }}
