@@ -1,17 +1,28 @@
 import type { TestProject } from 'vitest/node'
 import fs from 'node:fs/promises'
+import { createServer } from 'node:http'
 import os from 'node:os'
 import path from 'node:path'
 import { getAnkiConnectVersions } from './anki-connect-versions'
 import { closeAnki, openAnki } from './anki-process'
 
 let ankiBasePath: string | undefined
+const mediaServer = createServer((request, response) => {
+	if (request.url === '/empty') {
+		response.writeHead(204).end()
+		return
+	}
+
+	response.setHeader('Content-Type', 'application/json')
+	response.end(JSON.stringify({ url: request.url, userAgent: request.headers['user-agent'] }))
+})
 
 declare module 'vitest' {
 	// eslint-disable-next-line ts/consistent-type-definitions -- Vitest requires an interface for context augmentation.
 	export interface ProvidedContext {
 		ankiConnectVersion: string
 		ankiVersion: string
+		mediaServerUrl: string
 	}
 }
 
@@ -47,12 +58,28 @@ export async function setup(project: TestProject) {
 		'ankiVersion',
 		await fs.readFile(path.join(dialogsAddonPath, 'anki-version.txt'), 'utf8'),
 	)
+	await new Promise<void>((resolve, reject) => {
+		mediaServer.once('error', reject)
+		mediaServer.listen(0, '127.0.0.1', resolve)
+	})
+	const address = mediaServer.address()
+	if (address === null || typeof address === 'string') {
+		throw new Error('Could not determine media server port')
+	}
+
+	project.provide('mediaServerUrl', `http://127.0.0.1:${address.port}`)
 }
 
 /**
  * Clean up.
  */
 export async function teardown() {
+	mediaServer.closeAllConnections()
+	await new Promise<void>((resolve) => {
+		mediaServer.close(() => {
+			resolve()
+		})
+	})
 	await closeAnki()
 
 	if (ankiBasePath !== undefined) {

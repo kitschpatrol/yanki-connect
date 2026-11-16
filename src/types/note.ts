@@ -11,8 +11,8 @@ type NoteMedia = {
 	/**
 	 * Replace an existing media file with the same name. `false` lets Anki give
 	 * the new file a non-conflicting name instead. AnkiConnect 22.2.19.0 ignores
-	 * it and replaces. When omitted, 22.4.26.0 through 25.11.9.0 default to
-	 * `false`, and later releases to `true`.
+	 * it and replaces. Defaults to `false`, except in AnkiConnect 26.10.11.0
+	 * through 26.10.14.0, which default to `true`.
 	 */
 	deleteExisting?: boolean
 	/**
@@ -46,6 +46,11 @@ type NoteWithCreationOptions = Note & {
 		duplicateScopeOptions?: {
 			checkAllModels?: boolean
 			checkChildren?: boolean
+			/**
+			 * Deck to check; omitted or null uses the creation deck. A missing named
+			 * deck allows duplicates without creating that deck, except in
+			 * AnkiConnect 26.10.11.0 through 26.10.14.0, which reject it.
+			 */
 			deckName?: null | string
 		}
 	}
@@ -231,10 +236,12 @@ export type NoteRequests =
 					id: number
 					modelName: string
 					/**
-					 * Replaces the note's tags. When omitted, AnkiConnect 24.6.17.0
-					 * through 25.11.9.0 clear the tags, and later releases keep them.
+					 * Replaces the note's tags. Omitted or null clears tags, except in
+					 * AnkiConnect 26.10.11.0 through 26.10.14.0, where omission preserves
+					 * them. Pass the existing tags explicitly to keep them across
+					 * releases. Explicit null requires AnkiConnect 26.10.14.0.
 					 */
-					tags?: string[]
+					tags?: null | string[]
 				}
 			}
 	  >

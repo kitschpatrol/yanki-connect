@@ -3,9 +3,11 @@ name: Compatibility
 # Probes every client action against every Anki and AnkiConnect release
 # combination on Linux, type-checks the responses, and verifies the
 # @minimumAnki and @minimumAnkiConnect tags documented in src/client.ts.
-# Expensive (one job per Anki release), so it only runs on demand.
+# Runs monthly on the 15th and on demand, with one job per Anki release.
 
 on:
+  schedule:
+    - cron: '0 0 15 * *' # 00:00 UTC on the 15th of each month.
   workflow_dispatch:
     inputs:
       anki-versions:

@@ -111,14 +111,14 @@ export const defaultYankiConnectOptions: YankiConnectOptions = {
 
 /**
  * **YankiConnect is a client for the legacy [AnkiConnect
- * API](https://git.sr.ht/~foosoft/anki-connect/tree/26.10.14.0/item/API_LEGACY.md)**.
+ * API](https://git.sr.ht/~foosoft/anki-connect/tree/26.11.15.0/item/API_LEGACY.md)**.
  *
- * It implements every legacy endpoint from AnkiConnect version 26.10.14.0,
- * released 2026-10-14.
+ * It implements every legacy endpoint from AnkiConnect version 26.11.15.0,
+ * released 2026-11-15.
  *
  * Most inline documentation is by the AnkiConnect authors, taken from [the
  * legacy API
- * reference](https://git.sr.ht/~foosoft/anki-connect/tree/26.10.14.0/item/API_LEGACY.md)
+ * reference](https://git.sr.ht/~foosoft/anki-connect/tree/26.11.15.0/item/API_LEGACY.md)
  * and [the 25.11.9.0
  * readme](https://git.sr.ht/~foosoft/anki-connect/tree/25.11.9.0/item/README.md).
  * Notes on version-specific behavior are Yanki Connect's own.
@@ -127,7 +127,7 @@ export class YankiConnect {
 	/**
 	 * **Card Actions**
 	 *
-	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.10.14.0/item/API_LEGACY.md#card-actions)
+	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.11.15.0/item/API_LEGACY.md#card-actions)
 	 */
 	public readonly card = {
 		/**
@@ -325,7 +325,7 @@ export class YankiConnect {
 	/**
 	 * **Deck Actions**
 	 *
-	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.10.14.0/item/API_LEGACY.md#deck-actions)
+	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.11.15.0/item/API_LEGACY.md#deck-actions)
 	 */
 	public readonly deck = {
 		/**
@@ -414,11 +414,12 @@ export class YankiConnect {
 		 */
 		getDecks: this.build('getDecks'),
 		/**
-		 * ```
-		 * 	  Gets statistics such as total cards and cards due for the given decks.
-		 * ```
+		 * Gets statistics such as total cards and cards due for the given decks.
 		 *
-		 * Includes the required total_in_deck response field.
+		 * `name` is the deck's last name component. Due counts include subdecks,
+		 * while `total_in_deck` counts only the deck's own cards. AnkiConnect
+		 * 26.10.11.0 through 26.10.14.0 instead return the requested name and
+		 * include subdecks in `total_in_deck`. Unknown decks are created.
 		 *
 		 * @minimumAnki 2.1.47
 		 * @minimumAnkiConnect 22.7.14.0
@@ -441,6 +442,10 @@ export class YankiConnect {
 		 * `false` if the ID of the configuration group is invalid (such as when it
 		 * does not exist).
 		 *
+		 * From AnkiConnect 26.11.15.0, obsolete `new.separate`, `rev.fuzz`,
+		 * `rev.minSpace`, and the third `new.ints` entry are accepted and ignored
+		 * again; 26.10.11.0 through 26.10.14.0 return `false` for those changes.
+		 *
 		 * @minimumAnki 2.1.24
 		 * @minimumAnkiConnect 22.2.19.0
 		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L555}
@@ -460,7 +465,7 @@ export class YankiConnect {
 	/**
 	 * **Graphical Actions**
 	 *
-	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.10.14.0/item/API_LEGACY.md#graphical-actions)
+	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.11.15.0/item/API_LEGACY.md#graphical-actions)
 	 */
 	public readonly graphical = {
 		/**
@@ -708,7 +713,7 @@ export class YankiConnect {
 	/**
 	 * **Media Actions**
 	 *
-	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.10.14.0/item/API_LEGACY.md#media-actions)
+	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.11.15.0/item/API_LEGACY.md#media-actions)
 	 */
 	public readonly media = {
 		/**
@@ -764,6 +769,10 @@ export class YankiConnect {
 		 *
 		 * Includes the optional skipHash and deleteExisting parameters.
 		 *
+		 * AnkiConnect 26.11.15.0 restores Anki's HTTP client for URL downloads,
+		 * including non-ASCII URLs and Anki's user agent. Only HTTP 200 succeeds;
+		 * other statuses fail with `URL download failed with return code STATUS`.
+		 *
 		 * @minimumAnki 2.1.15
 		 * @minimumAnkiConnect 22.2.19.0
 		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L614}
@@ -773,7 +782,7 @@ export class YankiConnect {
 	/**
 	 * **Miscellaneous Actions**
 	 *
-	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.10.14.0/item/API_LEGACY.md#miscellaneous-actions)
+	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.11.15.0/item/API_LEGACY.md#miscellaneous-actions)
 	 */
 	public readonly miscellaneous = {
 		/**
@@ -906,7 +915,7 @@ export class YankiConnect {
 	/**
 	 * **Model Actions**
 	 *
-	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.10.14.0/item/API_LEGACY.md#model-actions)
+	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.11.15.0/item/API_LEGACY.md#model-actions)
 	 */
 	public readonly model = {
 		/**
@@ -921,6 +930,9 @@ export class YankiConnect {
 		 * and so on.
 		 *
 		 * Includes the full Anki 23.10 model, field, and template schema.
+		 *
+		 * Anki's default LaTeX header and footer are used, except in AnkiConnect
+		 * 26.10.11.0 through 26.10.14.0, which leave them empty.
 		 *
 		 * @minimumAnki 23.10.0
 		 * @minimumAnkiConnect 22.4.26.0
@@ -1020,6 +1032,9 @@ export class YankiConnect {
 		 * The value of `index` starts at 0. For example, an `index` of `0` puts the
 		 * field in the first position, and an `index` of `2` puts the field in the
 		 * third position.
+		 *
+		 * An index past the end moves the field last, except in AnkiConnect
+		 * 26.10.11.0 through 26.10.14.0, which reject it.
 		 *
 		 * @minimumAnki 2.1.45
 		 * @minimumAnkiConnect 22.9.18.0
@@ -1125,6 +1140,9 @@ export class YankiConnect {
 		/**
 		 * Repositions a template in an existing model.
 		 *
+		 * `index` starts at 0. An index past the end moves the template last,
+		 * except in AnkiConnect 26.10.11.0 through 26.10.14.0, which reject it.
+		 *
 		 * @minimumAnki 2.1.45
 		 * @minimumAnkiConnect 23.10.29.0
 		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/23.10.29.0/item/plugin/__init__.py#L1287}
@@ -1166,7 +1184,7 @@ export class YankiConnect {
 	/**
 	 * **Note Actions**
 	 *
-	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.10.14.0/item/API_LEGACY.md#note-actions)
+	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.11.15.0/item/API_LEGACY.md#note-actions)
 	 */
 	public readonly note = {
 		/**
@@ -1199,7 +1217,8 @@ export class YankiConnect {
 		 *
 		 * - `duplicateScopeOptions.deckName` will specify which deck to use for
 		 *   checking duplicates in. If undefined or `null`, the target deck will be
-		 *   used.
+		 *   used. A nonexistent named deck allows duplicates without creating it,
+		 *   except in 26.10.11.0 through 26.10.14.0, which reject it.
 		 * - `duplicateScopeOptions.checkChildren` will change whether or not
 		 *   duplicate cards are checked in child decks. The default value is
 		 *   `false`.
@@ -1464,8 +1483,10 @@ export class YankiConnect {
 		 * to change the note's model, update its fields with new content, and set
 		 * new tags.
 		 *
-		 * When `tags` is omitted, AnkiConnect 24.6.17.0 through 25.11.9.0 clear the
-		 * note's tags, and later releases keep them.
+		 * Omitted or null `tags` clears the note's tags. AnkiConnect 26.10.11.0
+		 * through 26.10.14.0 preserve tags when omitted. Pass the existing tags
+		 * explicitly to preserve them across releases. Explicit null requires
+		 * AnkiConnect 26.10.14.0.
 		 *
 		 * When the note's only card template has no namesake in the new model,
 		 * AnkiConnect 26.10.11.0 through 26.10.12.2 replace the card and lose its
@@ -1489,7 +1510,7 @@ export class YankiConnect {
 	/**
 	 * **Statistic Actions**
 	 *
-	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.10.14.0/item/API_LEGACY.md#statistic-actions)
+	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.11.15.0/item/API_LEGACY.md#statistic-actions)
 	 */
 	public readonly statistic = {
 		/**
@@ -1620,7 +1641,7 @@ export class YankiConnect {
 	/**
 	 * Directly invoke the Anki Connect API.
 	 *
-	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.10.14.0/item/API_LEGACY.md)
+	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.11.15.0/item/API_LEGACY.md)
 	 *
 	 * Primarily for internal use, since the client provides a more convenient
 	 * methods on its class, e.g. instead of:

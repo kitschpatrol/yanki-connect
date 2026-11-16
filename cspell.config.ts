@@ -13,6 +13,7 @@ export default cspellConfig({
 		'odid',
 		'odue',
 		'resched',
+		'subdecks',
 		'tmpls',
 	],
 })

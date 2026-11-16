@@ -3,9 +3,11 @@ import type { Request } from './shared'
 type DeckStats = {
 	deck_id: number
 	learn_count: number
+	/** Leaf deck name; 26.10.11.0 through 26.10.14.0 return the requested name. */
 	name: string
 	new_count: number
 	review_count: number
+	/** Own cards only; 26.10.11.0 through 26.10.14.0 also count subdecks. */
 	total_in_deck: number
 }
 

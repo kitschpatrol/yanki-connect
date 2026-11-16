@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 (Node.js support requirements have sometimes increased in minor or patch releases.)
 
+## [Unreleased]
+
+### Documentation
+
+- [AnkiConnect 26.11.15.0](https://git.sr.ht/~foosoft/anki-connect/tree/26.11.15.0/item/API_LEGACY.md) keeps all 122 legacy actions and their parameter signatures. Its new `scheduling.getQueue` and `scheduling.repositionNewCards` methods belong to [APIv1](https://git.sr.ht/~foosoft/anki-connect/tree/26.11.15.0/item/API_V1.md#schedulinggetqueue), which Yanki Connect does not expose.
+  - `updateNoteModel` without `tags`: Clears tags again. Versions 26.10.11.0 through 26.10.14.0 preserved them. Pass the existing tags explicitly to keep them across releases.
+  - Note attachments without `deleteExisting`: Defaults to `false` again, preserving existing files and using Anki's renamed filename for collisions. October releases defaulted to `true`. Standalone `storeMediaFile` still defaults to `true`.
+  - `getDeckStats`: Returns the leaf deck name and counts only the deck's own cards in `total_in_deck`. Due counts include child decks.
+  - `duplicateScopeOptions.deckName`: A nonexistent scope deck allows duplicates without creating that deck.
+  - `createModel`: Restores Anki's default LaTeX header and footer.
+  - `modelFieldReposition`, `modelTemplateReposition`: An index past the end moves the item last.
+  - `saveDeckConfig`: Accepts and ignores obsolete `new.separate`, `rev.fuzz`, `rev.minSpace`, and the third `new.ints` entry.
+  - Media downloads from `url`: Uses Anki's HTTP client again, with non-ASCII URL support and Anki's user agent. Only HTTP 200 succeeds.
+  - The release also restores legacy routing at paths other than `/api/v1`, treats an empty configured API key as disabled authentication, and fixes request/reply logging and interrupted media recovery. These changes do not require new client methods. Method and parameter JSDoc includes the relevant version caveats.
+
 ## [5.2.2] - 2026-11-15
 
 ### Documentation
@@ -761,3 +776,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [5.2.0]: https://github.com/kitschpatrol/yanki-connect/compare/v5.1.0...v5.2.0
 [5.2.1]: https://github.com/kitschpatrol/yanki-connect/compare/v5.2.0...v5.2.1
 [5.2.2]: https://github.com/kitschpatrol/yanki-connect/compare/v5.2.1...v5.2.2
+[Unreleased]: https://github.com/kitschpatrol/yanki-connect/compare/v5.2.2...HEAD

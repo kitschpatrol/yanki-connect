@@ -2,8 +2,10 @@ import { describe, expect, inject, it } from 'vitest'
 import type { Actions } from '../src/types/shared'
 import { YankiConnect } from '../src'
 
+const ANKI_USER_AGENT = /^Anki /v
 const exercised = new Set<Actions>()
 const isLegacy = inject('ankiConnectVersion') === '25.11.9.0'
+const isOctober = inject('ankiConnectVersion') === '26.10.14.0'
 const hasLegacyEditor = Number(inject('ankiVersion').split('.', 1)[0]) < 26
 const client = new YankiConnect({
 	// Record coverage while forwarding every request to the real Anki fixture.
@@ -58,7 +60,8 @@ describe('real AnkiConnect endpoints', { concurrent: false }, () => {
 		expect(await client.miscellaneous.version()).toBe(6)
 		await expect(client.invoke('version')).resolves.toMatchObject({ result: 6 })
 		const reflected = await client.miscellaneous.apiReflect({
-			actions: endpoints,
+			// eslint-disable-next-line unicorn/no-null -- Reflect all upstream actions to detect additions too.
+			actions: null,
 			scopes: ['actions'],
 		})
 		// The 2025 fixture predates guiAddNoteSetData.
@@ -207,6 +210,15 @@ describe('real AnkiConnect endpoints', { concurrent: false }, () => {
 		})
 	})
 
+	it('model creation uses Anki LaTeX defaults', async () => {
+		const [model] = await client.model.findModelsById({ modelIds: [modelId] })
+		const [basic] = await client.model.findModelsByName({ modelNames: ['Basic'] })
+		expect(model!.latexPre).toBe(isOctober ? '' : basic!.latexPre)
+		expect(model!.latexPost).toBe(isOctober ? '' : basic!.latexPost)
+		expect(basic!.latexPre).not.toBe('')
+		expect(basic!.latexPost).not.toBe('')
+	})
+
 	it('note actions', async () => {
 		const extraNote = { ...note, fields: { ...note.fields, Front: `${deck}-extra` } }
 		expect(await client.note.canAddNotes({ notes: [note, extraNote] })).toEqual([false, true])
@@ -311,8 +323,8 @@ describe('real AnkiConnect endpoints', { concurrent: false }, () => {
 			note: { fields: extraNote.fields, id: added[0]!, modelName: 'Basic' },
 		})
 		await expect(client.note.notesInfo({ notes: added })).resolves.toMatchObject([
-			// Without `tags`, the 2025 fixture clears the note's tags and the newer one keeps them.
-			{ modelName: 'Basic', tags: isLegacy ? [] : [deck] },
+			// November restores the historical default of clearing omitted tags.
+			{ modelName: 'Basic', tags: isOctober ? [deck] : [] },
 		])
 		expect(await client.note.notesModTime({ notes: [noteId] })).toEqual([
 			{ mod: expect.any(Number) as number, noteId },
@@ -331,6 +343,162 @@ describe('real AnkiConnect endpoints', { concurrent: false }, () => {
 		}
 
 		expect(await client.model.modelNames()).toContain(modelName)
+	})
+
+	it('nested deck statistics retain native names and own-card totals', async () => {
+		const childDeck = `${deck}::Child`
+		const childDeckId = await client.deck.createDeck({ deck: childDeck })
+		const childNoteId = (await client.note.addNote({
+			note: { ...note, deckName: childDeck, fields: { ...note.fields, Front: childDeck } },
+		}))!
+		await expect(client.deck.getDeckStats({ decks: [deck, childDeck] })).resolves.toMatchObject({
+			[String(childDeckId)]: { name: isOctober ? childDeck : 'Child', total_in_deck: 1 },
+			[String(deckId)]: { name: deck, new_count: 2, total_in_deck: isOctober ? 2 : 1 },
+		})
+		await client.note.deleteNotes({ notes: [childNoteId] })
+		await client.deck.deleteDecks({ cardsToo: true, decks: [childDeck] })
+	})
+
+	it('missing duplicate-scope decks allow duplicates without being created', async () => {
+		const missingDeck = `${deck}-missing`
+		const candidate = {
+			...note,
+			options: { duplicateScope: 'deck', duplicateScopeOptions: { deckName: missingDeck } },
+		}
+		await expect(client.note.canAddNoteWithErrorDetail({ note: candidate })).resolves.toMatchObject(
+			{ canAdd: !isOctober },
+		)
+		expect(await client.deck.deckNames()).not.toContain(missingDeck)
+	})
+
+	it('oversized field and template indexes move to the end', async () => {
+		await client.model.modelFieldAdd({ fieldName: 'Last', index: 0, modelName })
+		const fieldResult = await client.invoke('modelFieldReposition', {
+			fieldName: 'Last',
+			index: 99,
+			modelName,
+		})
+		expect(fieldResult.error === null).toBe(!isOctober)
+		expect(await client.model.modelFieldNames({ modelName })).toEqual(
+			isOctober ? ['Last', 'Front', 'Back'] : ['Front', 'Back', 'Last'],
+		)
+		await client.model.modelFieldRemove({ fieldName: 'Last', modelName })
+		await client.model.modelTemplateAdd({ modelName, template: { ...template, Name: 'Last' } })
+		await client.model.modelTemplateReposition({ index: 0, modelName, templateName: 'Last' })
+		const templateResult = await client.invoke('modelTemplateReposition', {
+			index: 99,
+			modelName,
+			templateName: 'Last',
+		})
+		expect(templateResult.error === null).toBe(!isOctober)
+		const [model] = await client.model.findModelsById({ modelIds: [modelId] })
+		expect(model!.tmpls.map((entry) => entry.name)).toEqual(
+			isOctober ? ['Last', 'Card 1'] : ['Card 1', 'Last'],
+		)
+		await client.model.modelTemplateRemove({ modelName, templateName: 'Last' })
+	})
+
+	it('obsolete deck configuration values are accepted', async () => {
+		const configId = await client.deck.cloneDeckConfigId({ name: `${deck}-obsolete` })
+		if (configId === false) {
+			throw new Error('Could not clone deck config')
+		}
+
+		await client.deck.setDeckConfigId({ configId, decks: [deck] })
+		const config = await client.deck.getDeckConfig({ deck })
+		if (config === false || config.dyn === 1) {
+			throw new Error('Could not get a regular deck config')
+		}
+
+		const result = await client.deck.saveDeckConfig({
+			config: {
+				...config,
+				maxTaken: 43,
+				new: { ...config.new, ints: [2, 5, 99], separate: true },
+				rev: { ...config.rev, fuzz: 0.5, minSpace: 9 },
+			},
+		})
+		expect(result).toBe(!isOctober)
+		await expect(client.deck.getDeckConfig({ deck })).resolves.toMatchObject({
+			maxTaken: isOctober ? config.maxTaken : 43,
+		})
+		await client.deck.setDeckConfigId({ configId: 1, decks: [deck] })
+		await client.deck.removeDeckConfigId({ configId })
+	})
+
+	it.each(['addNote', 'addNotes', 'updateNoteFields', 'updateNote'] as const)(
+		'%s attachment collisions respect default and explicit replacement flags',
+		async (action) => {
+			for (const replaceExisting of [undefined, false, true]) {
+				const filename = `${deck}-${action.toLowerCase()}-${String(replaceExisting)}.txt`
+				await client.media.storeMediaFile({ data: 'b3JpZ2luYWw=', filename })
+				const fields = { Back: '', Front: filename }
+				const audio = [
+					{
+						data: 'dGVzdA==',
+						fields: ['Back'],
+						filename,
+						...(replaceExisting !== undefined && { deleteExisting: replaceExisting }),
+					},
+				]
+				let id: number
+				if (action === 'addNotes') {
+					const added = await client.note.addNotes({ notes: [{ ...note, audio, fields }] })
+					id = added[0]!
+				} else if (action === 'addNote') {
+					id = (await client.note.addNote({ note: { ...note, audio, fields } }))!
+				} else {
+					id = (await client.note.addNote({ note: { ...note, fields } }))!
+					await client.note[action]({ note: { audio, fields: { Back: '' }, id } })
+				}
+
+				const replace = replaceExisting ?? isOctober
+				const stored = replace
+					? filename
+					: filename.replace('.txt', '-a94a8fe5ccb19ba61c4c0873d391e987982fbbd3.txt')
+				expect(await client.media.retrieveMediaFile({ filename })).toBe(
+					replace ? 'dGVzdA==' : 'b3JpZ2luYWw=',
+				)
+				await expect(client.note.notesInfo({ notes: [id] })).resolves.toMatchObject([
+					{ fields: { Back: { value: `[sound:${stored}]` } } },
+				])
+				await client.note.deleteNotes({ notes: [id] })
+			}
+		},
+	)
+
+	it.each([{ tags: [] }, { tags: [deck] }])(
+		'updateNoteModel replaces explicit tags: $tags',
+		async ({ tags }) => {
+			const targetModelName = `${deck}-converted-${tags.length}`
+			await client.model.createModel({
+				cardTemplates: [template],
+				inOrderFields: ['Front', 'Back'],
+				modelName: targetModelName,
+			})
+			const id = (await client.note.addNote({
+				note: { ...note, fields: { ...note.fields, Front: `${deck}-conversion` } },
+			}))!
+			const cards = await client.card.findCards({ query: `nid:${id}` })
+			await client.note.updateNoteModel({
+				note: { fields: note.fields, id, modelName: targetModelName, tags },
+			})
+			expect(await client.note.getNoteTags({ note: id })).toEqual(tags)
+			expect(await client.card.findCards({ query: `nid:${id}` })).toEqual(cards)
+			await client.note.deleteNotes({ notes: [id] })
+		},
+	)
+
+	it.runIf(!isLegacy)('updateNoteModel accepts null to clear tags', async () => {
+		const id = (await client.note.addNote({
+			note: { ...note, fields: { ...note.fields, Front: `${deck}-null-tags` } },
+		}))!
+		await client.note.updateNoteModel({
+			// eslint-disable-next-line unicorn/no-null -- AnkiConnect 26.10.14.0 added null normalization.
+			note: { fields: note.fields, id, modelName: 'Basic', tags: null },
+		})
+		expect(await client.note.getNoteTags({ note: id })).toEqual([])
+		await client.note.deleteNotes({ notes: [id] })
 	})
 
 	it('card actions', async () => {
@@ -443,6 +611,35 @@ describe('real AnkiConnect endpoints', { concurrent: false }, () => {
 		noteId = restored[0]!
 		const cards = await client.card.findCards({ query: `nid:${noteId}` })
 		cardId = cards[0]!
+	})
+
+	it.runIf(!isOctober)(
+		"media downloads encode non-ASCII URLs and use Anki's user agent",
+		async () => {
+			const filename = `${deck}-download.json`
+			const url = `${inject('mediaServerUrl')}/語彙.mp3?q=音`
+			expect(await client.media.storeMediaFile({ filename, url })).toBe(filename)
+			const data = await client.media.retrieveMediaFile({ filename })
+			if (data === false) {
+				throw new Error('Downloaded media is missing')
+			}
+
+			const response = await fetch(`data:application/json;base64,${data}`)
+			await expect(response.json()).resolves.toMatchObject({
+				url: '/%E8%AA%9E%E5%BD%99.mp3?q=%E9%9F%B3',
+				userAgent: expect.stringMatching(ANKI_USER_AGENT) as string,
+			})
+		},
+	)
+
+	it('media downloads reject HTTP 204', async () => {
+		const filename = `${deck}-empty.txt`
+		const url = `${inject('mediaServerUrl')}/empty`
+		const response = await client.invoke('storeMediaFile', { filename, url })
+		expect(response.error ?? undefined).toBe(
+			isOctober ? undefined : `${url} download failed with return code 204`,
+		)
+		expect(await client.media.retrieveMediaFile({ filename })).toBe(isOctober ? '' : false)
 	})
 
 	it('graphical actions', async () => {
