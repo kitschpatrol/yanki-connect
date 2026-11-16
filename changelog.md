@@ -7,7 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 (Node.js support requirements have sometimes increased in minor or patch releases.)
 
-## [Unreleased]
+## [5.3.0] - 2026-11-16
+
+### Fixed
+
+- Correct the `updateNoteModel` parameter type to accept `tags: null`, which clears tags in AnkiConnect 26.10.14.0 and later.
 
 ### Documentation
 
@@ -21,6 +25,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `saveDeckConfig`: Accepts and ignores obsolete `new.separate`, `rev.fuzz`, `rev.minSpace`, and the third `new.ints` entry.
   - Media downloads from `url`: Uses Anki's HTTP client again, with non-ASCII URL support and Anki's user agent. Only HTTP 200 succeeds.
   - The release also restores legacy routing at paths other than `/api/v1`, treats an empty configured API key as disabled authentication, and fixes request/reply logging and interrupted media recovery. These changes do not require new client methods. Method and parameter JSDoc includes the relevant version caveats.
+- Add testing instructions covering local Anki requirements, the pinned Node.js and Chromium test matrix, and fixture selection with `ANKI_CONNECT_VERSION`.
+
+### Maintenance
+
+- Add an AnkiConnect 26.11.15.0 fixture to the test and cross-platform CI matrices, with regression coverage for version-specific legacy behavior and checks for upstream action additions.
+- Schedule the full Anki/AnkiConnect compatibility workflow to run monthly on the 15th, alongside on-demand runs.
 
 ## [5.2.2] - 2026-11-15
 
@@ -776,4 +786,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [5.2.0]: https://github.com/kitschpatrol/yanki-connect/compare/v5.1.0...v5.2.0
 [5.2.1]: https://github.com/kitschpatrol/yanki-connect/compare/v5.2.0...v5.2.1
 [5.2.2]: https://github.com/kitschpatrol/yanki-connect/compare/v5.2.1...v5.2.2
-[Unreleased]: https://github.com/kitschpatrol/yanki-connect/compare/v5.2.2...HEAD
+[5.3.0]: https://github.com/kitschpatrol/yanki-connect/compare/v5.2.2...v5.3.0
