@@ -582,6 +582,12 @@ export class YankiConnect {
 		 * Starts review for the deck with the given name; returns `true` if
 		 * succeeded or `false` otherwise.
 		 *
+		 * AnkiConnect 25.11.9.0 and earlier break on Anki 23.10 and later: they
+		 * return `true` and Anki enters review on the expected card, but the
+		 * reviewer never finishes loading. No AnkiConnect release supports it on
+		 * Anki 23.10 through 26.05; Anki 26.08 and later need AnkiConnect
+		 * 26.10.11.0 or later.
+		 *
 		 * @minimumAnki 2.1.15
 		 * @minimumAnkiConnect 22.2.19.0
 		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L1621}
