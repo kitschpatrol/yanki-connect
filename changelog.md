@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 (Node.js support requirements have sometimes increased in minor or patch releases.)
 
+## [5.3.1] - 2026-11-17
+
+### Documentation
+
+- Correct the documented minimum Anki version for `modelNamesAndIds` from 2.1.28 to 2.1.15 in its JSDoc and the readme compatibility table.
+- Note in the `guiDeckReview` JSDoc that AnkiConnect 25.11.9.0 and earlier break on Anki 23.10 and later: they return `true` and enter review on the expected card, but the reviewer never finishes loading. No AnkiConnect release supports it on Anki 23.10 through 26.05, and Anki 26.08 and later need AnkiConnect 26.10.11.0 or later.
+- Expand docunentation of compatibility test scripts, including probe outcomes, baseline regression gating, runtime workarounds, retained logs, and how to diagnose GUI crashes in older Anki releases.
+
+### Maintenance
+
+- Overhaul the Anki × AnkiConnect compatibility survey workflow. It now fails on regressions against an accepted baseline run and on incomplete collection. Probes run on Ubuntu 24.04 under Openbox with GUI readiness and focus checks, valid `mpv`-verified media fixtures, retried Anki downloads, and one fresh-profile retry for host infrastructure failures. The workflow disables the QtWebEngine sandbox for Anki 2.1.15–2.1.49 bundles and adds an optional GUI crash diagnostic mode that captures native backtraces.
+- Add Vitest unit tests for the compatibility tooling, run with a new `test:compatibility` script and a dedicated CI job.
+
 ## [5.3.0] - 2026-11-16
 
 ### Fixed
@@ -787,3 +800,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [5.2.1]: https://github.com/kitschpatrol/yanki-connect/compare/v5.2.0...v5.2.1
 [5.2.2]: https://github.com/kitschpatrol/yanki-connect/compare/v5.2.1...v5.2.2
 [5.3.0]: https://github.com/kitschpatrol/yanki-connect/compare/v5.2.2...v5.3.0
+[5.3.1]: https://github.com/kitschpatrol/yanki-connect/compare/v5.3.0...v5.3.1
