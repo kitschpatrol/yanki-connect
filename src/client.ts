@@ -932,6 +932,10 @@ export class YankiConnect {
 		/**
 		 * Synchronizes the local Anki collections with AnkiWeb.
 		 *
+		 * Returns once the sync finishes, except in AnkiConnect 26.10.11.0 through
+		 * 26.11.19.0, where a call outside `multi` returns as soon as the sync
+		 * starts.
+		 *
 		 * @minimumAnki 2.1.45
 		 * @minimumAnkiConnect 22.2.19.0
 		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L445}
@@ -1446,8 +1450,11 @@ export class YankiConnect {
 		/**
 		 * Removes all the empty notes for the current user.
 		 *
-		 * AnkiConnect 26.10.11.0 and later reject this action with the error `Use
-		 * notes.findEmpty with explicit criteria, then notes.delete.`
+		 * Despite the name, AnkiConnect 25.11.9.0 and earlier delete every unused
+		 * note type instead. 26.10.11.0 through 26.11.19.0 reject this action with
+		 * the error `Use notes.findEmpty with explicit criteria, then
+		 * notes.delete.`, and 26.11.19.1 and later accept it without deleting
+		 * anything.
 		 *
 		 * @minimumAnki 2.1.15
 		 * @minimumAnkiConnect 22.2.19.0
