@@ -962,6 +962,10 @@ export class YankiConnect {
 		 * Anki's default LaTeX header and footer are used, except in AnkiConnect
 		 * 26.10.11.0 through 26.10.14.0, which leave them empty.
 		 *
+		 * From AnkiConnect 26.11.19.0, field or template names that Anki treats as
+		 * repeats, such as `Front` and `front`, return an error. Earlier releases
+		 * save the repeat with a `+` suffix.
+		 *
 		 * @minimumAnki 23.10.0
 		 * @minimumAnkiConnect 22.4.26.0
 		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.4.26.0/item/plugin/__init__.py#L974}
@@ -1006,6 +1010,10 @@ export class YankiConnect {
 		 * same as the index in `modelFieldReposition`. By default, the field is
 		 * added to the end of the field list.
 		 *
+		 * From AnkiConnect 26.11.19.0, a name that Anki treats as a repeat of an
+		 * existing field, such as `front` or `Front ` beside `Front`, returns an
+		 * error. Earlier releases add the field as `front+`.
+		 *
 		 * @minimumAnki 2.1.45
 		 * @minimumAnkiConnect 22.9.18.0
 		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.9.18.0/item/plugin/__init__.py#L1223}
@@ -1048,6 +1056,10 @@ export class YankiConnect {
 		modelFieldRemove: this.build('modelFieldRemove'),
 		/**
 		 * Rename the field name of a given model.
+		 *
+		 * From AnkiConnect 26.11.19.0, a new name that Anki treats as a repeat of
+		 * another field's name, such as `front` beside `Front`, returns an error.
+		 * Earlier releases save it as `front+`.
 		 *
 		 * @minimumAnki 2.1.45
 		 * @minimumAnkiConnect 22.9.18.0
@@ -1144,6 +1156,10 @@ export class YankiConnect {
 		 * Adds a template to an existing model by name. If you want to update an
 		 * existing template, use `updateModelTemplates`.
 		 *
+		 * From AnkiConnect 26.11.19.0, a name that differs from an existing
+		 * template's only in case, such as `card 1` beside `Card 1`, returns an
+		 * error. Earlier releases add the template as `card 1+`.
+		 *
 		 * @minimumAnki 2.1.45
 		 * @minimumAnkiConnect 23.10.29.0
 		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/23.10.29.0/item/plugin/__init__.py#L1297}
@@ -1159,6 +1175,10 @@ export class YankiConnect {
 		modelTemplateRemove: this.build('modelTemplateRemove'),
 		/**
 		 * Renames a template in an existing model.
+		 *
+		 * From AnkiConnect 26.11.19.0, a new name that differs from another
+		 * template's only in case returns an error. Earlier releases save it with a
+		 * `+` suffix.
 		 *
 		 * @minimumAnki 2.1.45
 		 * @minimumAnkiConnect 23.10.29.0

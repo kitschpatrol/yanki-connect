@@ -409,6 +409,72 @@ describe('real AnkiConnect endpoints', { concurrent: false }, () => {
 		await client.model.modelTemplateRemove({ modelName, templateName: 'Last' })
 	})
 
+	it('field and template names that differ only in case are rejected', async () => {
+		// Earlier releases let Anki rename the repeat with a "+" suffix.
+		const savesRepeats = isLegacy || isOctober
+		const added = await client.invoke('modelFieldAdd', { fieldName: 'front', modelName })
+		expect(added.error === null).toBe(savesRepeats)
+		expect(await client.model.modelFieldNames({ modelName })).toEqual(
+			savesRepeats ? ['Front', 'Back', 'front+'] : ['Front', 'Back'],
+		)
+		if (savesRepeats) {
+			await client.model.modelFieldRemove({ fieldName: 'front+', modelName })
+		}
+
+		const renamed = await client.invoke('modelFieldRename', {
+			modelName,
+			newFieldName: 'front',
+			oldFieldName: 'Back',
+		})
+		expect(renamed.error === null).toBe(savesRepeats)
+		expect(await client.model.modelFieldNames({ modelName })).toEqual([
+			'Front',
+			savesRepeats ? 'front+' : 'Back',
+		])
+		if (savesRepeats) {
+			await client.model.modelFieldRename({
+				modelName,
+				newFieldName: 'Back',
+				oldFieldName: 'front+',
+			})
+		}
+
+		const addedTemplate = await client.invoke('modelTemplateAdd', {
+			modelName,
+			template: { ...template, Name: 'card 1' },
+		})
+		expect(addedTemplate.error === null).toBe(savesRepeats)
+		expect(Object.keys(await client.model.modelTemplates({ modelName }))).toEqual(
+			savesRepeats ? ['Card 1', 'card 1+'] : ['Card 1'],
+		)
+		if (savesRepeats) {
+			await client.model.modelTemplateRemove({ modelName, templateName: 'card 1+' })
+		}
+
+		await client.model.modelTemplateAdd({ modelName, template: { ...template, Name: 'Extra' } })
+		const renamedTemplate = await client.invoke('modelTemplateRename', {
+			modelName,
+			newTemplateName: 'card 1',
+			oldTemplateName: 'Extra',
+		})
+		expect(renamedTemplate.error === null).toBe(savesRepeats)
+		const templateName = savesRepeats ? 'card 1+' : 'Extra'
+		expect(Object.keys(await client.model.modelTemplates({ modelName }))).toEqual([
+			'Card 1',
+			templateName,
+		])
+		await client.model.modelTemplateRemove({ modelName, templateName })
+
+		const created = await client.invoke('createModel', {
+			cardTemplates: [template],
+			inOrderFields: ['Front', 'front', 'Back'],
+			modelName: `${deck}-repeats`,
+		})
+		const createdFields =
+			created.error === null ? created.result.flds.map(({ name }) => name) : undefined
+		expect(createdFields).toEqual(savesRepeats ? ['Front', 'front+', 'Back'] : undefined)
+	})
+
 	it('obsolete deck configuration values are accepted', async () => {
 		const configId = await client.deck.cloneDeckConfigId({ name: `${deck}-obsolete` })
 		if (configId === false) {
