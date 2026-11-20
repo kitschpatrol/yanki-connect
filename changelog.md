@@ -7,7 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 (Node.js support requirements have sometimes increased in minor or patch releases.)
 
-## [Unreleased]
+Entries are drafted with LLM assistance via [Chagent](https://github.com/kitschpatrol/chagent).
+
+## [5.3.2] - 2026-11-20
 
 ### Documentation
 
@@ -21,11 +23,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `storeMediaFile` and other large requests: 26.11.19.1 accepts legacy requests up to 128 MiB, enough for 64 MiB of base64 `data`. 26.10.11.0 through 26.11.19.0 reject requests over 16 MiB with HTTP 413 and no CORS headers, so browsers report an `AnkiConnectUnreachableError`. Releases before 26.10.11.0 have no limit, but read a request 1 KiB at a time and reparse it after each read, so reading time grows with the square of its size and Anki stops responding until it finishes. A 17 MiB request took 16 seconds on a fast machine and over 30 on slower ones.
   - `sync`: A standalone call replies after the sync finishes again in 26.11.19.1. 26.10.11.0 through 26.11.19.0 reply as soon as it starts.
 - [AnkiConnect 26.11.18.0](https://git.sr.ht/~foosoft/anki-connect/commit/a08d4d534c0c1956f5cefe4a0d5bdb9bba1f83e3) only changes add-on startup: it ignores local version labels in Anki's version string, such as `26.09.4+fsrs7`, which previously crashed add-on loading on forked Anki builds. Its legacy API is identical to 26.11.15.0.
+- Record survey run `44802360641` as the accepted compatibility regression baseline. It covers 80 Anki releases and 35 AnkiConnect releases through 26.11.19.1, and its artifacts expire on 2027-02-18.
+- Document chagent’s role in maintaining the changelog and simplify the contributing guidance on unsolicited pull requests.
 
 ### Maintenance
 
 - Replace the AnkiConnect 26.11.15.0 test fixture with 26.11.19.1, by way of 26.11.18.0, as the newest release in the local and cross-platform CI test matrices. The 25.11.9.0 and 26.10.14.0 fixtures remain.
 - Add fixture tests for the behavior changes in 26.11.19.0 and 26.11.19.1, with version-specific expectations for each fixture. The 17 MiB upload test skips the 25.11.9.0 fixture, which reads it too slowly for CI.
+- Update `@kitschpatrol/chagent` to 0.8.0, `@kitschpatrol/shared-config` to 8.15.0, and Vitest and its browser and coverage packages to 5.1.1. Clean up local lint and spell-check overrides.
+- Fetch full Git history in the dependency-update workflow and update its `github-action-skill-to-pr` action to v1.3.1.
+- Restore `.claude/skills` as a pnpm skill installation directory.
+- Refactor the compatibility survey runner to pass environment and diagnostics settings in a single options object.
 
 ## [5.3.1] - 2026-11-17
 
@@ -821,4 +829,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [5.2.2]: https://github.com/kitschpatrol/yanki-connect/compare/v5.2.1...v5.2.2
 [5.3.0]: https://github.com/kitschpatrol/yanki-connect/compare/v5.2.2...v5.3.0
 [5.3.1]: https://github.com/kitschpatrol/yanki-connect/compare/v5.3.0...v5.3.1
-[Unreleased]: https://github.com/kitschpatrol/yanki-connect/compare/v5.3.1...HEAD
+[5.3.2]: https://github.com/kitschpatrol/yanki-connect/compare/v5.3.1...v5.3.2
