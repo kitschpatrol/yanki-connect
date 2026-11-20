@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 (Node.js support requirements have sometimes increased in minor or patch releases.)
 
+## [Unreleased]
+
+### Documentation
+
+- [AnkiConnect 26.11.19.1](https://git.sr.ht/~foosoft/anki-connect/tree/26.11.19.1/item/API_LEGACY.md) keeps all 122 legacy actions and their parameter signatures, and is now the reference release for the client documentation and the readme's recommended version. It shipped about five hours after 26.11.19.0, with fixes from an upstream audit of AnkiConnect clients. 26.11.19.0 still has the October behavior for everything that audit fixed. Action JSDoc now covers these behaviors:
+  - `removeEmptyNotes`: Has never removed empty notes. Through 25.11.9.0, it deletes every note type that has no notes, and its JSDoc now opens with a bold warning. 26.10.11.0 through 26.11.19.0 reject the call, and 26.11.19.1 accepts it without deleting anything. The documented maximum stays at 25.11.9.0.
+  - `changeDeck`, `forgetCards`, `setDueDate`: Ignore missing card IDs again in 26.11.19.1. 26.10.11.0 through 26.11.19.0 return an error, and `changeDeck` moves the other cards before returning it.
+  - `guiSelectCard`, `guiSelectNote`: Return `true` for a missing card again in 26.11.19.1, instead of an error.
+  - `answerCards`: Returns `false` for cards it cannot answer, such as suspended cards, and leaves them unchanged. 25.11.9.0 and earlier answer a suspended card and take it out of suspension, and 26.10.11.0 through 26.11.19.0 stop the batch with an error. An invalid ease now fails before any card is answered; earlier releases answer the preceding cards first.
+  - `createModel`, `modelFieldAdd`, `modelFieldRename`, `modelTemplateAdd`, `modelTemplateRename`: From 26.11.19.0, a field or template name that Anki treats as a repeat of another, such as `front` beside `Front`, returns an error. This is new behavior rather than a restoration; earlier releases silently save the repeat as `front+`.
+  - `addNote`, `canAddNote`, and related actions: Deck-scoped and `checkAllModels` duplicate checks skip Anki's cloze validation again, so they accept a cloze note without a deletion. 26.10.11.0 through 26.11.19.0 reject it.
+  - `storeMediaFile` and other large requests: 26.11.19.1 accepts legacy requests up to 128 MiB, enough for 64 MiB of base64 `data`. 26.10.11.0 through 26.11.19.0 reject requests over 16 MiB with HTTP 413 and no CORS headers, so browsers report an `AnkiConnectUnreachableError`. Releases before 26.10.11.0 have no limit.
+  - `sync`: A standalone call replies after the sync finishes again in 26.11.19.1. 26.10.11.0 through 26.11.19.0 reply as soon as it starts.
+- [AnkiConnect 26.11.18.0](https://git.sr.ht/~foosoft/anki-connect/commit/a08d4d534c0c1956f5cefe4a0d5bdb9bba1f83e3) only changes add-on startup: it ignores local version labels in Anki's version string, such as `26.09.4+fsrs7`, which previously crashed add-on loading on forked Anki builds. Its legacy API is identical to 26.11.15.0.
+
+### Maintenance
+
+- Replace the AnkiConnect 26.11.15.0 test fixture with 26.11.19.1, by way of 26.11.18.0, as the newest release in the local and cross-platform CI test matrices. The 25.11.9.0 and 26.10.14.0 fixtures remain.
+- Add fixture tests for the behavior changes in 26.11.19.0 and 26.11.19.1, run against every fixture.
+
 ## [5.3.1] - 2026-11-17
 
 ### Documentation
@@ -801,3 +821,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [5.2.2]: https://github.com/kitschpatrol/yanki-connect/compare/v5.2.1...v5.2.2
 [5.3.0]: https://github.com/kitschpatrol/yanki-connect/compare/v5.2.2...v5.3.0
 [5.3.1]: https://github.com/kitschpatrol/yanki-connect/compare/v5.3.0...v5.3.1
+[Unreleased]: https://github.com/kitschpatrol/yanki-connect/compare/v5.3.1...HEAD
