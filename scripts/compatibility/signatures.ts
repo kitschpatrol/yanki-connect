@@ -232,6 +232,7 @@ export function checkSignatures(records: ProbeRecord[]): Map<number, string> {
 		const declared = sourceFile.getTypeAliasOrThrow(`Declared${String(index)}`).getType()
 		failures.set(
 			index,
+			// eslint-disable-next-line ts/no-unsafe-class-instance-assignment -- ts-morph builds node classes from intersection mixins the rule does not traverse; see typescript-eslint#13214
 			explain(checker, node.getType(), declared, node, 0) ??
 				flattenMessage(diagnostic.getMessageText()),
 		)

@@ -174,6 +174,15 @@ async function waitForAnkiConnect(
 		: 'probe-failed'
 }
 
+type RunOptions = {
+	diagnostic?: GuiDiagnosticOptions | undefined
+	diagnosticsDirectory?: string | undefined
+}
+
+type CombinationOptions = RunOptions & {
+	environment?: NodeJS.ProcessEnv
+}
+
 /**
  * Launch the given Anki executable with one AnkiConnect release installed in a
  * disposable profile, probe every action, and shut Anki down again.
@@ -182,9 +191,7 @@ async function testCombinationAttempt(
 	executable: string,
 	pluginDirectory: string,
 	ankiConnectVersion: string,
-	environment: NodeJS.ProcessEnv = process.env,
-	diagnosticsDirectory?: string,
-	diagnostic?: GuiDiagnosticOptions,
+	{ diagnostic, diagnosticsDirectory, environment = process.env }: CombinationOptions = {},
 ): Promise<CombinationResult> {
 	const base = await createBase(pluginDirectory, diagnostic?.focus)
 	const anki = launchAnki(executable, base, environment, diagnostic?.sandbox)
@@ -220,23 +227,17 @@ export async function testCombination(
 	executable: string,
 	pluginDirectory: string,
 	ankiConnectVersion: string,
-	environment: NodeJS.ProcessEnv = process.env,
-	diagnosticsDirectory?: string,
-	diagnostic?: GuiDiagnosticOptions,
+	options: CombinationOptions = {},
 ): Promise<CombinationResult> {
 	return retryInfrastructure(async (attempt) => {
 		const directory =
-			diagnosticsDirectory === undefined
+			options.diagnosticsDirectory === undefined
 				? undefined
-				: path.join(diagnosticsDirectory, `attempt-${String(attempt)}`)
-		const result = await testCombinationAttempt(
-			executable,
-			pluginDirectory,
-			ankiConnectVersion,
-			environment,
-			directory,
-			diagnostic,
-		)
+				: path.join(options.diagnosticsDirectory, `attempt-${String(attempt)}`)
+		const result = await testCombinationAttempt(executable, pluginDirectory, ankiConnectVersion, {
+			...options,
+			diagnosticsDirectory: directory,
+		})
 		if (directory !== undefined) {
 			await fs.promises.writeFile(
 				path.join(directory, 'result.json'),
@@ -257,8 +258,7 @@ export async function runAnkiRelease(
 	installDirectory: string,
 	pluginsDirectory: string,
 	ankiConnectVersions: string[],
-	diagnosticsDirectory?: string,
-	diagnostic?: GuiDiagnosticOptions,
+	{ diagnostic, diagnosticsDirectory }: RunOptions = {},
 ): Promise<AnkiRunResult> {
 	const { environment, notes } = prepareAnkiRuntime(release, process.env, diagnostic)
 	const metadata = {
@@ -319,11 +319,14 @@ export async function runAnkiRelease(
 				executable,
 				path.join(pluginsDirectory, ankiConnectVersion),
 				ankiConnectVersion,
-				environment,
-				diagnosticsDirectory === undefined
-					? undefined
-					: path.join(diagnosticsDirectory, ankiConnectVersion),
-				diagnostic,
+				{
+					diagnostic,
+					diagnosticsDirectory:
+						diagnosticsDirectory === undefined
+							? undefined
+							: path.join(diagnosticsDirectory, ankiConnectVersion),
+					environment,
+				},
 			)
 		} catch (error) {
 			result = {
@@ -384,8 +387,10 @@ async function main(): Promise<void> {
 			values['install-directory'] ?? path.join(os.tmpdir(), 'yanki-compat-install'),
 			values.plugins ?? 'plugins',
 			ankiConnectVersions,
-			path.join(path.dirname(output), 'logs', release.version),
-			diagnostic,
+			{
+				diagnostic,
+				diagnosticsDirectory: path.join(path.dirname(output), 'logs', release.version),
+			},
 		)
 	} catch (error) {
 		result = {

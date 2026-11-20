@@ -31,7 +31,7 @@ export type YankiFetchAdapter = (
 	| {
 			headers: Headers | Record<string, string>
 			// eslint-disable-next-line ts/no-explicit-any
-			json(): Promise<any>
+			json: () => Promise<any>
 			status: number
 	  }
 >
