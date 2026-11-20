@@ -3,6 +3,9 @@ import type { Actions } from '../src/types/shared'
 import { YankiConnect } from '../src'
 
 const ANKI_USER_AGENT = /^Anki /v
+const INVALID_EASE = /^invalid ease\.?$/iv
+// Browsers can't read October's 413 response, which lacks CORS headers.
+const OVERSIZED_REQUEST = /^(?:AnkiConnect response status is 413|Failed to fetch)$/v
 const exercised = new Set<Actions>()
 const isLegacy = inject('ankiConnectVersion') === '25.11.9.0'
 const isOctober = inject('ankiConnectVersion') === '26.10.14.0'
@@ -333,16 +336,26 @@ describe('real AnkiConnect endpoints', { concurrent: false }, () => {
 		expect(await client.note.notesInfo({ notes: added })).toEqual([{}])
 		await expect(client.note.clearUnusedTags()).resolves.toBeNull()
 		expect(await client.note.getTags()).not.toContain('replaced')
-		if (isLegacy) {
-			await client.note.removeEmptyNotes()
-		} else {
+		const unusedModelName = `${deck}-unused`
+		await client.model.createModel({
+			cardTemplates: [template],
+			inOrderFields: ['Front', 'Back'],
+			modelName: unusedModelName,
+		})
+		if (isOctober) {
 			// eslint-disable-next-line test/no-conditional-expect -- The fixtures define different behavior for this legacy endpoint.
 			await expect(client.note.removeEmptyNotes()).rejects.toThrow(
 				'Use notes.findEmpty with explicit criteria, then notes.delete.',
 			)
+		} else {
+			// eslint-disable-next-line test/no-conditional-expect -- The fixtures define different behavior for this legacy endpoint.
+			await expect(client.note.removeEmptyNotes()).resolves.toBeNull()
 		}
 
-		expect(await client.model.modelNames()).toContain(modelName)
+		// Despite its name, the 2025 fixture deletes unused note types; November does nothing.
+		const modelNames = await client.model.modelNames()
+		expect(modelNames).toContain(modelName)
+		expect(modelNames.includes(unusedModelName)).toBe(!isLegacy)
 	})
 
 	it('nested deck statistics retain native names and own-card totals', async () => {
@@ -371,6 +384,26 @@ describe('real AnkiConnect endpoints', { concurrent: false }, () => {
 		expect(await client.deck.deckNames()).not.toContain(missingDeck)
 	})
 
+	it('deck and all-model duplicate checks skip cloze validation', async () => {
+		const clozeModelName = `${deck}-cloze`
+		await client.model.createModel({
+			cardTemplates: [{ Back: '{{cloze:Text}}', Front: '{{cloze:Text}}' }],
+			inOrderFields: ['Text'],
+			isCloze: true,
+			modelName: clozeModelName,
+		})
+		const candidate = { deckName: deck, fields: { Text: 'No deletion' }, modelName: clozeModelName }
+		expect(await client.note.canAddNote({ note: candidate })).toBe(false)
+		expect(
+			await client.note.canAddNotes({
+				notes: [
+					{ ...candidate, options: { duplicateScope: 'deck' } },
+					{ ...candidate, options: { duplicateScopeOptions: { checkAllModels: true } } },
+				],
+			}),
+		).toEqual([!isOctober, !isOctober])
+	})
+
 	it('oversized field and template indexes move to the end', async () => {
 		await client.model.modelFieldAdd({ fieldName: 'Last', index: 0, modelName })
 		const fieldResult = await client.invoke('modelFieldReposition', {
@@ -396,6 +429,72 @@ describe('real AnkiConnect endpoints', { concurrent: false }, () => {
 			isOctober ? ['Last', 'Card 1'] : ['Card 1', 'Last'],
 		)
 		await client.model.modelTemplateRemove({ modelName, templateName: 'Last' })
+	})
+
+	it('field and template names that differ only in case are rejected', async () => {
+		// Earlier releases let Anki rename the repeat with a "+" suffix.
+		const savesRepeats = isLegacy || isOctober
+		const added = await client.invoke('modelFieldAdd', { fieldName: 'front', modelName })
+		expect(added.error === null).toBe(savesRepeats)
+		expect(await client.model.modelFieldNames({ modelName })).toEqual(
+			savesRepeats ? ['Front', 'Back', 'front+'] : ['Front', 'Back'],
+		)
+		if (savesRepeats) {
+			await client.model.modelFieldRemove({ fieldName: 'front+', modelName })
+		}
+
+		const renamed = await client.invoke('modelFieldRename', {
+			modelName,
+			newFieldName: 'front',
+			oldFieldName: 'Back',
+		})
+		expect(renamed.error === null).toBe(savesRepeats)
+		expect(await client.model.modelFieldNames({ modelName })).toEqual([
+			'Front',
+			savesRepeats ? 'front+' : 'Back',
+		])
+		if (savesRepeats) {
+			await client.model.modelFieldRename({
+				modelName,
+				newFieldName: 'Back',
+				oldFieldName: 'front+',
+			})
+		}
+
+		const addedTemplate = await client.invoke('modelTemplateAdd', {
+			modelName,
+			template: { ...template, Name: 'card 1' },
+		})
+		expect(addedTemplate.error === null).toBe(savesRepeats)
+		expect(Object.keys(await client.model.modelTemplates({ modelName }))).toEqual(
+			savesRepeats ? ['Card 1', 'card 1+'] : ['Card 1'],
+		)
+		if (savesRepeats) {
+			await client.model.modelTemplateRemove({ modelName, templateName: 'card 1+' })
+		}
+
+		await client.model.modelTemplateAdd({ modelName, template: { ...template, Name: 'Extra' } })
+		const renamedTemplate = await client.invoke('modelTemplateRename', {
+			modelName,
+			newTemplateName: 'card 1',
+			oldTemplateName: 'Extra',
+		})
+		expect(renamedTemplate.error === null).toBe(savesRepeats)
+		const templateName = savesRepeats ? 'card 1+' : 'Extra'
+		expect(Object.keys(await client.model.modelTemplates({ modelName }))).toEqual([
+			'Card 1',
+			templateName,
+		])
+		await client.model.modelTemplateRemove({ modelName, templateName })
+
+		const created = await client.invoke('createModel', {
+			cardTemplates: [template],
+			inOrderFields: ['Front', 'front', 'Back'],
+			modelName: `${deck}-repeats`,
+		})
+		const createdFields =
+			created.error === null ? created.result.flds.map(({ name }) => name) : undefined
+		expect(createdFields).toEqual(savesRepeats ? ['Front', 'front+', 'Back'] : undefined)
 	})
 
 	it('obsolete deck configuration values are accepted', async () => {
@@ -557,6 +656,55 @@ describe('real AnkiConnect endpoints', { concurrent: false }, () => {
 		await expect(client.card.cardsInfo({ cards })).resolves.toMatchObject([{ type: 0 }])
 	})
 
+	it('bulk card writes ignore missing card IDs', async () => {
+		const missingCardId = 1
+		const movedDeck = `${deck}-missing-cards`
+		const responses = [
+			await client.invoke('changeDeck', { cards: [cardId, missingCardId], deck: movedDeck }),
+			await client.invoke('forgetCards', { cards: [missingCardId] }),
+			await client.invoke('setDueDate', { cards: [missingCardId], days: '1' }),
+		]
+		expect(responses.map(({ error }) => error === null)).toEqual([
+			!isOctober,
+			!isOctober,
+			!isOctober,
+		])
+		// October reports the missing card after moving the existing one.
+		expect(await client.deck.getDecks({ cards: [cardId] })).toEqual({ [movedDeck]: [cardId] })
+		await client.deck.changeDeck({ cards: [cardId], deck })
+		await client.deck.deleteDecks({ cardsToo: true, decks: [movedDeck] })
+	})
+
+	it('answerCards leaves suspended cards and invalid batches unanswered', async () => {
+		const cards = [cardId]
+		await client.card.suspend({ cards })
+		const suspended = await client.invoke('answerCards', { answers: [{ cardId, ease: 3 }] })
+		if (isOctober) {
+			// eslint-disable-next-line test/no-conditional-expect -- October rejects the whole batch.
+			expect(suspended.error).toBe('This card cannot be answered outside the reviewer.')
+		} else {
+			// eslint-disable-next-line test/no-conditional-expect -- The other fixtures report per-card results.
+			expect(suspended.result).toEqual([isLegacy])
+		}
+
+		// The 2025 fixture answers the suspended card, taking it out of suspension.
+		expect(await client.card.areSuspended({ cards })).toEqual([!isLegacy])
+		await client.card.unsuspend({ cards })
+		await client.card.forgetCards({ cards })
+		const invalid = await client.invoke('answerCards', {
+			answers: [
+				{ cardId, ease: 3 },
+				{ cardId, ease: 5 },
+			],
+		})
+		expect(invalid.error).toMatch(INVALID_EASE)
+		// Earlier releases answer the cards before the invalid ease, leaving this one learning.
+		await expect(client.card.cardsInfo({ cards })).resolves.toMatchObject([
+			{ type: isLegacy || isOctober ? 1 : 0 },
+		])
+		await client.card.forgetCards({ cards })
+	})
+
 	it('statistic actions', async () => {
 		const reviewId = Date.now() - 60_000
 		await client.statistic.insertReviews({
@@ -642,6 +790,24 @@ describe('real AnkiConnect endpoints', { concurrent: false }, () => {
 		expect(await client.media.retrieveMediaFile({ filename })).toBe(isOctober ? '' : false)
 	})
 
+	// The 2025 fixture has no limit, but reads a body this size too slowly for CI.
+	it.runIf(!isLegacy)(
+		'media uploads accept requests over 16 MiB',
+		async () => {
+			const filename = `${deck}-large.txt`
+			const upload = client.media.storeMediaFile({ data: 'A'.repeat(17 * 1024 * 1024), filename })
+			if (isOctober) {
+				// eslint-disable-next-line test/no-conditional-expect -- October limits requests to 16 MiB.
+				await expect(upload).rejects.toThrow(OVERSIZED_REQUEST)
+			} else {
+				// eslint-disable-next-line test/no-conditional-expect -- November accepts larger requests.
+				await expect(upload).resolves.toBe(filename)
+				await client.media.deleteMediaFile({ filename })
+			}
+		},
+		30_000,
+	)
+
 	it('graphical actions', async () => {
 		await client.graphical.guiDeckBrowser()
 		expect(await client.graphical.guiReviewActive()).toBe(false)
@@ -692,6 +858,11 @@ describe('real AnkiConnect endpoints', { concurrent: false }, () => {
 		// The deprecated endpoint takes a card ID despite the parameter name.
 		// eslint-disable-next-line ts/no-deprecated -- Exercise the deprecated endpoint too.
 		expect(await client.graphical.guiSelectNote({ note: cardId })).toBe(true)
+		const missingSelections = [
+			await client.invoke('guiSelectCard', { card: 1 }),
+			await client.invoke('guiSelectNote', { note: 1 }),
+		]
+		expect(missingSelections.map(({ error }) => error === null)).toEqual([!isOctober, !isOctober])
 		if (isLegacy && !hasLegacyEditor) {
 			// Anki 26 removed the Qt editor used by this frozen AnkiConnect fixture.
 			// eslint-disable-next-line test/no-conditional-expect -- Assert the known error only for the incompatible fixture/runtime pair.

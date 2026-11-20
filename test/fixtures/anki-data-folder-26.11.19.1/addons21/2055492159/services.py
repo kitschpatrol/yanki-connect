@@ -17,14 +17,20 @@ TYPES = {0: 'new', 1: 'learning', 2: 'review', 3: 'relearning'}
 QUEUES = {0: 'new', 1: 'learning', 2: 'review', 3: 'dayLearning', 4: 'preview',
           -1: 'suspended', -2: 'buriedByScheduler', -3: 'buriedByUser'}
 RATINGS = ('again', 'hard', 'good', 'easy')
+FILTERED_POSITION_OFFSET = 100000
 KINDS = ('learning', 'review', 'relearning', 'filtered', 'manual', 'rescheduled')
 # Preserve Anki's legacy filename filter without its deprecated stripIllegal API.
+# Internal legacy note option. Public v1 schemas reject it, so only the legacy
+# adapter can attach it after schema validation.
+LEGACY_SKIP_CLOZE = 'x-legacySkipClozeChecks'
 MEDIA_ILLEGAL_CHARACTERS = re.compile(r'[][><:"/?*^\\|\0\r\n]')
 FIELD_KEYS = {'fontFamily': 'font', 'fontSize': 'size', 'description': 'description',
               'sticky': 'sticky', 'rtl': 'rtl', 'plainText': 'plainText',
               'collapsed': 'collapsed', 'excludeFromSearch': 'excludeFromSearch'}
 TEMPLATE_KEYS = {'questionHtml': 'qfmt', 'answerHtml': 'afmt', 'browserQuestionHtml': 'bqfmt',
                  'browserAnswerHtml': 'bafmt', 'browserFontFamily': 'bfont', 'browserFontSize': 'bsize'}
+FIELD_NAME_REMOVED_CHARACTERS = re.compile(r'[:{}"]')
+FIELD_NAME_LEADING_CHARACTERS = re.compile(r'^[\s#/^]+')
 PRESET_KEYS = {
     'learnStepsMinutes': 'learn_steps', 'relearnStepsMinutes': 'relearn_steps',
     'fsrsParameters4': 'fsrs_params_4', 'fsrsParameters5': 'fsrs_params_5', 'fsrsParameters6': 'fsrs_params_6',
@@ -100,6 +106,24 @@ def template_fields(text, names):
     if stack:
         raise ApiError('validationFailed', 'Unclosed template conditional.')
     return fields
+
+
+def structure_name_key(name, is_field):
+    """Mirror the name identity Anki uses when it appends "+" to repeated field/template names."""
+    name = unicodedata.normalize('NFC', name)
+    if is_field:
+        name = FIELD_NAME_LEADING_CHARACTERS.sub('', FIELD_NAME_REMOVED_CHARACTERS.sub('', name)).rstrip()
+    return name.casefold()
+
+
+def require_unique_names(values, is_field):
+    seen = {}
+    for value in values:
+        key = structure_name_key(value['name'], is_field)
+        if key in seen:
+            kind = 'field' if is_field else 'template'
+            raise ApiError('validationFailed', f'Duplicate {kind} name: "{value["name"]}" is the same as "{seen[key]}" in Anki.')
+        seen[key] = value['name']
 
 
 class Services:
@@ -253,11 +277,14 @@ class Services:
             note=note._to_backend_note(), card_ord=template['ord'], template=to_json_bytes(template),
             fill_empty=False, partial_render=True).is_empty for template in templates)
 
-    def validation(self, note, deck, policy, reject_empty):
+    def validation(self, note, deck, policy, reject_empty, cloze_checks=True):
         result = int(note.fields_check())
         reasons = {1: 'emptyFirstField', 3: 'missingCloze', 4: 'notClozeNoteType', 5: 'notClozeField'}
         issues = []
-        if result in reasons:
+        if not cloze_checks and result in (3, 4, 5):
+            # Legacy deck/all-model duplicate checks never ran Anki's cloze checks.
+            pass
+        elif result in reasons:
             issues.append({'type': reasons[result], 'message': 'Anki field validation: ' + reasons[result]})
         elif result not in (0, 2):
             raise ApiError('unsupportedCapability', 'Unknown native field validation result.')
@@ -290,14 +317,16 @@ class Services:
 
     def notes_validate(self, note):
         native, deck = self.prepare_note(note)
-        return self.validation(native, deck, note.get('duplicates'), note.get('rejectEmptyQuestions', True))
+        return self.validation(native, deck, note.get('duplicates'), note.get('rejectEmptyQuestions', True),
+                               note.get(LEGACY_SKIP_CLOZE) is not True)
 
     def notes_validateMany(self, notes):
         return self.many(notes, self.notes_validate)
 
     def notes_create(self, **data):
         note, deck = self.prepare_note(data)
-        validation = self.validation(note, deck, data.get('duplicates'), data.get('rejectEmptyQuestions', True))
+        validation = self.validation(note, deck, data.get('duplicates'), data.get('rejectEmptyQuestions', True),
+                                     data.get(LEGACY_SKIP_CLOZE) is not True)
         if not validation['valid']:
             raise ApiError('validationFailed', 'Note cannot be created.', validation)
         self.change(self.col.add_note(note, deck['id']))
@@ -321,7 +350,8 @@ class Services:
         for index, data in enumerate(notes):
             try:
                 note, deck = self.prepare_note(data)
-                validation = self.validation(note, deck, data.get('duplicates'), data.get('rejectEmptyQuestions', True))
+                validation = self.validation(note, deck, data.get('duplicates'), data.get('rejectEmptyQuestions', True),
+                                             data.get(LEGACY_SKIP_CLOZE) is not True)
                 policy = data.get('duplicates', {})
                 if not policy.get('allow', False):
                     for old_note, old_deck in seen:
@@ -464,7 +494,10 @@ class Services:
         if queue is None or card.type not in TYPES:
             raise ApiError('unsupportedCapability', 'Unknown card scheduling state.')
         underlying = card.queue if card.queue >= 0 else card.type
-        if underlying == 0:
+        if card.odid and card.due < 0:
+            # Filtered builds replace due with -100000 + build order; the home due moves to odue.
+            due = {'kind': 'position', 'position': max(0, card.due + FILTERED_POSITION_OFFSET)}
+        elif underlying == 0:
             due = {'kind': 'position', 'position': max(0, card.due)}
         elif card.queue in (1, 4) or (card.queue < 0 and card.type in (1, 3) and card.due > 1000000000):
             due = {'kind': 'timestamp', 'at': timestamp(card.due)}
@@ -635,8 +668,12 @@ class Services:
 
     def scheduling_setDueDate(self, cardIds, days):
         def set_due(id):
+            from anki.errors import InvalidInput
             card = self.card(id)
-            self.change(self.col.sched.set_due_date([card.id], days, config_key=None))
+            try:
+                self.change(self.col.sched.set_due_date([card.id], days, config_key=None))
+            except InvalidInput as error:
+                raise ApiError('invalidParams', str(error)) from error
             return {'changed': True}
         return self.many(cardIds, set_due, True)
 
@@ -737,9 +774,9 @@ class Services:
             template = self.col.models.new_template(data['name'])
             self.fill_template(template, data)
             self.col.models.add_template(model, template)
+        require_unique_names(model['flds'], True)
+        require_unique_names(model['tmpls'], False)
         names = [field['name'] for field in model['flds']]
-        if len(names) != len(set(names)) or len({t['name'] for t in model['tmpls']}) != len(templates):
-            raise ApiError('validationFailed', 'Duplicate field/template names.')
         model['sortf'] = names.index(sortField) if sortField else 0
         out = self.change(self.col.models.add_dict(model))
         return self.noteTypes_get({'id': str(out.id)})
@@ -793,8 +830,9 @@ class Services:
                         raise ApiError('validationFailed', 'Move index out of range.')
                     values.remove(value)
                     values.insert(edit['index'], value)
-            if not values or len({value['name'] for value in values}) != len(values):
-                raise ApiError('validationFailed', 'Invalid field/template structure.')
+            if not values:
+                raise ApiError('validationFailed', 'A note type must keep at least one ' + ('field.' if is_field else 'template.'))
+            require_unique_names(values, is_field)
         self.change(self.col.models.update_dict(model))
         return self.noteTypes_get({'id': str(model['id'])})
 
