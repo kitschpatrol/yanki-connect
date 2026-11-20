@@ -382,6 +382,26 @@ describe('real AnkiConnect endpoints', { concurrent: false }, () => {
 		expect(await client.deck.deckNames()).not.toContain(missingDeck)
 	})
 
+	it('deck and all-model duplicate checks skip cloze validation', async () => {
+		const clozeModelName = `${deck}-cloze`
+		await client.model.createModel({
+			cardTemplates: [{ Back: '{{cloze:Text}}', Front: '{{cloze:Text}}' }],
+			inOrderFields: ['Text'],
+			isCloze: true,
+			modelName: clozeModelName,
+		})
+		const candidate = { deckName: deck, fields: { Text: 'No deletion' }, modelName: clozeModelName }
+		expect(await client.note.canAddNote({ note: candidate })).toBe(false)
+		expect(
+			await client.note.canAddNotes({
+				notes: [
+					{ ...candidate, options: { duplicateScope: 'deck' } },
+					{ ...candidate, options: { duplicateScopeOptions: { checkAllModels: true } } },
+				],
+			}),
+		).toEqual([!isOctober, !isOctober])
+	})
+
 	it('oversized field and template indexes move to the end', async () => {
 		await client.model.modelFieldAdd({ fieldName: 'Last', index: 0, modelName })
 		const fieldResult = await client.invoke('modelFieldReposition', {

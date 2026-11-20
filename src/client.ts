@@ -1273,6 +1273,10 @@ export class YankiConnect {
 		 * - `duplicateScopeOptions.checkAllModels` specifies whether duplicate checks
 		 *   are performed across all note types. The default value is `false`.
 		 *
+		 * Deck-scoped and `checkAllModels` checks skip Anki's cloze validation, so
+		 * they accept a cloze note without a deletion, except in AnkiConnect
+		 * 26.10.11.0 through 26.11.19.0, which reject it.
+		 *
 		 * Media entries may omit `fields` from 25.11.2.0 on Anki 23.10 or later.
 		 *
 		 * @minimumAnki 2.1.15
