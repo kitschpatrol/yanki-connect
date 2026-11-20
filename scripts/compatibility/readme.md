@@ -168,14 +168,12 @@ without a retry or media-player exception. One pairing on Anki 2.1.51 needed a
 fresh-profile retry after its media-server thread stopped; that retry recovered
 all GUI coverage.
 
-Run `44130540851` is the recommended next baseline candidate. It includes the
+Run `44130540851` was accepted as the baseline on 2026-11-17. It includes the
 current probe revisions and the existing 707 `guiDeckReview` behavior failures;
 the three dependent reviewer actions remain inconclusive for those pairings.
 Those compatibility boundaries are not evidence of complete cross-version support.
-After accepting that report, use `44130540851` for the next normal full survey:
-disable `diagnose-gui-crash` and leave both version filters empty. Baseline
-acceptance remains explicit; this recommendation does not update the repository
-variable. Do not use a diagnostic run as the baseline.
+[Accepting a baseline](#accepting-a-baseline) names the current baseline. Do not
+use a diagnostic run as the baseline.
 
 The runner first verifies core capture using a small process that raises
 `SIGTRAP`. After each Anki attempt, GDB reads the core dumps and records thread
@@ -213,6 +211,15 @@ the job; it never silently falls back to discovery. Artifacts expire after 90
 days, so review and accept a newer report before the baseline expires. Keep an
 external copy of accepted reports for longer-term comparisons.
 
+The current baseline is the
+[AnkiConnect 26.11.19.1 survey](https://github.com/kitschpatrol/yanki-connect/actions/runs/44802360641),
+run `44802360641`, accepted on 2026-11-20. It covers 80 Anki releases and 35
+AnkiConnect releases through 26.11.19.1. Compared against `44130540851`, it had no
+regressions, unverified observations, collection failures, or infrastructure
+retries. It still records the 707 `guiDeckReview` behavior failures, so the three
+dependent reviewer actions remain inconclusive for those pairings. Its artifacts
+expire on 2027-02-18.
+
 The comparison uses only the baseline's successful action observations with
 matching probe revisions. Older artifacts default to revision 1. Changed
 assertions are listed as **changed probes**, with the number of observations
@@ -225,13 +232,12 @@ The four reviewer probes (`guiDeckReview`, `guiShowQuestion`, `guiShowAnswer`,
 it compares model identity without blaming a valid numeric ID for a string ID
 returned by an older `createModel`. Both original responses are still checked
 against their declared types, so signature failures remain attached to the
-action that produced them. The validated full survey `44130540851` captures
-these revised assertions and is the recommended next baseline candidate.
-Review the revised GUI findings and any infrastructure retries before accepting
-it. A green report with changed probes does
-not mean those revised assertions have regression coverage yet. Never promote
-a partial run. Reports with unresolved collection failures are rejected as
-baselines. When changing an
+action that produced them. Every baseline since `44130540851` captures these
+revised assertions, so they have regression coverage. A green report with
+changed probes does not give the revised assertions regression coverage until a
+run that includes them is accepted. Review its GUI findings and any
+infrastructure retries before accepting it. Never promote a partial run. Reports
+with unresolved collection failures are rejected as baselines. When changing an
 assertion's meaning, bump its entry in `probe-revisions.ts`.
 
 ## Local use
