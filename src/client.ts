@@ -806,7 +806,10 @@ export class YankiConnect {
 		 * can't read that response, which lacks CORS headers, so there the client
 		 * throws `AnkiConnectUnreachableError` instead. From 26.11.19.1, requests
 		 * can be up to 128 MiB, enough for 64 MiB of `data` after base64 encoding.
-		 * Releases before 26.10.11.0 have no limit.
+		 * Releases before 26.10.11.0 have no limit, but read a request 1 KiB at a
+		 * time and reparse it after each read, so reading time grows with the
+		 * square of its size, and Anki stops responding until it finishes. A 17 MiB
+		 * request took 16 seconds on a fast machine and over 30 on slower ones.
 		 *
 		 * @minimumAnki 2.1.15
 		 * @minimumAnkiConnect 22.2.19.0
