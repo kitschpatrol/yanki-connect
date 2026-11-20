@@ -20,7 +20,7 @@
 <!-- /short-description -->
 
 > [!IMPORTANT]
-> The latest 26.x versions of Anki-Connect introduce a new [APIv1](https://git.sr.ht/~foosoft/anki-connect/tree/26.11.18.0/item/API_V1.md), which is meant to supersede the "version 6" API Yanki Connect currently supports.
+> The latest 26.x versions of Anki-Connect introduce a new [APIv1](https://git.sr.ht/~foosoft/anki-connect/tree/26.11.19.1/item/API_V1.md), which is meant to supersede the "version 6" API Yanki Connect currently supports.
 >
 > A future version of Yanki Connect might introduce support for this new API, but for now please note that Yanki Connect only exposes the now "Legacy" version 6 API.
 
@@ -37,7 +37,7 @@ The "Y" prefix in "Yanki" is in the "Yet another" naming tradition; a nod to Ank
 ## Features
 
 - **Action method organization + convenience methods**\
-  Instead of putting all <!-- actionCount -->122<!-- /actionCount --> methods in a single namespace, action convenience methods are organized into the same groups used in the [AnkiConnect documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.11.18.0/item/API_LEGACY.md#action-reference), to simplify auto-complete discoverability.
+  Instead of putting all <!-- actionCount -->122<!-- /actionCount --> methods in a single namespace, action convenience methods are organized into the same groups used in the [AnkiConnect documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.11.19.1/item/API_LEGACY.md#action-reference), to simplify auto-complete discoverability.
 
 - **Low-level access through the provided `invoke` method**\
   If you don't want to use the convenience methods, an `invoke(action, params)` method is also exposed on the YankiConnect class for direct interaction with the AnkiConnect API.
@@ -87,7 +87,7 @@ Yanki Connect runs in either Node.js or a browser and provides ESM exports with 
 - [Anki desktop app](https://apps.ankiweb.net/) 2.1.15+\
   _26.08.0+ recommended for full API support_
 - [AnkiConnect add-on](https://ankiweb.net/shared/info/2055492159) 22.2.19.0+\
-  _26.11.18.0+ recommended for full API support_
+  _26.11.19.1+ recommended for full API support_
 - **Browsers:** builds target Chrome 100+, Firefox 110+, and Safari 18+\
   _Older versions may work but are not verified_
 
@@ -115,7 +115,7 @@ npm install yanki-connect
 
 Yanki Connect aims to be discoverable and self-documenting when used in an environment with a robust autocompletion / language service implementation. (VS Code, for example.)
 
-The library exports the `YankiConnect` class, which groups methods into the same structure of "supported actions" used in the official [AnkiConnect documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.11.18.0/item/API_LEGACY.md#action-reference).
+The library exports the `YankiConnect` class, which groups methods into the same structure of "supported actions" used in the official [AnkiConnect documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.11.19.1/item/API_LEGACY.md#action-reference).
 
 Here's a simple example:
 
@@ -367,7 +367,7 @@ Chen Lijun's [autoanki](https://github.com/chenlijun99/autoanki) also implements
 
 Thanks to [Alex Yatskov](https://foosoft.net/) for creating [AnkiConnect](https://ankiweb.net/shared/info/2055492159).
 
-Most of the embedded action descriptions in Yanki Connect are taken from the [AnkiConnect legacy API reference](https://git.sr.ht/~foosoft/anki-connect/tree/26.11.18.0/item/API_LEGACY.md) and its predecessor, the [AnkiConnect 25.11.9.0 readme](https://git.sr.ht/~foosoft/anki-connect/tree/25.11.9.0/item/README.md). Notes on version-specific behavior are Yanki Connect's own.
+Most of the embedded action descriptions in Yanki Connect are taken from the [AnkiConnect legacy API reference](https://git.sr.ht/~foosoft/anki-connect/tree/26.11.19.1/item/API_LEGACY.md) and its predecessor, the [AnkiConnect 25.11.9.0 readme](https://git.sr.ht/~foosoft/anki-connect/tree/25.11.9.0/item/README.md). Notes on version-specific behavior are Yanki Connect's own.
 
 ## Testing
 
