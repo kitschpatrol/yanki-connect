@@ -333,16 +333,26 @@ describe('real AnkiConnect endpoints', { concurrent: false }, () => {
 		expect(await client.note.notesInfo({ notes: added })).toEqual([{}])
 		await expect(client.note.clearUnusedTags()).resolves.toBeNull()
 		expect(await client.note.getTags()).not.toContain('replaced')
-		if (isLegacy) {
-			await client.note.removeEmptyNotes()
-		} else {
+		const unusedModelName = `${deck}-unused`
+		await client.model.createModel({
+			cardTemplates: [template],
+			inOrderFields: ['Front', 'Back'],
+			modelName: unusedModelName,
+		})
+		if (isOctober) {
 			// eslint-disable-next-line test/no-conditional-expect -- The fixtures define different behavior for this legacy endpoint.
 			await expect(client.note.removeEmptyNotes()).rejects.toThrow(
 				'Use notes.findEmpty with explicit criteria, then notes.delete.',
 			)
+		} else {
+			// eslint-disable-next-line test/no-conditional-expect -- The fixtures define different behavior for this legacy endpoint.
+			await expect(client.note.removeEmptyNotes()).resolves.toBeNull()
 		}
 
-		expect(await client.model.modelNames()).toContain(modelName)
+		// Despite its name, the 2025 fixture deletes unused note types; November does nothing.
+		const modelNames = await client.model.modelNames()
+		expect(modelNames).toContain(modelName)
+		expect(modelNames.includes(unusedModelName)).toBe(!isLegacy)
 	})
 
 	it('nested deck statistics retain native names and own-card totals', async () => {
