@@ -801,6 +801,13 @@ export class YankiConnect {
 		 * including non-ASCII URLs and Anki's user agent. Only HTTP 200 succeeds;
 		 * other statuses fail with `URL download failed with return code STATUS`.
 		 *
+		 * AnkiConnect 26.10.11.0 through 26.11.19.0 reject requests over 16 MiB,
+		 * and the client throws `AnkiConnect response status is 413`. Browsers
+		 * can't read that response, which lacks CORS headers, so there the client
+		 * throws `AnkiConnectUnreachableError` instead. From 26.11.19.1, requests
+		 * can be up to 128 MiB, enough for 64 MiB of `data` after base64 encoding.
+		 * Releases before 26.10.11.0 have no limit.
+		 *
 		 * @minimumAnki 2.1.15
 		 * @minimumAnkiConnect 22.2.19.0
 		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L614}

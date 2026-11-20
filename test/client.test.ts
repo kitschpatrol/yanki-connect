@@ -4,6 +4,8 @@ import { YankiConnect } from '../src'
 
 const ANKI_USER_AGENT = /^Anki /v
 const INVALID_EASE = /^invalid ease\.?$/iv
+// Browsers can't read October's 413 response, which lacks CORS headers.
+const OVERSIZED_REQUEST = /^(?:AnkiConnect response status is 413|Failed to fetch)$/v
 const exercised = new Set<Actions>()
 const isLegacy = inject('ankiConnectVersion') === '25.11.9.0'
 const isOctober = inject('ankiConnectVersion') === '26.10.14.0'
@@ -787,6 +789,19 @@ describe('real AnkiConnect endpoints', { concurrent: false }, () => {
 		)
 		expect(await client.media.retrieveMediaFile({ filename })).toBe(isOctober ? '' : false)
 	})
+
+	it('media uploads accept requests over 16 MiB', async () => {
+		const filename = `${deck}-large.txt`
+		const upload = client.media.storeMediaFile({ data: 'A'.repeat(17 * 1024 * 1024), filename })
+		if (isOctober) {
+			// eslint-disable-next-line test/no-conditional-expect -- October limits requests to 16 MiB.
+			await expect(upload).rejects.toThrow(OVERSIZED_REQUEST)
+		} else {
+			// eslint-disable-next-line test/no-conditional-expect -- The other fixtures accept larger requests.
+			await expect(upload).resolves.toBe(filename)
+			await client.media.deleteMediaFile({ filename })
+		}
+	}, 30_000)
 
 	it('graphical actions', async () => {
 		await client.graphical.guiDeckBrowser()
