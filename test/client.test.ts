@@ -567,6 +567,25 @@ describe('real AnkiConnect endpoints', { concurrent: false }, () => {
 		await expect(client.card.cardsInfo({ cards })).resolves.toMatchObject([{ type: 0 }])
 	})
 
+	it('bulk card writes ignore missing card IDs', async () => {
+		const missingCardId = 1
+		const movedDeck = `${deck}-missing-cards`
+		const responses = [
+			await client.invoke('changeDeck', { cards: [cardId, missingCardId], deck: movedDeck }),
+			await client.invoke('forgetCards', { cards: [missingCardId] }),
+			await client.invoke('setDueDate', { cards: [missingCardId], days: '1' }),
+		]
+		expect(responses.map(({ error }) => error === null)).toEqual([
+			!isOctober,
+			!isOctober,
+			!isOctober,
+		])
+		// October reports the missing card after moving the existing one.
+		expect(await client.deck.getDecks({ cards: [cardId] })).toEqual({ [movedDeck]: [cardId] })
+		await client.deck.changeDeck({ cards: [cardId], deck })
+		await client.deck.deleteDecks({ cardsToo: true, decks: [movedDeck] })
+	})
+
 	it('statistic actions', async () => {
 		const reviewId = Date.now() - 60_000
 		await client.statistic.insertReviews({
@@ -702,6 +721,11 @@ describe('real AnkiConnect endpoints', { concurrent: false }, () => {
 		// The deprecated endpoint takes a card ID despite the parameter name.
 		// eslint-disable-next-line ts/no-deprecated -- Exercise the deprecated endpoint too.
 		expect(await client.graphical.guiSelectNote({ note: cardId })).toBe(true)
+		const missingSelections = [
+			await client.invoke('guiSelectCard', { card: 1 }),
+			await client.invoke('guiSelectNote', { note: 1 }),
+		]
+		expect(missingSelections.map(({ error }) => error === null)).toEqual([!isOctober, !isOctober])
 		if (isLegacy && !hasLegacyEditor) {
 			// Anki 26 removed the Qt editor used by this frozen AnkiConnect fixture.
 			// eslint-disable-next-line test/no-conditional-expect -- Assert the known error only for the incompatible fixture/runtime pair.

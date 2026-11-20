@@ -219,6 +219,9 @@ export class YankiConnect {
 		/**
 		 * Forget cards, making the cards new again.
 		 *
+		 * Missing card IDs are ignored, except in AnkiConnect 26.10.11.0 through
+		 * 26.11.19.0, which return an error.
+		 *
 		 * @minimumAnki 2.1.15
 		 * @minimumAnkiConnect 22.2.19.0
 		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L1210}
@@ -259,6 +262,9 @@ export class YankiConnect {
 		 * - 0 = today
 		 * - 1! = tomorrow + change interval to 1
 		 * - 3-7 = random choice of 3-7 days
+		 *
+		 * Missing card IDs are ignored, except in AnkiConnect 26.10.11.0 through
+		 * 26.11.19.0, which return an error.
 		 *
 		 * @minimumAnki 23.10.0
 		 * @minimumAnkiConnect 25.2.24.0
@@ -331,6 +337,9 @@ export class YankiConnect {
 		/**
 		 * Moves cards with the given IDs to a different deck, creating the deck if
 		 * it doesn’t exist yet.
+		 *
+		 * Missing card IDs are ignored, except in AnkiConnect 26.10.11.0 through
+		 * 26.11.19.0, which return an error after moving the other cards.
 		 *
 		 * @minimumAnki 2.1.15
 		 * @minimumAnkiConnect 22.2.19.0
@@ -655,6 +664,9 @@ export class YankiConnect {
 		 * given a card identifier. Returns true if the Card Browser is open, false
 		 * otherwise.
 		 *
+		 * A missing card also returns `true`, except in AnkiConnect 26.10.11.0
+		 * through 26.11.19.0, which return an error.
+		 *
 		 * @minimumAnki 23.10.0
 		 * @minimumAnkiConnect 25.2.24.0
 		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/25.2.24.0/item/plugin/__init__.py#L1817}
@@ -671,6 +683,9 @@ export class YankiConnect {
 		 */
 		guiSelectedNotes: this.build('guiSelectedNotes'),
 		/**
+		 * A missing card returns `true`, except in AnkiConnect 26.10.11.0 through
+		 * 26.11.19.0, which return an error.
+		 *
 		 * @deprecated Actually selects card IDs. Use `guiSelectCard` instead.'
 		 * @minimumAnki 2.1.45
 		 * @minimumAnkiConnect 24.1.21.0
