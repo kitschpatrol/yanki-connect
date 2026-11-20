@@ -135,6 +135,13 @@ export class YankiConnect {
 		 * timer immediately before answering. Returns true if card exists, `false`
 		 * otherwise.
 		 *
+		 * Cards that cannot be answered, such as suspended cards, also return
+		 * `false` and stay unchanged. AnkiConnect 25.11.9.0 and earlier answer
+		 * suspended cards, taking them out of suspension, and 26.10.11.0 through
+		 * 26.11.19.0 stop with an error at the first such card. An invalid ease
+		 * fails the request before any card is answered, except in 26.11.19.0 and
+		 * earlier, which first answer the cards before it.
+		 *
 		 * @minimumAnki 2.1.45
 		 * @minimumAnkiConnect 23.10.29.0
 		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/23.10.29.0/item/plugin/__init__.py#L1534}

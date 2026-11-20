@@ -3,6 +3,7 @@ import type { Actions } from '../src/types/shared'
 import { YankiConnect } from '../src'
 
 const ANKI_USER_AGENT = /^Anki /v
+const INVALID_EASE = /^invalid ease\.?$/iv
 const exercised = new Set<Actions>()
 const isLegacy = inject('ankiConnectVersion') === '25.11.9.0'
 const isOctober = inject('ankiConnectVersion') === '26.10.14.0'
@@ -584,6 +585,36 @@ describe('real AnkiConnect endpoints', { concurrent: false }, () => {
 		expect(await client.deck.getDecks({ cards: [cardId] })).toEqual({ [movedDeck]: [cardId] })
 		await client.deck.changeDeck({ cards: [cardId], deck })
 		await client.deck.deleteDecks({ cardsToo: true, decks: [movedDeck] })
+	})
+
+	it('answerCards leaves suspended cards and invalid batches unanswered', async () => {
+		const cards = [cardId]
+		await client.card.suspend({ cards })
+		const suspended = await client.invoke('answerCards', { answers: [{ cardId, ease: 3 }] })
+		if (isOctober) {
+			// eslint-disable-next-line test/no-conditional-expect -- October rejects the whole batch.
+			expect(suspended.error).toBe('This card cannot be answered outside the reviewer.')
+		} else {
+			// eslint-disable-next-line test/no-conditional-expect -- The other fixtures report per-card results.
+			expect(suspended.result).toEqual([isLegacy])
+		}
+
+		// The 2025 fixture answers the suspended card, taking it out of suspension.
+		expect(await client.card.areSuspended({ cards })).toEqual([!isLegacy])
+		await client.card.unsuspend({ cards })
+		await client.card.forgetCards({ cards })
+		const invalid = await client.invoke('answerCards', {
+			answers: [
+				{ cardId, ease: 3 },
+				{ cardId, ease: 5 },
+			],
+		})
+		expect(invalid.error).toMatch(INVALID_EASE)
+		// Earlier releases answer the cards before the invalid ease, leaving this one learning.
+		await expect(client.card.cardsInfo({ cards })).resolves.toMatchObject([
+			{ type: isLegacy || isOctober ? 1 : 0 },
+		])
+		await client.card.forgetCards({ cards })
 	})
 
 	it('statistic actions', async () => {
