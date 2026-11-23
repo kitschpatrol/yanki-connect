@@ -53,6 +53,21 @@ class DecentPreviewer(aqt.browser.previewer.MultiCardPreviewer):
         super().__init__(parent=None, mw=aqt.mw, on_close=lambda: None) # noqa
         self.adapter = adapter
         self.last_card_id = 0
+        gui_hooks.operation_did_execute.append(self.on_operation_did_execute)
+
+    # Unlike the Browser's previewer, no host refreshes this one; close it rather
+    # than render a card deleted elsewhere, e.g. through the API.
+    def on_operation_did_execute(self, changes, handler):
+        if not self._open or not (changes.card or changes.note_text):
+            return
+        ids = [card.id for card in getattr(self.adapter, "cards", [self.card()])]
+        if self.mw.col.db.scalar(
+                "select count() from cards where id in " + ids2str(ids)) != len(ids):
+            self.close()
+
+    def _on_close(self):
+        gui_hooks.operation_did_execute.remove(self.on_operation_did_execute)
+        super()._on_close()
 
     def card(self):
         return self.adapter.get_current_card()
@@ -229,6 +244,18 @@ class Edit(aqt.editcurrent.EditCurrent):
             return
         self.editor.call_after_note_saved(self.cleanup)
 
+    # Before 23.10, EditCurrent's versions close the reviewer's dialog registration
+    # and call QDialog.reject on this QMainWindow.
+    def _saveAndClose(self):
+        self.cleanup()
+        self.close()
+
+    def closeWithCallback(self, onsuccess):
+        def callback():
+            self._saveAndClose()
+            onsuccess()
+        self.editor.call_after_note_saved(callback)
+
     # This method (mostly) solves (at least on my Windows 10 machine) three issues
     # with window activation. Without this not even too hacky a fix,
     #   * When dialog is opened from Yomichan *for the first time* since app start,
@@ -321,7 +348,8 @@ class Edit(aqt.editcurrent.EditCurrent):
             gui_hooks.browser_did_change_row.remove(search_input_select_all)
 
     def show_preview(self, *_):
-        if cards := self.note.cards():
+        cards = self.note.cards()
+        if cards:
             previewer = DecentPreviewer(ReadyCardsAdapter(cards))
             previewer.open()
             return previewer

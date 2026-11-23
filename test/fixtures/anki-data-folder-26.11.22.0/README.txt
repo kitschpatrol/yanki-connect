@@ -4,7 +4,7 @@ please see:
 
 https://docs.ankiweb.net/files#startup-options
 
-AnkiConnect fixture: 26.11.19.1
+AnkiConnect fixture: 26.11.22.0
 Upstream: https://git.sr.ht/~foosoft/anki-connect
-Commit: bc65f65129dd2e17bd0ed3143bb4c733e9353975
+Commit: d9165b4c563ee01ceb3f7c4daaa034eefaabffc6
 The add-on metadata keeps auto-update disabled and allows test browser origins.

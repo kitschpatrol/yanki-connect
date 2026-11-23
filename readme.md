@@ -371,12 +371,12 @@ Most of the embedded action descriptions in Yanki Connect are taken from the [An
 
 ## Testing
 
-`pnpm test` runs the Node.js and Chromium suites against pinned AnkiConnect `25.11.9.0`, `26.10.14.0`, and `26.11.19.1` fixtures. The tests launch Anki with temporary copies of the test profiles and exercise every legacy action, including the version-specific behavior. Anki must be installed; the test runner closes running Anki instances. CI runs each fixture on Linux, macOS, and Windows, using Anki `25.9.2`, `26.8`, and `26.9.4`, respectively.
+`pnpm test` runs the Node.js and Chromium suites against pinned AnkiConnect `25.11.9.0`, `26.10.14.0`, and `26.11.22.0` fixtures. The tests launch Anki with temporary copies of the test profiles and exercise every legacy action, including the version-specific behavior. Anki must be installed; the test runner closes running Anki instances. CI runs each fixture on Linux, macOS, and Windows, using Anki `25.9.2`, `26.8`, and `26.9.4`, respectively.
 
 To run only the November release:
 
 ```sh
-ANKI_CONNECT_VERSION=26.11.19.1 pnpm test
+ANKI_CONNECT_VERSION=26.11.22.0 pnpm test
 ```
 
 The broader compatibility workflow runs monthly and on demand, discovering upstream release tags automatically.
