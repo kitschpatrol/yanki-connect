@@ -647,6 +647,9 @@ export class YankiConnect {
 		 * Anki 23.10 and later, and releases before 26.10.11.0 fail on Anki 26.08
 		 * and later.
 		 *
+		 * From AnkiConnect 26.11.22.0, the dialog's card preview closes when its
+		 * note is deleted elsewhere, including through the API.
+		 *
 		 * @minimumAnki 26.08.0
 		 * @minimumAnkiConnect 26.10.11.0
 		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/26.10.11.0/item/plugin/__init__.py#L669}
