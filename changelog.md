@@ -28,7 +28,7 @@ Entries are drafted with LLM assistance via [Chagent](https://github.com/kitschp
 ### Maintenance
 
 - Replace the AnkiConnect 26.11.19.1 test fixture with 26.11.22.0 as the newest release in the local and cross-platform CI test matrices. The 25.11.9.0 and 26.10.14.0 fixtures remain.
-- Add a fixture test for note and tag writes while the _Card Browser_ shows the note, with version-specific expectations for each fixture.
+- Add a fixture test for note and tag writes while the _Card Browser_ shows the note, with version-specific expectations for each fixture. The Add dialog now opens after this test: with it open during the writes, Anki hung when quitting with 26.11.22.0 in about half of the CI jobs.
 
 ## [5.3.2] - 2026-11-20
 
