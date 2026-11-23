@@ -212,13 +212,17 @@ days, so review and accept a newer report before the baseline expires. Keep an
 external copy of accepted reports for longer-term comparisons.
 
 The current baseline is the
-[AnkiConnect 26.11.19.1 survey](https://github.com/kitschpatrol/yanki-connect/actions/runs/44802360641),
-run `44802360641`, accepted on 2026-11-20. It covers 80 Anki releases and 35
-AnkiConnect releases through 26.11.19.1. Compared against `44130540851`, it had no
-regressions, unverified observations, collection failures, or infrastructure
-retries. It still records the 707 `guiDeckReview` behavior failures, so the three
-dependent reviewer actions remain inconclusive for those pairings. Its artifacts
-expire on 2027-02-18.
+[AnkiConnect 26.11.22.0 survey](https://github.com/kitschpatrol/yanki-connect/actions/runs/45182814645),
+run `45182814645`, accepted on 2026-11-23. It covers 80 Anki releases and 36
+AnkiConnect releases through 26.11.22.0. Compared against `44802360641`, it had no
+regressions, unverified observations, or collection failures. Anki 2.1.64's job was
+rerun after its release download failed, and three pairings of Anki 2.1.51–2.1.53
+with older AnkiConnect releases recovered after one fresh-profile retry when Anki's
+media server stopped. It records 708 `guiDeckReview` behavior failures, the
+previous 707 plus AnkiConnect 26.11.22.0 on Anki 2.1.15, so the three dependent
+reviewer actions remain inconclusive for those pairings. Its artifacts expire on
+2027-02-21. Run `44802360641`, the AnkiConnect 26.11.19.1 survey, was the baseline
+from 2026-11-20.
 
 The comparison uses only the baseline's successful action observations with
 matching probe revisions. Older artifacts default to revision 1. Changed
