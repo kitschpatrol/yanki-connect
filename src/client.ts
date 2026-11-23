@@ -625,9 +625,9 @@ export class YankiConnect {
 		 *
 		 * AnkiConnect 25.11.9.0 and earlier break on Anki 23.10 and later: they
 		 * return `true` and Anki enters review on the expected card, but the
-		 * reviewer never finishes loading. No AnkiConnect release supports it on
-		 * Anki 23.10 through 26.05; Anki 26.08 and later need AnkiConnect
-		 * 26.10.11.0 or later.
+		 * reviewer never finishes loading. On Anki 23.10 through 26.05, only
+		 * AnkiConnect 26.11.22.0 and later support it; Anki 26.08 and later need
+		 * AnkiConnect 26.10.11.0 or later.
 		 *
 		 * @minimumAnki 2.1.15
 		 * @minimumAnkiConnect 22.2.19.0

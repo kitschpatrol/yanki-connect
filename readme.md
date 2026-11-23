@@ -85,7 +85,7 @@ The "Y" prefix in "Yanki" is in the "Yet another" naming tradition; a nod to Ank
 Yanki Connect runs in either Node.js or a browser and provides ESM exports with TypeScript definitions.
 
 - [Anki desktop app](https://apps.ankiweb.net/) 2.1.15+\
-  _26.08.0+ recommended for full API support_
+  _23.10.0+ recommended for full API support_
 - [AnkiConnect add-on](https://ankiweb.net/shared/info/2055492159) 22.2.19.0+\
   _26.11.22.0+ recommended for full API support_
 - **Browsers:** builds target Chrome 100+, Firefox 110+, and Safari 18+\
@@ -138,6 +138,8 @@ AnkiConnect has accumulated additional methods over the years, some of which req
 The table below shows all AnkiConnect methods exposed in a YankiConnect client, with the minimum Anki and AnkiConnect versions that support each action. Parameters and response fields added in later releases are optional in the types and name their release in their documentation, so they do not raise an action's minimum, but check the JSDoc annotation for version-specific caveats.
 
 A range in the AnkiConnect column marks an action that a later release either broke or removed.
+
+AnkiConnect 26.11.22.0 loads on every Anki release from 2.1.15, while releases from 22.4.26.0 through 26.11.19.1 need Anki 2.1.45 or later. With 26.11.22.0, most actions also work on Anki 2.1.20 and later where the table lists a later minimum Anki, because the table pairs each minimum Anki with the oldest AnkiConnect release that supports the action. On the Linux build of Anki 2.1.15, 26.11.22.0 fails nearly every action, because that build lacks Python's `concurrent` package.
 
 <!-- actionList -->
 
