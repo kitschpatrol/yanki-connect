@@ -111,14 +111,14 @@ export const defaultYankiConnectOptions: YankiConnectOptions = {
 
 /**
  * **YankiConnect is a client for the legacy [AnkiConnect
- * API](https://git.sr.ht/~foosoft/anki-connect/tree/26.11.19.1/item/API_LEGACY.md)**.
+ * API](https://git.sr.ht/~foosoft/anki-connect/tree/26.11.22.0/item/API_LEGACY.md)**.
  *
- * It implements every legacy endpoint from AnkiConnect version 26.11.19.1,
- * released 2026-11-19.
+ * It implements every legacy endpoint from AnkiConnect version 26.11.22.0,
+ * released 2026-11-22.
  *
  * Most inline documentation is by the AnkiConnect authors, taken from [the
  * legacy API
- * reference](https://git.sr.ht/~foosoft/anki-connect/tree/26.11.19.1/item/API_LEGACY.md)
+ * reference](https://git.sr.ht/~foosoft/anki-connect/tree/26.11.22.0/item/API_LEGACY.md)
  * and [the 25.11.9.0
  * readme](https://git.sr.ht/~foosoft/anki-connect/tree/25.11.9.0/item/README.md).
  * Notes on version-specific behavior are Yanki Connect's own.
@@ -127,7 +127,7 @@ export class YankiConnect {
 	/**
 	 * **Card Actions**
 	 *
-	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.11.19.1/item/API_LEGACY.md#card-actions)
+	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.11.22.0/item/API_LEGACY.md#card-actions)
 	 */
 	public readonly card = {
 		/**
@@ -338,7 +338,7 @@ export class YankiConnect {
 	/**
 	 * **Deck Actions**
 	 *
-	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.11.19.1/item/API_LEGACY.md#deck-actions)
+	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.11.22.0/item/API_LEGACY.md#deck-actions)
 	 */
 	public readonly deck = {
 		/**
@@ -481,7 +481,7 @@ export class YankiConnect {
 	/**
 	 * **Graphical Actions**
 	 *
-	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.11.19.1/item/API_LEGACY.md#graphical-actions)
+	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.11.22.0/item/API_LEGACY.md#graphical-actions)
 	 */
 	public readonly graphical = {
 		/**
@@ -741,7 +741,7 @@ export class YankiConnect {
 	/**
 	 * **Media Actions**
 	 *
-	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.11.19.1/item/API_LEGACY.md#media-actions)
+	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.11.22.0/item/API_LEGACY.md#media-actions)
 	 */
 	public readonly media = {
 		/**
@@ -820,7 +820,7 @@ export class YankiConnect {
 	/**
 	 * **Miscellaneous Actions**
 	 *
-	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.11.19.1/item/API_LEGACY.md#miscellaneous-actions)
+	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.11.22.0/item/API_LEGACY.md#miscellaneous-actions)
 	 */
 	public readonly miscellaneous = {
 		/**
@@ -957,7 +957,7 @@ export class YankiConnect {
 	/**
 	 * **Model Actions**
 	 *
-	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.11.19.1/item/API_LEGACY.md#model-actions)
+	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.11.22.0/item/API_LEGACY.md#model-actions)
 	 */
 	public readonly model = {
 		/**
@@ -1246,7 +1246,7 @@ export class YankiConnect {
 	/**
 	 * **Note Actions**
 	 *
-	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.11.19.1/item/API_LEGACY.md#note-actions)
+	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.11.22.0/item/API_LEGACY.md#note-actions)
 	 */
 	public readonly note = {
 		/**
@@ -1580,7 +1580,7 @@ export class YankiConnect {
 	/**
 	 * **Statistic Actions**
 	 *
-	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.11.19.1/item/API_LEGACY.md#statistic-actions)
+	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.11.22.0/item/API_LEGACY.md#statistic-actions)
 	 */
 	public readonly statistic = {
 		/**
@@ -1711,7 +1711,7 @@ export class YankiConnect {
 	/**
 	 * Directly invoke the Anki Connect API.
 	 *
-	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.11.19.1/item/API_LEGACY.md)
+	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.11.22.0/item/API_LEGACY.md)
 	 *
 	 * Primarily for internal use, since the client provides a more convenient
 	 * methods on its class, e.g. instead of:
