@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Entries are drafted with LLM assistance via [Chagent](https://github.com/kitschpatrol/chagent).
 
-## [Unreleased]
+## [5.3.3] - 2026-11-23
 
 ### Documentation
 
@@ -851,4 +851,4 @@ Entries are drafted with LLM assistance via [Chagent](https://github.com/kitschp
 [5.3.0]: https://github.com/kitschpatrol/yanki-connect/compare/v5.2.2...v5.3.0
 [5.3.1]: https://github.com/kitschpatrol/yanki-connect/compare/v5.3.0...v5.3.1
 [5.3.2]: https://github.com/kitschpatrol/yanki-connect/compare/v5.3.1...v5.3.2
-[Unreleased]: https://github.com/kitschpatrol/yanki-connect/compare/v5.3.2...HEAD
+[5.3.3]: https://github.com/kitschpatrol/yanki-connect/compare/v5.3.2...v5.3.3
