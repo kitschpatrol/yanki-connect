@@ -35,6 +35,7 @@ const deck = `yanki-e2e-${Date.now()}`
 const modelName = `${deck}-model`
 const note = { deckName: deck, fields: { Back: 'Answer', Front: deck }, modelName, tags: [deck] }
 const template = { Back: '{{Back}}', Front: '{{Front}}', Name: 'Card 1' }
+const draft = { note: { fields: { Front: 'draft' }, tags: ['draft'] } }
 let deckId: number
 let modelId: number
 let noteId: number
@@ -813,7 +814,6 @@ describe('real AnkiConnect endpoints', { concurrent: false }, () => {
 	it('graphical actions', async () => {
 		await client.graphical.guiDeckBrowser()
 		expect(await client.graphical.guiReviewActive()).toBe(false)
-		const draft = { note: { fields: { Front: 'draft' }, tags: ['draft'] } }
 		if (isLegacy) {
 			// eslint-disable-next-line test/no-conditional-expect -- The 2025 fixture predates this action.
 			await expect(client.graphical.guiAddNoteSetData(draft)).rejects.toThrow('unsupported action')
@@ -874,16 +874,6 @@ describe('real AnkiConnect endpoints', { concurrent: false }, () => {
 		} else {
 			await client.graphical.guiEditNote({ note: noteId })
 		}
-
-		expect(
-			typeof (await client.graphical.guiAddCards({
-				note: { ...note, fields: { Back: '', Front: '' } },
-			})),
-		).toBe('number')
-		if (!isLegacy) {
-			// eslint-disable-next-line test/no-conditional-expect -- The 2025 fixture predates this action.
-			expect(await client.graphical.guiAddNoteSetData({ ...draft, append: true })).toBe(true)
-		}
 	}, 30_000)
 
 	it('note writes while an editor shows the note', async () => {
@@ -906,6 +896,20 @@ describe('real AnkiConnect endpoints', { concurrent: false }, () => {
 		if (!isLegacy) {
 			// eslint-disable-next-line test/no-conditional-expect -- Later fixtures have a deterministic outcome.
 			expect(outcome).toEqual(isOctober ? unchanged : { back: 'Edited', edited: true })
+		}
+	})
+
+	// With 26.11.22.0, note writes while this dialog is open can keep it from closing when
+	// Anki quits on slower CI runners, so it opens after the editor write test.
+	it('add dialog actions', async () => {
+		expect(
+			typeof (await client.graphical.guiAddCards({
+				note: { ...note, fields: { Back: '', Front: '' } },
+			})),
+		).toBe('number')
+		if (!isLegacy) {
+			// eslint-disable-next-line test/no-conditional-expect -- The 2025 fixture predates this action.
+			expect(await client.graphical.guiAddNoteSetData({ ...draft, append: true })).toBe(true)
 		}
 	})
 
