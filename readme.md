@@ -20,7 +20,7 @@
 <!-- /short-description -->
 
 > [!IMPORTANT]
-> The latest 26.x versions of Anki-Connect introduce a new [APIv1](https://git.sr.ht/~foosoft/anki-connect/tree/26.11.19.1/item/API_V1.md), which is meant to supersede the "version 6" API Yanki Connect currently supports.
+> The latest 26.x versions of Anki-Connect introduce a new [APIv1](https://git.sr.ht/~foosoft/anki-connect/tree/26.11.22.0/item/API_V1.md), which is meant to supersede the "version 6" API Yanki Connect currently supports.
 >
 > A future version of Yanki Connect might introduce support for this new API, but for now please note that Yanki Connect only exposes the now "Legacy" version 6 API.
 
@@ -37,7 +37,7 @@ The "Y" prefix in "Yanki" is in the "Yet another" naming tradition; a nod to Ank
 ## Features
 
 - **Action method organization + convenience methods**\
-  Instead of putting all <!-- actionCount -->122<!-- /actionCount --> methods in a single namespace, action convenience methods are organized into the same groups used in the [AnkiConnect documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.11.19.1/item/API_LEGACY.md#action-reference), to simplify auto-complete discoverability.
+  Instead of putting all <!-- actionCount -->122<!-- /actionCount --> methods in a single namespace, action convenience methods are organized into the same groups used in the [AnkiConnect documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.11.22.0/item/API_LEGACY.md#action-reference), to simplify auto-complete discoverability.
 
 - **Low-level access through the provided `invoke` method**\
   If you don't want to use the convenience methods, an `invoke(action, params)` method is also exposed on the YankiConnect class for direct interaction with the AnkiConnect API.
@@ -85,9 +85,9 @@ The "Y" prefix in "Yanki" is in the "Yet another" naming tradition; a nod to Ank
 Yanki Connect runs in either Node.js or a browser and provides ESM exports with TypeScript definitions.
 
 - [Anki desktop app](https://apps.ankiweb.net/) 2.1.15+\
-  _26.08.0+ recommended for full API support_
+  _23.10.0+ recommended for full API support_
 - [AnkiConnect add-on](https://ankiweb.net/shared/info/2055492159) 22.2.19.0+\
-  _26.11.19.1+ recommended for full API support_
+  _26.11.22.0+ recommended for full API support_
 - **Browsers:** builds target Chrome 100+, Firefox 110+, and Safari 18+\
   _Older versions may work but are not verified_
 
@@ -115,7 +115,7 @@ npm install yanki-connect
 
 Yanki Connect aims to be discoverable and self-documenting when used in an environment with a robust autocompletion / language service implementation. (VS Code, for example.)
 
-The library exports the `YankiConnect` class, which groups methods into the same structure of "supported actions" used in the official [AnkiConnect documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.11.19.1/item/API_LEGACY.md#action-reference).
+The library exports the `YankiConnect` class, which groups methods into the same structure of "supported actions" used in the official [AnkiConnect documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.11.22.0/item/API_LEGACY.md#action-reference).
 
 Here's a simple example:
 
@@ -139,6 +139,8 @@ The table below shows all AnkiConnect methods exposed in a YankiConnect client, 
 
 A range in the AnkiConnect column marks an action that a later release either broke or removed.
 
+AnkiConnect 26.11.22.0 loads on every Anki release from 2.1.15, while releases from 22.4.26.0 through 26.11.19.1 need Anki 2.1.45 or later. With 26.11.22.0, most actions also work on Anki 2.1.20 and later where the table lists a later minimum Anki, because the table pairs each minimum Anki with the oldest AnkiConnect release that supports the action. On the Linux build of Anki 2.1.15, 26.11.22.0 fails nearly every action, because that build lacks Python's `concurrent` package.
+
 <!-- actionList -->
 
 | Action                                      | Minimum Anki | Minimum Anki-Connect   |
@@ -153,7 +155,7 @@ A range in the AnkiConnect column marks an action that a later release either br
 | `client.card.forgetCards`                   | 2.1.15       | 22.2.19.0              |
 | `client.card.getEaseFactors`                | 2.1.15       | 22.2.19.0              |
 | `client.card.getIntervals`                  | 2.1.15       | 22.2.19.0              |
-| `client.card.relearnCards`                  | 2.1.15       | 22.2.19.0              |
+| `client.card.relearnCards`                  | 2.1.45       | 22.2.19.0              |
 | `client.card.setDueDate`                    | 23.10.0      | 25.2.24.0              |
 | `client.card.setEaseFactors`                | 2.1.15       | 22.2.19.0              |
 | `client.card.setSpecificValueOfCard`        | 2.1.45       | 22.4.26.0              |
@@ -162,51 +164,51 @@ A range in the AnkiConnect column marks an action that a later release either br
 | `client.card.unsuspend`                     | 2.1.15       | 22.2.19.0              |
 | `client.deck.changeDeck`                    | 2.1.15       | 22.2.19.0              |
 | `client.deck.cloneDeckConfigId`             | 2.1.24       | 22.2.19.0              |
-| `client.deck.createDeck`                    | 2.1.15       | 22.2.19.0              |
+| `client.deck.createDeck`                    | 2.1.20       | 22.2.19.0              |
 | `client.deck.deckNameFromId`                | 2.1.15       | 22.2.19.0              |
-| `client.deck.deckNames`                     | 2.1.15       | 22.2.19.0              |
-| `client.deck.deckNamesAndIds`               | 2.1.15       | 22.2.19.0              |
+| `client.deck.deckNames`                     | 2.1.20       | 22.2.19.0              |
+| `client.deck.deckNamesAndIds`               | 2.1.20       | 22.2.19.0              |
 | `client.deck.deleteDecks`                   | 2.1.45       | 22.4.26.0              |
-| `client.deck.getDeckConfig`                 | 2.1.25       | 22.2.19.0              |
+| `client.deck.getDeckConfig`                 | 2.1.28       | 22.2.19.0              |
 | `client.deck.getDecks`                      | 2.1.15       | 22.2.19.0              |
 | `client.deck.getDeckStats`                  | 2.1.47       | 22.7.14.0              |
 | `client.deck.removeDeckConfigId`            | 2.1.24       | 22.2.19.0              |
-| `client.deck.saveDeckConfig`                | 2.1.24       | 22.2.19.0              |
+| `client.deck.saveDeckConfig`                | 2.1.28       | 22.2.19.0              |
 | `client.deck.setDeckConfigId`               | 2.1.24       | 22.2.19.0              |
-| `client.graphical.guiAddCards`              | 2.1.15       | 22.2.19.0              |
+| `client.graphical.guiAddCards`              | 2.1.20       | 22.2.19.0              |
 | `client.graphical.guiAddNoteSetData`        | 26.08.0      | 26.10.11.0             |
 | `client.graphical.guiAnswerCard`            | 2.1.15       | 22.2.19.0              |
 | `client.graphical.guiBrowse`                | 2.1.15       | 22.2.19.0              |
-| `client.graphical.guiCheckDatabase`         | 2.1.15       | 22.2.19.0              |
+| `client.graphical.guiCheckDatabase`         | 2.1.20       | 22.2.19.0              |
 | `client.graphical.guiCurrentCard`           | 2.1.15       | 22.2.19.0              |
-| `client.graphical.guiDeckBrowser`           | 2.1.15       | 22.2.19.0              |
-| `client.graphical.guiDeckOverview`          | 2.1.15       | 22.2.19.0              |
+| `client.graphical.guiDeckBrowser`           | 2.1.20       | 22.2.19.0              |
+| `client.graphical.guiDeckOverview`          | 2.1.20       | 22.2.19.0              |
 | `client.graphical.guiDeckReview`            | 2.1.15       | 22.2.19.0              |
 | `client.graphical.guiEditNote`              | 26.08.0      | 26.10.11.0             |
 | `client.graphical.guiExitAnki`              | 2.1.15       | 22.2.19.0              |
-| `client.graphical.guiImportFile`            | 2.1.52       | 23.10.29.0             |
+| `client.graphical.guiImportFile`            | 23.10.0      | 23.10.29.0             |
 | `client.graphical.guiPlayAudio`             | 23.10.0      | 25.11.9.0              |
-| `client.graphical.guiReviewActive`          | 2.1.15       | 22.2.19.0              |
+| `client.graphical.guiReviewActive`          | 2.1.20       | 22.2.19.0              |
 | `client.graphical.guiSelectCard`            | 23.10.0      | 25.2.24.0              |
 | `client.graphical.guiSelectedNotes`         | 2.1.15       | 22.2.19.0              |
 | `client.graphical.guiSelectNote`            | 2.1.45       | 24.1.21.0              |
 | `client.graphical.guiShowAnswer`            | 2.1.15       | 22.2.19.0              |
 | `client.graphical.guiShowQuestion`          | 2.1.15       | 22.2.19.0              |
-| `client.graphical.guiStartCardTimer`        | 2.1.15       | 22.2.19.0              |
+| `client.graphical.guiStartCardTimer`        | 2.1.20       | 22.2.19.0              |
 | `client.graphical.guiUndo`                  | 2.1.45       | 23.10.29.0             |
-| `client.media.deleteMediaFile`              | 2.1.15       | 22.2.19.0              |
+| `client.media.deleteMediaFile`              | 2.1.20       | 22.2.19.0              |
 | `client.media.getMediaDirPath`              | 2.1.45       | 23.4.11.0              |
-| `client.media.getMediaFilesNames`           | 2.1.15       | 22.2.19.0              |
-| `client.media.retrieveMediaFile`            | 2.1.15       | 22.2.19.0              |
-| `client.media.storeMediaFile`               | 2.1.15       | 22.2.19.0              |
+| `client.media.getMediaFilesNames`           | 2.1.20       | 22.2.19.0              |
+| `client.media.retrieveMediaFile`            | 2.1.20       | 22.2.19.0              |
+| `client.media.storeMediaFile`               | 2.1.20       | 22.2.19.0              |
 | `client.miscellaneous.apiReflect`           | 2.1.45       | 22.7.14.0              |
-| `client.miscellaneous.exportPackage`        | 2.1.15       | 22.2.19.0              |
+| `client.miscellaneous.exportPackage`        | 2.1.20       | 22.2.19.0              |
 | `client.miscellaneous.getActiveProfile`     | 2.1.50       | 24.7.25.0              |
 | `client.miscellaneous.getProfiles`          | 2.1.15       | 22.2.19.0              |
 | `client.miscellaneous.importPackage`        | 2.1.15       | 22.2.19.0              |
 | `client.miscellaneous.loadProfile`          | 2.1.15       | 22.2.19.0              |
 | `client.miscellaneous.multi`                | 2.1.15       | 22.2.19.0              |
-| `client.miscellaneous.reloadCollection`     | 2.1.15       | 22.2.19.0              |
+| `client.miscellaneous.reloadCollection`     | 2.1.20       | 22.2.19.0              |
 | `client.miscellaneous.requestPermission`    | 2.1.15       | 22.2.19.0              |
 | `client.miscellaneous.sync`                 | 2.1.45       | 22.2.19.0              |
 | `client.miscellaneous.version`              | 2.1.15       | 22.2.19.0              |
@@ -217,37 +219,37 @@ A range in the AnkiConnect column marks an action that a later release either br
 | `client.model.modelFieldAdd`                | 2.1.45       | 22.9.18.0              |
 | `client.model.modelFieldDescriptions`       | 2.1.50       | 23.2.5.0               |
 | `client.model.modelFieldFonts`              | 2.1.45       | 23.2.5.0               |
-| `client.model.modelFieldNames`              | 2.1.15       | 22.2.19.0              |
+| `client.model.modelFieldNames`              | 2.1.20       | 22.2.19.0              |
 | `client.model.modelFieldRemove`             | 2.1.45       | 22.9.18.0              |
 | `client.model.modelFieldRename`             | 2.1.45       | 22.9.18.0              |
 | `client.model.modelFieldReposition`         | 2.1.45       | 22.9.18.0              |
 | `client.model.modelFieldSetDescription`     | 2.1.50       | 23.2.5.0               |
 | `client.model.modelFieldSetFont`            | 2.1.45       | 23.2.5.0               |
 | `client.model.modelFieldSetFontSize`        | 2.1.45       | 23.2.5.0               |
-| `client.model.modelFieldsOnTemplates`       | 2.1.15       | 22.2.19.0              |
+| `client.model.modelFieldsOnTemplates`       | 2.1.20       | 22.2.19.0              |
 | `client.model.modelNameFromId`              | 2.1.15       | 22.2.19.0              |
-| `client.model.modelNames`                   | 2.1.15       | 22.2.19.0              |
-| `client.model.modelNamesAndIds`             | 2.1.15       | 22.2.19.0              |
-| `client.model.modelStyling`                 | 2.1.15       | 22.2.19.0              |
+| `client.model.modelNames`                   | 2.1.20       | 22.2.19.0              |
+| `client.model.modelNamesAndIds`             | 2.1.20       | 22.2.19.0              |
+| `client.model.modelStyling`                 | 2.1.20       | 22.2.19.0              |
 | `client.model.modelTemplateAdd`             | 2.1.45       | 23.10.29.0             |
 | `client.model.modelTemplateRemove`          | 2.1.45       | 23.10.29.0             |
 | `client.model.modelTemplateRename`          | 2.1.45       | 23.10.29.0             |
 | `client.model.modelTemplateReposition`      | 2.1.45       | 23.10.29.0             |
-| `client.model.modelTemplates`               | 2.1.15       | 22.2.19.0              |
-| `client.model.updateModelStyling`           | 2.1.15       | 22.2.19.0              |
-| `client.model.updateModelTemplates`         | 2.1.15       | 22.2.19.0              |
-| `client.note.addNote`                       | 2.1.15       | 22.2.19.0              |
-| `client.note.addNotes`                      | 2.1.15       | 22.2.19.0              |
+| `client.model.modelTemplates`               | 2.1.20       | 22.2.19.0              |
+| `client.model.updateModelStyling`           | 2.1.20       | 22.2.19.0              |
+| `client.model.updateModelTemplates`         | 2.1.20       | 22.2.19.0              |
+| `client.note.addNote`                       | 2.1.20       | 22.2.19.0              |
+| `client.note.addNotes`                      | 2.1.20       | 22.2.19.0              |
 | `client.note.addTags`                       | 2.1.15       | 22.2.19.0              |
-| `client.note.canAddNote`                    | 2.1.15       | 22.2.19.0              |
-| `client.note.canAddNotes`                   | 2.1.15       | 22.2.19.0              |
+| `client.note.canAddNote`                    | 2.1.20       | 22.2.19.0              |
+| `client.note.canAddNotes`                   | 2.1.20       | 22.2.19.0              |
 | `client.note.canAddNotesWithErrorDetail`    | 2.1.50       | 24.2.26.0              |
 | `client.note.canAddNoteWithErrorDetail`     | 2.1.50       | 24.2.26.0              |
-| `client.note.clearUnusedTags`               | 2.1.15       | 22.2.19.0              |
-| `client.note.deleteNotes`                   | 2.1.15       | 22.2.19.0              |
+| `client.note.clearUnusedTags`               | 2.1.20       | 22.2.19.0              |
+| `client.note.deleteNotes`                   | 2.1.20       | 22.2.19.0              |
 | `client.note.findNotes`                     | 2.1.15       | 22.2.19.0              |
 | `client.note.getNoteTags`                   | 2.1.45       | 23.4.11.0              |
-| `client.note.getTags`                       | 2.1.15       | 22.2.19.0              |
+| `client.note.getTags`                       | 2.1.20       | 22.2.19.0              |
 | `client.note.notesInfo`                     | 2.1.45       | 23.2.5.0               |
 | `client.note.notesModTime`                  | 2.1.50       | 24.7.25.0              |
 | `client.note.removeEmptyNotes`              | 2.1.15       | 22.2.19.0 to 25.11.9.0 |
@@ -259,8 +261,8 @@ A range in the AnkiConnect column marks an action that a later release either br
 | `client.note.updateNoteModel`               | 2.1.50       | 24.6.17.0              |
 | `client.note.updateNoteTags`                | 2.1.45       | 23.4.11.0              |
 | `client.statistic.cardReviews`              | 2.1.15       | 22.2.19.0              |
-| `client.statistic.getCollectionStatsHTML`   | 2.1.15       | 22.2.19.0              |
-| `client.statistic.getLatestReviewID`        | 2.1.15       | 22.2.19.0              |
+| `client.statistic.getCollectionStatsHTML`   | 2.1.20       | 22.2.19.0              |
+| `client.statistic.getLatestReviewID`        | 2.1.20       | 22.2.19.0              |
 | `client.statistic.getNumCardsReviewedByDay` | 2.1.15       | 22.2.19.0              |
 | `client.statistic.getNumCardsReviewedToday` | 2.1.15       | 22.2.19.0              |
 | `client.statistic.getReviewsOfCards`        | 2.1.45       | 23.2.5.0               |
@@ -367,16 +369,16 @@ Chen Lijun's [autoanki](https://github.com/chenlijun99/autoanki) also implements
 
 Thanks to [Alex Yatskov](https://foosoft.net/) for creating [AnkiConnect](https://ankiweb.net/shared/info/2055492159).
 
-Most of the embedded action descriptions in Yanki Connect are taken from the [AnkiConnect legacy API reference](https://git.sr.ht/~foosoft/anki-connect/tree/26.11.19.1/item/API_LEGACY.md) and its predecessor, the [AnkiConnect 25.11.9.0 readme](https://git.sr.ht/~foosoft/anki-connect/tree/25.11.9.0/item/README.md). Notes on version-specific behavior are Yanki Connect's own.
+Most of the embedded action descriptions in Yanki Connect are taken from the [AnkiConnect legacy API reference](https://git.sr.ht/~foosoft/anki-connect/tree/26.11.22.0/item/API_LEGACY.md) and its predecessor, the [AnkiConnect 25.11.9.0 readme](https://git.sr.ht/~foosoft/anki-connect/tree/25.11.9.0/item/README.md). Notes on version-specific behavior are Yanki Connect's own.
 
 ## Testing
 
-`pnpm test` runs the Node.js and Chromium suites against pinned AnkiConnect `25.11.9.0`, `26.10.14.0`, and `26.11.19.1` fixtures. The tests launch Anki with temporary copies of the test profiles and exercise every legacy action, including the version-specific behavior. Anki must be installed; the test runner closes running Anki instances. CI runs each fixture on Linux, macOS, and Windows, using Anki `25.9.2`, `26.8`, and `26.9.4`, respectively.
+`pnpm test` runs the Node.js and Chromium suites against pinned AnkiConnect `25.11.9.0`, `26.10.14.0`, and `26.11.22.0` fixtures. The tests launch Anki with temporary copies of the test profiles and exercise every legacy action, including the version-specific behavior. Anki must be installed; the test runner closes running Anki instances. CI runs each fixture on Linux, macOS, and Windows, using Anki `25.9.2`, `26.8`, and `26.9.4`, respectively.
 
 To run only the November release:
 
 ```sh
-ANKI_CONNECT_VERSION=26.11.19.1 pnpm test
+ANKI_CONNECT_VERSION=26.11.22.0 pnpm test
 ```
 
 The broader compatibility workflow runs monthly and on demand, discovering upstream release tags automatically.

@@ -111,14 +111,14 @@ export const defaultYankiConnectOptions: YankiConnectOptions = {
 
 /**
  * **YankiConnect is a client for the legacy [AnkiConnect
- * API](https://git.sr.ht/~foosoft/anki-connect/tree/26.11.19.1/item/API_LEGACY.md)**.
+ * API](https://git.sr.ht/~foosoft/anki-connect/tree/26.11.22.0/item/API_LEGACY.md)**.
  *
- * It implements every legacy endpoint from AnkiConnect version 26.11.19.1,
- * released 2026-11-19.
+ * It implements every legacy endpoint from AnkiConnect version 26.11.22.0,
+ * released 2026-11-22.
  *
  * Most inline documentation is by the AnkiConnect authors, taken from [the
  * legacy API
- * reference](https://git.sr.ht/~foosoft/anki-connect/tree/26.11.19.1/item/API_LEGACY.md)
+ * reference](https://git.sr.ht/~foosoft/anki-connect/tree/26.11.22.0/item/API_LEGACY.md)
  * and [the 25.11.9.0
  * readme](https://git.sr.ht/~foosoft/anki-connect/tree/25.11.9.0/item/README.md).
  * Notes on version-specific behavior are Yanki Connect's own.
@@ -127,7 +127,7 @@ export class YankiConnect {
 	/**
 	 * **Card Actions**
 	 *
-	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.11.19.1/item/API_LEGACY.md#card-actions)
+	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.11.22.0/item/API_LEGACY.md#card-actions)
 	 */
 	public readonly card = {
 		/**
@@ -257,7 +257,11 @@ export class YankiConnect {
 		/**
 		 * Make cards be “relearning”.
 		 *
-		 * @minimumAnki 2.1.15
+		 * On Anki 2.1.15 through 2.1.44, AnkiConnect 22.2.19.0 supports it.
+		 * 26.11.22.0 supports it on Anki 2.1.20 through 2.1.40, but on 2.1.41
+		 * through 2.1.44 it returns without putting the cards into relearning.
+		 *
+		 * @minimumAnki 2.1.45
 		 * @minimumAnkiConnect 22.2.19.0
 		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L1218}
 		 */
@@ -338,7 +342,7 @@ export class YankiConnect {
 	/**
 	 * **Deck Actions**
 	 *
-	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.11.19.1/item/API_LEGACY.md#deck-actions)
+	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.11.22.0/item/API_LEGACY.md#deck-actions)
 	 */
 	public readonly deck = {
 		/**
@@ -368,7 +372,9 @@ export class YankiConnect {
 		 * Create a new empty deck. Will not overwrite a deck that exists with the
 		 * same name.
 		 *
-		 * @minimumAnki 2.1.15
+		 * On Anki 2.1.15, AnkiConnect 22.2.19.0 supports it, but 26.11.22.0 fails.
+		 *
+		 * @minimumAnki 2.1.20
 		 * @minimumAnkiConnect 22.2.19.0
 		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L504}
 		 */
@@ -386,7 +392,9 @@ export class YankiConnect {
 		/**
 		 * Gets the complete list of deck names for the current user.
 		 *
-		 * @minimumAnki 2.1.15
+		 * On Anki 2.1.15, AnkiConnect 22.2.19.0 supports it, but 26.11.22.0 fails.
+		 *
+		 * @minimumAnki 2.1.20
 		 * @minimumAnkiConnect 22.2.19.0
 		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L476}
 		 */
@@ -395,7 +403,9 @@ export class YankiConnect {
 		 * Gets the complete list of deck names and their respective IDs for the
 		 * current user.
 		 *
-		 * @minimumAnki 2.1.15
+		 * On Anki 2.1.15, AnkiConnect 22.2.19.0 supports it, but 26.11.22.0 fails.
+		 *
+		 * @minimumAnki 2.1.20
 		 * @minimumAnkiConnect 22.2.19.0
 		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L481}
 		 */
@@ -415,7 +425,10 @@ export class YankiConnect {
 		 * releases raise an `int() argument must be a string, a bytes-like object
 		 * or a real number, not 'NoneType'` error for filtered decks.
 		 *
-		 * @minimumAnki 2.1.25
+		 * On Anki 2.1.25 and 2.1.26, AnkiConnect 22.2.19.0 supports it, while
+		 * 26.11.22.0 returns the configuration without `dyn`.
+		 *
+		 * @minimumAnki 2.1.28
 		 * @minimumAnkiConnect 22.2.19.0
 		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L545}
 		 */
@@ -462,7 +475,11 @@ export class YankiConnect {
 		 * `rev.minSpace`, and the third `new.ints` entry are accepted and ignored
 		 * again; 26.10.11.0 through 26.10.14.0 return `false` for those changes.
 		 *
-		 * @minimumAnki 2.1.24
+		 * On Anki 2.1.24 through 2.1.26, AnkiConnect 22.2.19.0 supports it. With
+		 * 26.11.22.0 there, saved configurations read back from `getDeckConfig`
+		 * without `dyn`.
+		 *
+		 * @minimumAnki 2.1.28
 		 * @minimumAnkiConnect 22.2.19.0
 		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L555}
 		 */
@@ -481,7 +498,7 @@ export class YankiConnect {
 	/**
 	 * **Graphical Actions**
 	 *
-	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.11.19.1/item/API_LEGACY.md#graphical-actions)
+	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.11.22.0/item/API_LEGACY.md#graphical-actions)
 	 */
 	public readonly graphical = {
 		/**
@@ -506,7 +523,9 @@ export class YankiConnect {
 		 * the preset `tags` in the dialog but do not save them with the added
 		 * note.
 		 *
-		 * @minimumAnki 2.1.15
+		 * On Anki 2.1.15, AnkiConnect 22.2.19.0 supports it, but 26.11.22.0 fails.
+		 *
+		 * @minimumAnki 2.1.20
 		 * @minimumAnkiConnect 22.2.19.0
 		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L1370}
 		 */
@@ -563,7 +582,9 @@ export class YankiConnect {
 		 * the check to complete. Therefore, the action will always return `true`
 		 * even if errors are detected during the database check.
 		 *
-		 * @minimumAnki 2.1.15
+		 * On Anki 2.1.15, AnkiConnect 22.2.19.0 supports it, but 26.11.22.0 fails.
+		 *
+		 * @minimumAnki 2.1.20
 		 * @minimumAnkiConnect 22.2.19.0
 		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L1637}
 		 */
@@ -580,7 +601,9 @@ export class YankiConnect {
 		/**
 		 * Opens the _Deck Browser_ dialog.
 		 *
-		 * @minimumAnki 2.1.15
+		 * On Anki 2.1.15, AnkiConnect 22.2.19.0 supports it, but 26.11.22.0 fails.
+		 *
+		 * @minimumAnki 2.1.20
 		 * @minimumAnkiConnect 22.2.19.0
 		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L1616}
 		 */
@@ -589,7 +612,9 @@ export class YankiConnect {
 		 * Opens the _Deck Overview_ dialog for the deck with the given name;
 		 * returns `true` if succeeded or `false` otherwise.
 		 *
-		 * @minimumAnki 2.1.15
+		 * On Anki 2.1.15, AnkiConnect 22.2.19.0 supports it, but 26.11.22.0 fails.
+		 *
+		 * @minimumAnki 2.1.20
 		 * @minimumAnkiConnect 22.2.19.0
 		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L1603}
 		 */
@@ -600,9 +625,9 @@ export class YankiConnect {
 		 *
 		 * AnkiConnect 25.11.9.0 and earlier break on Anki 23.10 and later: they
 		 * return `true` and Anki enters review on the expected card, but the
-		 * reviewer never finishes loading. No AnkiConnect release supports it on
-		 * Anki 23.10 through 26.05; Anki 26.08 and later need AnkiConnect
-		 * 26.10.11.0 or later.
+		 * reviewer never finishes loading. On Anki 23.10 through 26.05, only
+		 * AnkiConnect 26.11.22.0 and later support it; Anki 26.08 and later need
+		 * AnkiConnect 26.10.11.0 or later.
 		 *
 		 * @minimumAnki 2.1.15
 		 * @minimumAnkiConnect 22.2.19.0
@@ -621,6 +646,9 @@ export class YankiConnect {
 		 * Older combinations break: AnkiConnect releases before 24.1.1.0 fail on
 		 * Anki 23.10 and later, and releases before 26.10.11.0 fail on Anki 26.08
 		 * and later.
+		 *
+		 * From AnkiConnect 26.11.22.0, the dialog's card preview closes when its
+		 * note is deleted elsewhere, including through the API.
 		 *
 		 * @minimumAnki 26.08.0
 		 * @minimumAnkiConnect 26.10.11.0
@@ -644,7 +672,10 @@ export class YankiConnect {
 		 * Forward slashes must be used in the path on Windows. Only supported for
 		 * Anki 2.1.52+.
 		 *
-		 * @minimumAnki 2.1.52
+		 * On Anki 2.1.52 through 2.1.66, AnkiConnect 23.10.29.0 through 24.7.25.0
+		 * support it, but 26.11.22.0 returns an error that it requires Anki 23.10.
+		 *
+		 * @minimumAnki 23.10.0
 		 * @minimumAnkiConnect 23.10.29.0
 		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/23.10.29.0/item/plugin/__init__.py#L1856}
 		 */
@@ -661,7 +692,9 @@ export class YankiConnect {
 		/**
 		 * Returns whether the GUI reviewer is active.
 		 *
-		 * @minimumAnki 2.1.15
+		 * On Anki 2.1.15, AnkiConnect 22.2.19.0 supports it, but 26.11.22.0 fails.
+		 *
+		 * @minimumAnki 2.1.20
 		 * @minimumAnkiConnect 22.2.19.0
 		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L1520}
 		 */
@@ -723,7 +756,9 @@ export class YankiConnect {
 		 * allowing the recorded time taken to answer the card to be more accurate
 		 * when calling `guiAnswerCard`.
 		 *
-		 * @minimumAnki 2.1.15
+		 * On Anki 2.1.15, AnkiConnect 22.2.19.0 supports it, but 26.11.22.0 fails.
+		 *
+		 * @minimumAnki 2.1.20
 		 * @minimumAnkiConnect 22.2.19.0
 		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L1557}
 		 */
@@ -741,13 +776,15 @@ export class YankiConnect {
 	/**
 	 * **Media Actions**
 	 *
-	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.11.19.1/item/API_LEGACY.md#media-actions)
+	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.11.22.0/item/API_LEGACY.md#media-actions)
 	 */
 	public readonly media = {
 		/**
 		 * Deletes the specified file inside the media folder.
 		 *
-		 * @minimumAnki 2.1.15
+		 * On Anki 2.1.15, AnkiConnect 22.2.19.0 supports it, but 26.11.22.0 fails.
+		 *
+		 * @minimumAnki 2.1.20
 		 * @minimumAnkiConnect 22.2.19.0
 		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L660}
 		 */
@@ -765,7 +802,9 @@ export class YankiConnect {
 		 * Gets the names of media files matched the pattern. Returning all names by
 		 * default.
 		 *
-		 * @minimumAnki 2.1.15
+		 * On Anki 2.1.15, AnkiConnect 22.2.19.0 supports it, but 26.11.22.0 fails.
+		 *
+		 * @minimumAnki 2.1.20
 		 * @minimumAnkiConnect 22.2.19.0
 		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L654}
 		 */
@@ -774,7 +813,9 @@ export class YankiConnect {
 		 * Retrieves the base64-encoded contents of the specified file, returning
 		 * `false` if the file does not exist.
 		 *
-		 * @minimumAnki 2.1.15
+		 * On Anki 2.1.15, AnkiConnect 22.2.19.0 supports it, but 26.11.22.0 fails.
+		 *
+		 * @minimumAnki 2.1.20
 		 * @minimumAnkiConnect 22.2.19.0
 		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L640}
 		 */
@@ -811,7 +852,9 @@ export class YankiConnect {
 		 * square of its size, and Anki stops responding until it finishes. A 17 MiB
 		 * request took 16 seconds on a fast machine and over 30 on slower ones.
 		 *
-		 * @minimumAnki 2.1.15
+		 * On Anki 2.1.15, AnkiConnect 22.2.19.0 supports it, but 26.11.22.0 fails.
+		 *
+		 * @minimumAnki 2.1.20
 		 * @minimumAnkiConnect 22.2.19.0
 		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L614}
 		 */
@@ -820,7 +863,7 @@ export class YankiConnect {
 	/**
 	 * **Miscellaneous Actions**
 	 *
-	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.11.19.1/item/API_LEGACY.md#miscellaneous-actions)
+	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.11.22.0/item/API_LEGACY.md#miscellaneous-actions)
 	 */
 	public readonly miscellaneous = {
 		/**
@@ -844,7 +887,9 @@ export class YankiConnect {
 		 * `false` otherwise. The optional property `includeSched` (default is
 		 * `false`) can be specified to include the cards’ scheduling data.
 		 *
-		 * @minimumAnki 2.1.15
+		 * On Anki 2.1.15, AnkiConnect 22.2.19.0 supports it, but 26.11.22.0 fails.
+		 *
+		 * @minimumAnki 2.1.20
 		 * @minimumAnkiConnect 22.2.19.0
 		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L1664}
 		 */
@@ -897,7 +942,9 @@ export class YankiConnect {
 		/**
 		 * Tells `anki` to reload all data from the database.
 		 *
-		 * @minimumAnki 2.1.15
+		 * On Anki 2.1.15, AnkiConnect 22.2.19.0 supports it, but 26.11.22.0 fails.
+		 *
+		 * @minimumAnki 2.1.20
 		 * @minimumAnkiConnect 22.2.19.0
 		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L1235}
 		 */
@@ -957,7 +1004,7 @@ export class YankiConnect {
 	/**
 	 * **Model Actions**
 	 *
-	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.11.19.1/item/API_LEGACY.md#model-actions)
+	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.11.22.0/item/API_LEGACY.md#model-actions)
 	 */
 	public readonly model = {
 		/**
@@ -1028,6 +1075,9 @@ export class YankiConnect {
 		 * existing field, such as `front` or `Front ` beside `Front`, returns an
 		 * error. Earlier releases add the field as `front+`.
 		 *
+		 * From AnkiConnect 26.10.11.0, this returns an error while an open editor
+		 * shows a note of the model.
+		 *
 		 * @minimumAnki 2.1.45
 		 * @minimumAnkiConnect 22.9.18.0
 		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.9.18.0/item/plugin/__init__.py#L1223}
@@ -1055,13 +1105,18 @@ export class YankiConnect {
 		/**
 		 * Gets the complete list of field names for the provided model name.
 		 *
-		 * @minimumAnki 2.1.15
+		 * On Anki 2.1.15, AnkiConnect 22.2.19.0 supports it, but 26.11.22.0 fails.
+		 *
+		 * @minimumAnki 2.1.20
 		 * @minimumAnkiConnect 22.2.19.0
 		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L995}
 		 */
 		modelFieldNames: this.build('modelFieldNames'),
 		/**
 		 * Deletes a field within a given model.
+		 *
+		 * From AnkiConnect 26.10.11.0, this returns an error while an open editor
+		 * shows a note of the model.
 		 *
 		 * @minimumAnki 2.1.45
 		 * @minimumAnkiConnect 22.9.18.0
@@ -1074,6 +1129,9 @@ export class YankiConnect {
 		 * From AnkiConnect 26.11.19.0, a new name that Anki treats as a repeat of
 		 * another field's name, such as `front` beside `Front`, returns an error.
 		 * Earlier releases save it as `front+`.
+		 *
+		 * From AnkiConnect 26.10.11.0, this returns an error while an open editor
+		 * shows a note of the model.
 		 *
 		 * @minimumAnki 2.1.45
 		 * @minimumAnkiConnect 22.9.18.0
@@ -1089,6 +1147,9 @@ export class YankiConnect {
 		 *
 		 * An index past the end moves the field last, except in AnkiConnect
 		 * 26.10.11.0 through 26.10.14.0, which reject it.
+		 *
+		 * From AnkiConnect 26.10.11.0, this returns an error while an open editor
+		 * shows a note of the model.
 		 *
 		 * @minimumAnki 2.1.45
 		 * @minimumAnkiConnect 22.9.18.0
@@ -1128,7 +1189,9 @@ export class YankiConnect {
 		 * of each card template for the given model name. The question side is
 		 * given first in each array.
 		 *
-		 * @minimumAnki 2.1.15
+		 * On Anki 2.1.15, AnkiConnect 22.2.19.0 supports it, but 26.11.22.0 fails.
+		 *
+		 * @minimumAnki 2.1.20
 		 * @minimumAnkiConnect 22.2.19.0
 		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L1004}
 		 */
@@ -1144,7 +1207,9 @@ export class YankiConnect {
 		/**
 		 * Gets the complete list of model names for the current user.
 		 *
-		 * @minimumAnki 2.1.15
+		 * On Anki 2.1.15, AnkiConnect 22.2.19.0 supports it, but 26.11.22.0 fails.
+		 *
+		 * @minimumAnki 2.1.20
 		 * @minimumAnkiConnect 22.2.19.0
 		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L928}
 		 */
@@ -1153,7 +1218,9 @@ export class YankiConnect {
 		 * Gets the complete list of model names and their corresponding IDs for the
 		 * current user.
 		 *
-		 * @minimumAnki 2.1.15
+		 * On Anki 2.1.15, AnkiConnect 22.2.19.0 supports it, but 26.11.22.0 fails.
+		 *
+		 * @minimumAnki 2.1.20
 		 * @minimumAnkiConnect 22.2.19.0
 		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L977}
 		 */
@@ -1161,7 +1228,9 @@ export class YankiConnect {
 		/**
 		 * Gets the CSS styling for the provided model by name.
 		 *
-		 * @minimumAnki 2.1.15
+		 * On Anki 2.1.15, AnkiConnect 22.2.19.0 supports it, but 26.11.22.0 fails.
+		 *
+		 * @minimumAnki 2.1.20
 		 * @minimumAnkiConnect 22.2.19.0
 		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L1048}
 		 */
@@ -1218,7 +1287,9 @@ export class YankiConnect {
 		 * template in the first position, and an `index` of `2` puts the template
 		 * in the third position.
 		 *
-		 * @minimumAnki 2.1.15
+		 * On Anki 2.1.15, AnkiConnect 22.2.19.0 supports it, but 26.11.22.0 fails.
+		 *
+		 * @minimumAnki 2.1.20
 		 * @minimumAnkiConnect 22.2.19.0
 		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L1035}
 		 */
@@ -1226,7 +1297,9 @@ export class YankiConnect {
 		/**
 		 * Modify the CSS styling of an existing model by name.
 		 *
-		 * @minimumAnki 2.1.15
+		 * On Anki 2.1.15, AnkiConnect 22.2.19.0 supports it, but 26.11.22.0 fails.
+		 *
+		 * @minimumAnki 2.1.20
 		 * @minimumAnkiConnect 22.2.19.0
 		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L1079}
 		 */
@@ -1236,7 +1309,9 @@ export class YankiConnect {
 		 * and specified sides will be modified. If an existing card or side is not
 		 * included in the request, it will be left unchanged.
 		 *
-		 * @minimumAnki 2.1.15
+		 * On Anki 2.1.15, AnkiConnect 22.2.19.0 supports it, but 26.11.22.0 fails.
+		 *
+		 * @minimumAnki 2.1.20
 		 * @minimumAnkiConnect 22.2.19.0
 		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L1057}
 		 */
@@ -1246,7 +1321,7 @@ export class YankiConnect {
 	/**
 	 * **Note Actions**
 	 *
-	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.11.19.1/item/API_LEGACY.md#note-actions)
+	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.11.22.0/item/API_LEGACY.md#note-actions)
 	 */
 	public readonly note = {
 		/**
@@ -1293,7 +1368,9 @@ export class YankiConnect {
 		 *
 		 * Media entries may omit `fields` from 25.11.2.0 on Anki 23.10 or later.
 		 *
-		 * @minimumAnki 2.1.15
+		 * On Anki 2.1.15, AnkiConnect 22.2.19.0 supports it, but 26.11.22.0 fails.
+		 *
+		 * @minimumAnki 2.1.20
 		 * @minimumAnkiConnect 22.2.19.0
 		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L668}
 		 */
@@ -1308,7 +1385,9 @@ export class YankiConnect {
 		 *
 		 * Media entries may omit `fields` from 25.11.2.0 on Anki 23.10 or later.
 		 *
-		 * @minimumAnki 2.1.15
+		 * On Anki 2.1.15, AnkiConnect 22.2.19.0 supports it, but 26.11.22.0 fails.
+		 *
+		 * @minimumAnki 2.1.20
 		 * @minimumAnkiConnect 22.2.19.0
 		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L1643}
 		 */
@@ -1319,6 +1398,13 @@ export class YankiConnect {
 		 *
 		 * `tags` takes a space-separated string, or an array of tags from
 		 * 26.10.11.0.
+		 *
+		 * While the _Card Browser_, _Edit Current_, or `guiEditNote` editor shows
+		 * one of the notes, AnkiConnect 26.10.11.0 through 26.11.19.1 return an
+		 * error, and 26.11.22.0 saves the editor's pending input first and then
+		 * reloads the note. Earlier releases can silently lose the change:
+		 * 25.11.9.0 drops tags added right after an `updateNoteFields` call on a
+		 * note shown in the _Card Browser_.
 		 *
 		 * @minimumAnki 2.1.15
 		 * @minimumAnkiConnect 22.2.19.0
@@ -1333,7 +1419,9 @@ export class YankiConnect {
 		 *
 		 * Media entries may omit `fields` from 25.11.2.0 on Anki 23.10 or later.
 		 *
-		 * @minimumAnki 2.1.15
+		 * On Anki 2.1.15, AnkiConnect 22.2.19.0 supports it, but 26.11.22.0 fails.
+		 *
+		 * @minimumAnki 2.1.20
 		 * @minimumAnkiConnect 22.2.19.0
 		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L730}
 		 */
@@ -1346,7 +1434,9 @@ export class YankiConnect {
 		 *
 		 * Media entries may omit `fields` from 25.11.2.0 on Anki 23.10 or later.
 		 *
-		 * @minimumAnki 2.1.15
+		 * On Anki 2.1.15, AnkiConnect 22.2.19.0 supports it, but 26.11.22.0 fails.
+		 *
+		 * @minimumAnki 2.1.20
 		 * @minimumAnkiConnect 22.2.19.0
 		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L1655}
 		 */
@@ -1385,7 +1475,9 @@ export class YankiConnect {
 		/**
 		 * Clears all the unused tags in the notes for the current user.
 		 *
-		 * @minimumAnki 2.1.15
+		 * On Anki 2.1.15, AnkiConnect 22.2.19.0 supports it, but 26.11.22.0 fails.
+		 *
+		 * @minimumAnki 2.1.20
 		 * @minimumAnkiConnect 22.2.19.0
 		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L779}
 		 */
@@ -1394,7 +1486,14 @@ export class YankiConnect {
 		 * Deletes notes with the given ids. If a note has several cards associated
 		 * with it, all associated cards will be deleted.
 		 *
-		 * @minimumAnki 2.1.15
+		 * While the _Card Browser_, _Edit Current_, or `guiEditNote` editor shows
+		 * one of the notes, AnkiConnect 26.10.11.0 through 26.11.19.1 return an
+		 * error. 26.11.22.0 saves the editor's pending input first, but Anki's
+		 * experimental web editor, from 26.08, must still be closed.
+		 *
+		 * On Anki 2.1.15, AnkiConnect 22.2.19.0 supports it, but 26.11.22.0 fails.
+		 *
+		 * @minimumAnki 2.1.20
 		 * @minimumAnkiConnect 22.2.19.0
 		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L1328}
 		 */
@@ -1419,7 +1518,9 @@ export class YankiConnect {
 		/**
 		 * Gets the complete list of tags for the current user.
 		 *
-		 * @minimumAnki 2.1.15
+		 * On Anki 2.1.15, AnkiConnect 22.2.19.0 supports it, but 26.11.22.0 fails.
+		 *
+		 * @minimumAnki 2.1.20
 		 * @minimumAnkiConnect 22.2.19.0
 		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L774}
 		 */
@@ -1472,6 +1573,11 @@ export class YankiConnect {
 		 * `tags` takes a space-separated string, or an array of tags from
 		 * 26.10.11.0.
 		 *
+		 * While the _Card Browser_, _Edit Current_, or `guiEditNote` editor shows
+		 * one of the notes, AnkiConnect 26.10.11.0 through 26.11.19.1 return an
+		 * error, and 26.11.22.0 saves the editor's pending input first and then
+		 * reloads the note.
+		 *
 		 * @minimumAnki 2.1.15
 		 * @minimumAnkiConnect 22.2.19.0
 		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L769}
@@ -1480,6 +1586,11 @@ export class YankiConnect {
 		/**
 		 * Replace tags in notes by note ID.
 		 *
+		 * While the _Card Browser_, _Edit Current_, or `guiEditNote` editor shows
+		 * one of the notes, AnkiConnect 26.10.11.0 through 26.11.19.1 return an
+		 * error, and 26.11.22.0 saves the editor's pending input first and then
+		 * reloads the note.
+		 *
 		 * @minimumAnki 2.1.15
 		 * @minimumAnkiConnect 22.2.19.0
 		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L784}
@@ -1487,6 +1598,11 @@ export class YankiConnect {
 		replaceTags: this.build('replaceTags'),
 		/**
 		 * Replace tags in all the notes for the current user.
+		 *
+		 * While the _Card Browser_, _Edit Current_, or `guiEditNote` editor shows
+		 * any note, AnkiConnect 26.10.11.0 through 26.11.19.1 return an error, and
+		 * 26.11.22.0 saves the editor's pending input first and then reloads the
+		 * note.
 		 *
 		 * @minimumAnki 2.1.15
 		 * @minimumAnkiConnect 22.2.19.0
@@ -1507,10 +1623,16 @@ export class YankiConnect {
 		 * are updated first and are not rolled back if updating tags fails. Tags
 		 * are not updated if updating fields fails.
 		 *
-		 * > [!WARNING] You must not be viewing the note that you are updating on your
-		 * > Anki browser, otherwise the fields will not update. See [this
+		 * > [!WARNING] Before AnkiConnect 26.10.11.0, you must not be viewing the
+		 * > note that you are updating on your Anki browser, otherwise the fields
+		 * > will not update. See [this
 		 * > issue](https://github.com/FooSoft/anki-connect/issues/82) for further
 		 * > details.
+		 *
+		 * While the _Card Browser_, _Edit Current_, or `guiEditNote` editor shows
+		 * the note, AnkiConnect 26.10.11.0 through 26.11.19.1 return an error, and
+		 * 26.11.22.0 saves the editor's pending input first and then reloads the
+		 * note.
 		 *
 		 * Media entries may omit `fields` from 25.11.2.0 on Anki 23.10 or later.
 		 *
@@ -1531,10 +1653,16 @@ export class YankiConnect {
 		 * `addNote` for an explanation of objects in the `audio`, `video`, or
 		 * `picture` array.
 		 *
-		 * > [!WARNING] You must not be viewing the note that you are updating on your
-		 * > Anki browser, otherwise the fields will not update. See [this
+		 * > [!WARNING] Before AnkiConnect 26.10.11.0, you must not be viewing the
+		 * > note that you are updating on your Anki browser, otherwise the fields
+		 * > will not update. See [this
 		 * > issue](https://github.com/FooSoft/anki-connect/issues/82) for further
 		 * > details.
+		 *
+		 * While the _Card Browser_, _Edit Current_, or `guiEditNote` editor shows
+		 * the note, AnkiConnect 26.10.11.0 through 26.11.19.1 return an error, and
+		 * 26.11.22.0 saves the editor's pending input first and then reloads the
+		 * note.
 		 *
 		 * Media entries may omit `fields` from 25.11.2.0 on Anki 23.10 or later.
 		 *
@@ -1562,6 +1690,12 @@ export class YankiConnect {
 		 * AnkiConnect 26.10.11.0 through 26.10.12.2 replace the card and lose its
 		 * review history; later releases keep the card.
 		 *
+		 * While the _Card Browser_, _Edit Current_, or `guiEditNote` editor shows
+		 * the note, AnkiConnect 26.10.11.0 through 26.11.19.1 return an error.
+		 * 26.11.22.0 saves the editor's pending input first and then reloads the
+		 * note, but Anki's experimental web editor, from 26.08, must still be
+		 * closed.
+		 *
 		 * @minimumAnki 2.1.50
 		 * @minimumAnkiConnect 24.6.17.0
 		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/24.6.17.0/item/plugin/__init__.py#L839}
@@ -1569,6 +1703,11 @@ export class YankiConnect {
 		updateNoteModel: this.build('updateNoteModel'),
 		/**
 		 * Set a note's tags by note ID. Old tags will be removed.
+		 *
+		 * While the _Card Browser_, _Edit Current_, or `guiEditNote` editor shows
+		 * the note, AnkiConnect 26.10.11.0 through 26.11.19.1 return an error, and
+		 * 26.11.22.0 saves the editor's pending input first and then reloads the
+		 * note.
 		 *
 		 * @minimumAnki 2.1.45
 		 * @minimumAnkiConnect 23.4.11.0
@@ -1580,7 +1719,7 @@ export class YankiConnect {
 	/**
 	 * **Statistic Actions**
 	 *
-	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.11.19.1/item/API_LEGACY.md#statistic-actions)
+	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.11.22.0/item/API_LEGACY.md#statistic-actions)
 	 */
 	public readonly statistic = {
 		/**
@@ -1597,7 +1736,9 @@ export class YankiConnect {
 		/**
 		 * Gets the collection statistics report.
 		 *
-		 * @minimumAnki 2.1.15
+		 * On Anki 2.1.15, AnkiConnect 22.2.19.0 supports it, but 26.11.22.0 fails.
+		 *
+		 * @minimumAnki 2.1.20
 		 * @minimumAnkiConnect 22.2.19.0
 		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L465}
 		 */
@@ -1606,7 +1747,9 @@ export class YankiConnect {
 		 * Returns the unix time of the latest review for the given deck. 0 if no
 		 * review has ever been made for the deck.
 		 *
-		 * @minimumAnki 2.1.15
+		 * On Anki 2.1.15, AnkiConnect 22.2.19.0 supports it, but 26.11.22.0 fails.
+		 *
+		 * @minimumAnki 2.1.20
 		 * @minimumAnkiConnect 22.2.19.0
 		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L1240}
 		 */
@@ -1711,7 +1854,7 @@ export class YankiConnect {
 	/**
 	 * Directly invoke the Anki Connect API.
 	 *
-	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.11.19.1/item/API_LEGACY.md)
+	 * [Documentation](https://git.sr.ht/~foosoft/anki-connect/tree/26.11.22.0/item/API_LEGACY.md)
 	 *
 	 * Primarily for internal use, since the client provides a more convenient
 	 * methods on its class, e.g. instead of:
