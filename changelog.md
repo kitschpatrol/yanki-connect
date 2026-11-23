@@ -9,6 +9,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Entries are drafted with LLM assistance via [Chagent](https://github.com/kitschpatrol/chagent).
 
+## [Unreleased]
+
+### Documentation
+
+- [AnkiConnect 26.11.22.0](https://git.sr.ht/~foosoft/anki-connect/tree/26.11.22.0/item/API_LEGACY.md) keeps all 122 legacy actions and their parameter signatures, and is now the reference release for the client documentation and the readme's recommended version. A new versioning layer lets it load on every Anki release from 2.1.15, where 26.10.11.0 through 26.11.19.1 need Anki 26.08. The compatibility survey finds it passing every testable action on Anki 23.10 and later and most actions from Anki 2.1.20, so the readme now recommends Anki 23.10+ for full API support and notes that wider range above the action table, which keeps pairing each minimum Anki version with the oldest AnkiConnect release that supports the action. Action JSDoc now covers these behaviors:
+  - `updateNoteFields`, `updateNote`, `updateNoteTags`, `updateNoteModel`, `addTags`, `removeTags`, `replaceTags`, `replaceTagsInAllNotes`, `deleteNotes`: Succeed while the _Card Browser_, _Edit Current_, or `guiEditNote` editor shows an affected note. The editor saves its pending input first and then reloads the note. 26.10.11.0 through 26.11.19.1 return `Close the affected editor before this API write, even if its content is saved.` Anki's experimental web editor must still be closed before a deletion or note type change. 25.11.9.0 and earlier accept these writes without notifying the editor and can lose them: 25.11.9.0 drops tags added right after an `updateNoteFields` call on a note shown in the _Card Browser_. The upstream warning on `updateNote` and `updateNoteFields` now applies only to releases before 26.10.11.0.
+  - `modelFieldAdd`, `modelFieldRemove`, `modelFieldRename`, `modelFieldReposition`: Still return the same error while an open editor shows a note of the model, as they have since 26.10.11.0.
+  - `guiEditNote`: The dialog's card preview closes when its note is deleted elsewhere, including through the API.
+  - `guiDeckReview`: Works on Anki 23.10 through 26.05, where no earlier AnkiConnect release finishes loading the reviewer.
+  - 32 actions, including `addNote`, `deckNames`, and `storeMediaFile`: On the Linux build of Anki 2.1.15, 26.11.22.0 loads but fails nearly every action with `No module named 'concurrent'`. Their documented minimum Anki rises from 2.1.15 to 2.1.20, with a note that 22.2.19.0 still supports them on 2.1.15.
+  - `relearnCards`: On Anki 2.1.41 through 2.1.44, 26.11.22.0 returns without putting the cards into relearning. The documented minimum Anki rises from 2.1.15 to 2.1.45; 22.2.19.0 supports the older releases.
+  - `getDeckConfig`, `saveDeckConfig`: On Anki 2.1.24 through 2.1.26, 26.11.22.0 returns configurations without `dyn`. The documented minimum Anki rises to 2.1.28, from 2.1.25 and 2.1.24; 22.2.19.0 supports the older releases.
+  - `guiImportFile`: 26.11.22.0 requires Anki 23.10, while 23.10.29.0 through 24.7.25.0 support it from Anki 2.1.52. The documented minimum Anki rises from 2.1.52 to 23.10.
+  - `createModel`, `findModelsById`, `findModelsByName`: Like earlier releases, 26.11.22.0 returns note types without the field and template keys that Anki added in 23.10, such as field `id` and `tag`, when it runs on older Anki. The client's types declare those keys, so the documented minimum Anki stays at 23.10.
+- Record survey run `45182814645` as the accepted compatibility regression baseline. It covers 80 Anki releases and 36 AnkiConnect releases through 26.11.22.0, and its artifacts expire on 2027-02-21.
+
+### Maintenance
+
+- Replace the AnkiConnect 26.11.19.1 test fixture with 26.11.22.0 as the newest release in the local and cross-platform CI test matrices. The 25.11.9.0 and 26.10.14.0 fixtures remain.
+- Add a fixture test for note and tag writes while the _Card Browser_ shows the note, with version-specific expectations for each fixture.
+
 ## [5.3.2] - 2026-11-20
 
 ### Documentation
@@ -830,3 +851,4 @@ Entries are drafted with LLM assistance via [Chagent](https://github.com/kitschp
 [5.3.0]: https://github.com/kitschpatrol/yanki-connect/compare/v5.2.2...v5.3.0
 [5.3.1]: https://github.com/kitschpatrol/yanki-connect/compare/v5.3.0...v5.3.1
 [5.3.2]: https://github.com/kitschpatrol/yanki-connect/compare/v5.3.1...v5.3.2
+[Unreleased]: https://github.com/kitschpatrol/yanki-connect/compare/v5.3.2...HEAD
