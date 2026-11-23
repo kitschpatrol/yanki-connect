@@ -3,6 +3,8 @@ import type { Actions } from '../src/types/shared'
 import { YankiConnect } from '../src'
 
 const ANKI_USER_AGENT = /^Anki /v
+const EDITOR_CONFLICT =
+	'Close the affected editor before this API write, even if its content is saved.'
 const INVALID_EASE = /^invalid ease\.?$/iv
 // Browsers can't read October's 413 response, which lacks CORS headers.
 const OVERSIZED_REQUEST = /^(?:AnkiConnect response status is 413|Failed to fetch)$/v
@@ -883,6 +885,29 @@ describe('real AnkiConnect endpoints', { concurrent: false }, () => {
 			expect(await client.graphical.guiAddNoteSetData({ ...draft, append: true })).toBe(true)
 		}
 	}, 30_000)
+
+	it('note writes while an editor shows the note', async () => {
+		await expect
+			.poll(async () => client.graphical.guiBrowse({ query: `nid:${noteId}` }), { timeout: 10_000 })
+			.toContain(cardId)
+		expect(await client.graphical.guiSelectCard({ card: cardId })).toBe(true)
+		await expect.poll(async () => client.graphical.guiSelectedNotes()).toEqual([noteId])
+		const [before] = await client.note.notesInfo({ notes: [noteId] })
+		const writes = [
+			await client.invoke('updateNoteFields', { note: { fields: { Back: 'Edited' }, id: noteId } }),
+			await client.invoke('addTags', { notes: [noteId], tags: 'edited' }),
+		]
+		const [after] = await client.note.notesInfo({ notes: [noteId] })
+		const expectedError = isOctober ? EDITOR_CONFLICT : undefined
+		expect(writes.map(({ error }) => error ?? undefined)).toEqual([expectedError, expectedError])
+		const unchanged = { back: before!.fields.Back!.value, edited: before!.tags.includes('edited') }
+		const outcome = { back: after!.fields.Back!.value, edited: after!.tags.includes('edited') }
+		// 25.11.9.0 can drop the tags added right after the field update.
+		if (!isLegacy) {
+			// eslint-disable-next-line test/no-conditional-expect -- Later fixtures have a deterministic outcome.
+			expect(outcome).toEqual(isOctober ? unchanged : { back: 'Edited', edited: true })
+		}
+	})
 
 	it('exit and exhaustive endpoint coverage', async () => {
 		await expect(client.graphical.guiExitAnki()).resolves.toBeNull()

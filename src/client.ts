@@ -1028,6 +1028,9 @@ export class YankiConnect {
 		 * existing field, such as `front` or `Front ` beside `Front`, returns an
 		 * error. Earlier releases add the field as `front+`.
 		 *
+		 * From AnkiConnect 26.10.11.0, this returns an error while an open editor
+		 * shows a note of the model.
+		 *
 		 * @minimumAnki 2.1.45
 		 * @minimumAnkiConnect 22.9.18.0
 		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.9.18.0/item/plugin/__init__.py#L1223}
@@ -1063,6 +1066,9 @@ export class YankiConnect {
 		/**
 		 * Deletes a field within a given model.
 		 *
+		 * From AnkiConnect 26.10.11.0, this returns an error while an open editor
+		 * shows a note of the model.
+		 *
 		 * @minimumAnki 2.1.45
 		 * @minimumAnkiConnect 22.9.18.0
 		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.9.18.0/item/plugin/__init__.py#L1245}
@@ -1074,6 +1080,9 @@ export class YankiConnect {
 		 * From AnkiConnect 26.11.19.0, a new name that Anki treats as a repeat of
 		 * another field's name, such as `front` beside `Front`, returns an error.
 		 * Earlier releases save it as `front+`.
+		 *
+		 * From AnkiConnect 26.10.11.0, this returns an error while an open editor
+		 * shows a note of the model.
 		 *
 		 * @minimumAnki 2.1.45
 		 * @minimumAnkiConnect 22.9.18.0
@@ -1089,6 +1098,9 @@ export class YankiConnect {
 		 *
 		 * An index past the end moves the field last, except in AnkiConnect
 		 * 26.10.11.0 through 26.10.14.0, which reject it.
+		 *
+		 * From AnkiConnect 26.10.11.0, this returns an error while an open editor
+		 * shows a note of the model.
 		 *
 		 * @minimumAnki 2.1.45
 		 * @minimumAnkiConnect 22.9.18.0
@@ -1320,6 +1332,13 @@ export class YankiConnect {
 		 * `tags` takes a space-separated string, or an array of tags from
 		 * 26.10.11.0.
 		 *
+		 * While the _Card Browser_, _Edit Current_, or `guiEditNote` editor shows
+		 * one of the notes, AnkiConnect 26.10.11.0 through 26.11.19.1 return an
+		 * error, and 26.11.22.0 saves the editor's pending input first and then
+		 * reloads the note. Earlier releases can silently lose the change:
+		 * 25.11.9.0 drops tags added right after an `updateNoteFields` call on a
+		 * note shown in the _Card Browser_.
+		 *
 		 * @minimumAnki 2.1.15
 		 * @minimumAnkiConnect 22.2.19.0
 		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L762}
@@ -1393,6 +1412,11 @@ export class YankiConnect {
 		/**
 		 * Deletes notes with the given ids. If a note has several cards associated
 		 * with it, all associated cards will be deleted.
+		 *
+		 * While the _Card Browser_, _Edit Current_, or `guiEditNote` editor shows
+		 * one of the notes, AnkiConnect 26.10.11.0 through 26.11.19.1 return an
+		 * error. 26.11.22.0 saves the editor's pending input first, but Anki's
+		 * experimental web editor, from 26.08, must still be closed.
 		 *
 		 * @minimumAnki 2.1.15
 		 * @minimumAnkiConnect 22.2.19.0
@@ -1472,6 +1496,11 @@ export class YankiConnect {
 		 * `tags` takes a space-separated string, or an array of tags from
 		 * 26.10.11.0.
 		 *
+		 * While the _Card Browser_, _Edit Current_, or `guiEditNote` editor shows
+		 * one of the notes, AnkiConnect 26.10.11.0 through 26.11.19.1 return an
+		 * error, and 26.11.22.0 saves the editor's pending input first and then
+		 * reloads the note.
+		 *
 		 * @minimumAnki 2.1.15
 		 * @minimumAnkiConnect 22.2.19.0
 		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L769}
@@ -1480,6 +1509,11 @@ export class YankiConnect {
 		/**
 		 * Replace tags in notes by note ID.
 		 *
+		 * While the _Card Browser_, _Edit Current_, or `guiEditNote` editor shows
+		 * one of the notes, AnkiConnect 26.10.11.0 through 26.11.19.1 return an
+		 * error, and 26.11.22.0 saves the editor's pending input first and then
+		 * reloads the note.
+		 *
 		 * @minimumAnki 2.1.15
 		 * @minimumAnkiConnect 22.2.19.0
 		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/22.2.19.0/item/plugin/__init__.py#L784}
@@ -1487,6 +1521,11 @@ export class YankiConnect {
 		replaceTags: this.build('replaceTags'),
 		/**
 		 * Replace tags in all the notes for the current user.
+		 *
+		 * While the _Card Browser_, _Edit Current_, or `guiEditNote` editor shows
+		 * any note, AnkiConnect 26.10.11.0 through 26.11.19.1 return an error, and
+		 * 26.11.22.0 saves the editor's pending input first and then reloads the
+		 * note.
 		 *
 		 * @minimumAnki 2.1.15
 		 * @minimumAnkiConnect 22.2.19.0
@@ -1507,10 +1546,16 @@ export class YankiConnect {
 		 * are updated first and are not rolled back if updating tags fails. Tags
 		 * are not updated if updating fields fails.
 		 *
-		 * > [!WARNING] You must not be viewing the note that you are updating on your
-		 * > Anki browser, otherwise the fields will not update. See [this
+		 * > [!WARNING] Before AnkiConnect 26.10.11.0, you must not be viewing the
+		 * > note that you are updating on your Anki browser, otherwise the fields
+		 * > will not update. See [this
 		 * > issue](https://github.com/FooSoft/anki-connect/issues/82) for further
 		 * > details.
+		 *
+		 * While the _Card Browser_, _Edit Current_, or `guiEditNote` editor shows
+		 * the note, AnkiConnect 26.10.11.0 through 26.11.19.1 return an error, and
+		 * 26.11.22.0 saves the editor's pending input first and then reloads the
+		 * note.
 		 *
 		 * Media entries may omit `fields` from 25.11.2.0 on Anki 23.10 or later.
 		 *
@@ -1531,10 +1576,16 @@ export class YankiConnect {
 		 * `addNote` for an explanation of objects in the `audio`, `video`, or
 		 * `picture` array.
 		 *
-		 * > [!WARNING] You must not be viewing the note that you are updating on your
-		 * > Anki browser, otherwise the fields will not update. See [this
+		 * > [!WARNING] Before AnkiConnect 26.10.11.0, you must not be viewing the
+		 * > note that you are updating on your Anki browser, otherwise the fields
+		 * > will not update. See [this
 		 * > issue](https://github.com/FooSoft/anki-connect/issues/82) for further
 		 * > details.
+		 *
+		 * While the _Card Browser_, _Edit Current_, or `guiEditNote` editor shows
+		 * the note, AnkiConnect 26.10.11.0 through 26.11.19.1 return an error, and
+		 * 26.11.22.0 saves the editor's pending input first and then reloads the
+		 * note.
 		 *
 		 * Media entries may omit `fields` from 25.11.2.0 on Anki 23.10 or later.
 		 *
@@ -1562,6 +1613,12 @@ export class YankiConnect {
 		 * AnkiConnect 26.10.11.0 through 26.10.12.2 replace the card and lose its
 		 * review history; later releases keep the card.
 		 *
+		 * While the _Card Browser_, _Edit Current_, or `guiEditNote` editor shows
+		 * the note, AnkiConnect 26.10.11.0 through 26.11.19.1 return an error.
+		 * 26.11.22.0 saves the editor's pending input first and then reloads the
+		 * note, but Anki's experimental web editor, from 26.08, must still be
+		 * closed.
+		 *
 		 * @minimumAnki 2.1.50
 		 * @minimumAnkiConnect 24.6.17.0
 		 * @see {@link https://git.sr.ht/~foosoft/anki-connect/tree/24.6.17.0/item/plugin/__init__.py#L839}
@@ -1569,6 +1626,11 @@ export class YankiConnect {
 		updateNoteModel: this.build('updateNoteModel'),
 		/**
 		 * Set a note's tags by note ID. Old tags will be removed.
+		 *
+		 * While the _Card Browser_, _Edit Current_, or `guiEditNote` editor shows
+		 * the note, AnkiConnect 26.10.11.0 through 26.11.19.1 return an error, and
+		 * 26.11.22.0 saves the editor's pending input first and then reloads the
+		 * note.
 		 *
 		 * @minimumAnki 2.1.45
 		 * @minimumAnkiConnect 23.4.11.0
